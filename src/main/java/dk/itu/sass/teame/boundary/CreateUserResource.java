@@ -9,7 +9,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import dk.itu.sass.teame.controller.CreateUserController;
 
-
 @Path("createuser")
 @Produces(MediaType.APPLICATION_JSON)
 public class CreateUserResource {
@@ -41,7 +40,7 @@ public class CreateUserResource {
 		if(!foundUser.isEmpty())
 			return Response.status(Response.Status.PAYMENT_REQUIRED).entity(foundUser).build();
 	
-		int result = createUserController.insertUser(username, password, email);
+		long result = createUserController.insertAccount(username, password, email).getAccountid();
 		
 		return Response.status(Response.Status.ACCEPTED).entity(result).build();
 	}
