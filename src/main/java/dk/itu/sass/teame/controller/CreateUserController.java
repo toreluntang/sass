@@ -1,74 +1,49 @@
 package dk.itu.sass.teame.controller;
 
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.Properties;
+
 import javax.ejb.Stateless;
 
+import dk.itu.sass.teame.entity.Account;
+import dk.itu.sass.teame.postgresql.AccountSQL;
 
 @Stateless
 public class CreateUserController {
-	
-	private String url = "jdbc:postgresql://horton.elephantsql.com:5432/hmdgzyax";
-    private String dbusername = "hmdgzyax";
-    private String dbpassword = "8ETS72wV53uGfPIs-RCJy_tolfPs481n";
-	
-    
-	public String validateUsername(String username){
-		System.out.println("Validate Username called=" + username);
-		
-		String foundUser = "";
-		Connection con = null;
-		PreparedStatement pre = null;
-		
-		try{
-			Class.forName("org.postgresql.Driver");
-			con = DriverManager.getConnection(url,dbusername, dbpassword);
-			
-			String stm = "select username from bruger where username = ?";
-			pre = con.prepareStatement(stm);
-			pre.setString(1, username);
-			
-			ResultSet rs = pre.executeQuery();			
-			
-			if(rs.next()){
-				foundUser = rs.getString(1);
-			}
-			
-			con.close();
 
-		}catch(Exception sqle){
-			
-			sqle.printStackTrace();
-		}
+	public String validateUsername(String username) {
+		AccountSQL accountSQL = new AccountSQL();
 		
-		return foundUser;
+		Account a = accountSQL.getAccount(username);
+		
+		if(a == null)
+			return "";
+		
+		return a.getUsername();
 	}
 	
-	public int insertUser(String username, String password, String email){
-		System.out.println("Insert user called="+username+", "+password+", "+email);
-		int bob = -1;
-		Connection con = null;
-		PreparedStatement pre = null;
+	public Account insertAccount(String username, String password, String email){
 		
-		try{
-			Class.forName("org.postgresql.Driver");
-			con = DriverManager.getConnection(url,dbusername, dbpassword);
-			String stm = "insert into bruger(username, password, salt, email) VALUES(?, ?, ?, ?)";
-			pre = con.prepareStatement(stm);
-			
-			pre.setString(1, username);
-			pre.setString(2, password);
-			pre.setString(3, "SALT");
-			pre.setString(4, email);
-			bob = pre.executeUpdate();
-			
-		}catch(Exception e){
-			e.printStackTrace();
-		}
+		String salt = System.currentTimeMillis()+"username";
+		String pass = I_CAN_ENCRYPT_MY_SELF(password, salt);
+		Account newAccount = new Account(username, pass, salt, email);
 		
-		return bob;
+		AccountSQL accountSQL = new AccountSQL();
+		
+		int newAccountId = accountSQL.insertUser(newAccount);
+		newAccount.setAccountid(newAccountId);
+		
+		return newAccount;
 	}
 
+
+	public String I_CAN_ENCRYPT_MY_SELF(String password, String salt){
+		// Dont worry, i have taken 7 weeks of linear algebra.
+		return password + ":" + salt;
+	}
 }
