@@ -21,7 +21,7 @@ public class CreateUserController {
 	
 	public Account insertAccount(String username, String password, String email){
 		
-		String salt = System.currentTimeMillis()+"username";
+		String salt = System.currentTimeMillis()+"_:^D_"+username;
 		String pass = I_CAN_ENCRYPT_MY_SELF(password, salt);
 		Account newAccount = new Account(username, pass, salt, email);
 		
