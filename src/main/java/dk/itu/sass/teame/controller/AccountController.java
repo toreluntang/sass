@@ -6,7 +6,7 @@ import dk.itu.sass.teame.entity.Account;
 import dk.itu.sass.teame.postgresql.AccountSQL;
 
 @Stateless
-public class CreateUserController {
+public class AccountController {
 
 	public String validateUsername(String username) {
 		AccountSQL accountSQL = new AccountSQL();

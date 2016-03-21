@@ -1,47 +1,51 @@
 package dk.itu.sass.teame.boundary;
 
 import javax.inject.Inject;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import dk.itu.sass.teame.controller.CreateUserController;
 
-@Path("createuser")
+import dk.itu.sass.teame.controller.AccountController;
+
+@Path("account")
 @Produces(MediaType.APPLICATION_JSON)
-public class CreateUserResource {
+public class AccountResource {
 	
 	@Inject
-    private CreateUserController createUserController;
+    private AccountController accountController;
+	//private AccountController accController = new AccountController();
 	
 	@GET
 	@Path("hello")
 	public Response helloUser(){
 		System.out.println("hello user called");
-		return Response.ok().build();
+		return Response.ok().entity("success").build();
 	}
 
-	@GET
+	@POST
 	@Path("create")
 	public Response createUser(
-			@QueryParam("username") String username,
-			@QueryParam("password") String password,
-			@QueryParam("email") String email
+			@FormParam("username") String username,
+			@FormParam("password") String password,
+			@FormParam("email") String email
 			) {
-	
+		
 		if(username == null || password == null){
 			return Response.status(Response.Status.BAD_REQUEST).build();
 		}
-		String foundUser = createUserController.validateUsername(username);
 		
+		String foundUser = accountController.validateUsername(username);
 		
 		if(!foundUser.isEmpty())
 			return Response.status(Response.Status.PAYMENT_REQUIRED).entity(foundUser).build();
 	
-		long result = createUserController.insertAccount(username, password, email).getAccountid();
-		
+		long result = accountController.insertAccount(username, password, email).getAccountid();
+
 		return Response.status(Response.Status.ACCEPTED).entity(result).build();
 	}
 
