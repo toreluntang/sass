@@ -28,7 +28,7 @@ public class CommentSQL {
 				PreparedStatement pre = null;
 				String stm = "select commentid, body, userid, timestamp, imageid from comment where imageid = ?";
 				pre = con.prepareStatement(stm);
-				pre.setString(1, imageid);
+				pre.setInt(1, imageid);
 
 				try (ResultSet rs = pre.executeQuery();) {
 					if (rs.next()) {
@@ -36,8 +36,8 @@ public class CommentSQL {
 						String body = rs.getString("body");
 						int userid = rs.getInt("userid");
 						String timestamp = rs.getString("timestamp");
-						int imageid = rs.getInt("imageid");
-						foundComm = new Comment(commentid, body, userid, timestamp, imageid);
+						int imageid2 = rs.getInt("imageid");
+						foundComm = new Comment(body,timestamp, userid, commentid,  imageid2);
 					}
 				}
 			}
@@ -85,16 +85,16 @@ public class CommentSQL {
 	// 	return bob;
 	// }
 	
-	// private String readProperty(String key) throws Exception {
+	 private String readProperty(String key) throws Exception {
 
-	// 	Properties prop = new Properties();
-	// 	String res = "";
+	 	Properties prop = new Properties();
+	 	String res = "";
 
-	// 	try (InputStream input = new FileInputStream(propertyFilePath)) {
-	// 		prop.load(input);
-	// 		res = prop.getProperty(key);
-	// 	}
-	// 	System.out.println("I HAVE READ THE FOLLOWING : "+key+"="+res);
-	// 	return res;
-	// }
+	 	try (InputStream input = new FileInputStream(propertyFilePath)) {
+	 		prop.load(input);
+	 		res = prop.getProperty(key);
+	 	}
+	 	System.out.println("I HAVE READ THE FOLLOWING : "+key+"="+res);
+	 	return res;
+	 }
 }
