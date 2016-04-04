@@ -27,4 +27,12 @@ public class FileController {
 		return fileSQL.insertFile(file);
 	}
 
+	public File getFile(long id) {
+	
+		File file = new File();
+		file.setId(id);
+		
+		return fileSQL.selectFileById(file);
+	}
+
 }

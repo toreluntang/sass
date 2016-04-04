@@ -1,21 +1,25 @@
 package dk.itu.sass.teame.postgresql;
 
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.Properties;
+
+import javax.annotation.PostConstruct;
+import javax.ejb.Stateless;
 
 import dk.itu.sass.teame.entity.Account;
 
+@Stateless
 public class AccountSQL {
 
-	
+	//Empty constructor for injecting
 	public AccountSQL(){
-		
+	}
+	
+	@PostConstruct
+	public void init() {
 		try{
 			Class.forName("org.postgresql.Driver");
 		}
@@ -80,4 +84,32 @@ public class AccountSQL {
 
 		return bob;
 	}
+
+	public Account checkLogin(Account acc) {
+
+		try (
+			Connection con = DriverManager.getConnection("jdbc:postgresql://horton.elephantsql.com:5432/hmdgzyax", "hmdgzyax", "8ETS72wV53uGfPIs-RCJy_tolfPs481n");
+			PreparedStatement stmt = con.prepareStatement("SELECT accountid, username, password, email FROM account WHERE username=? AND password=?");
+		) {
+			
+			stmt.setString(1, acc.getUsername());
+			stmt.setString(2, acc.getPassword());
+			
+			ResultSet rs = stmt.executeQuery();
+			if(rs.next()) {
+				acc.setAccountid(rs.getLong("accountid"));
+				acc.setEmail(rs.getString("email"));
+				return acc;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	
+	
+	
+	
 }

@@ -1,0 +1,9 @@
+/vendor
+/node_modules
+/min-safe
+/app
+/concat
+/bower_components
+Homestead.yaml
+Homestead.json
+.env
