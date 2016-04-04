@@ -31,7 +31,7 @@ import dk.itu.sass.teame.entity.File;
 @Path("file")
 public class FileResource {
 
-	private String fileLocation = "/Users/Alexander/Code/Servers/wildfly-10-sass/fakestagram/images";
+	private final String FILE_LOCATION = "/Users/Alexander/Code/Servers/wildfly-10-sass/fakestagram/images";
 
 	@Inject
 	FileController fc;
@@ -86,7 +86,7 @@ public class FileResource {
 		try {
 			InputStream is = f.get(0).getBody(InputStream.class, null);
 			byte[] barr = IOUtils.toByteArray(is);
-			java.nio.file.Path p = Paths.get(fileLocation, filename);// #fail
+			java.nio.file.Path p = Paths.get(FILE_LOCATION, filename);// #fail
 			Files.deleteIfExists(p); // #fail
 			Files.createDirectories(p.getParent());// #fail
 			sti = Files.write(p, barr, StandardOpenOption.CREATE_NEW);// #fail

@@ -41,5 +41,14 @@ public class AccountResource {
 
 		return Response.status(Response.Status.ACCEPTED).entity(result).build();
 	}
+	
+	@POST
+	@Path("login")
+	public Response login(@FormParam("username") String username, @FormParam("password") String password) {
+		
+		boolean login = accountController.login(username, password);
+		
+		return Response.ok().build();
+	}
 
 }

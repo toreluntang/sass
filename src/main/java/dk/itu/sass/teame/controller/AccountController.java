@@ -18,7 +18,6 @@ public class AccountController {
 	}
 
 	public boolean validateUsername(String username) {
-		
 		return getAccount(username) == null;
 	}
 	
@@ -43,6 +42,13 @@ public class AccountController {
 		}
 		
 		return null;
+	}
+
+	public boolean login(String username, String password) {
+		
+		
+		
+		return false;
 	}
 
 }

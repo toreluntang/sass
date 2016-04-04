@@ -9,8 +9,12 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Properties;
 
+import javax.annotation.PostConstruct;
+import javax.ejb.Stateless;
+
 import dk.itu.sass.teame.entity.Account;
 
+@Stateless
 public class AccountSQL {
 	private String propertyFilePath = "src/main/resources/postgresql.properties";
 	private String url;
@@ -18,7 +22,10 @@ public class AccountSQL {
 	private String dbpassword;
 	
 	public AccountSQL(){
-		
+	}
+	
+	@PostConstruct
+	public void init() {
 		try{
 			url = readProperty("postgresurl");
 			dbusername = readProperty("postgresuser");
