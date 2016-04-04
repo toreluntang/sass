@@ -4,6 +4,9 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
 import dk.itu.sass.teame.entity.Comment;
 import dk.itu.sass.teame.postgresql.CommentSQL;
 
@@ -27,6 +30,10 @@ public class CommentController {
 		
 		List<Comment> comments = commentSQL.getComments(imageId);
 		
+		Gson gson = new Gson();
 		
+		String json = gson.toJson(comments);
+		
+		return json;
 	}
 }
