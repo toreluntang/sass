@@ -16,10 +16,7 @@ import dk.itu.sass.teame.entity.Account;
 
 @Stateless
 public class AccountSQL {
-	private String propertyFilePath = "src/main/resources/postgresql.properties";
-	private String url;
-	private String dbusername;
-	private String dbpassword;
+
 	
 	public AccountSQL(){
 	}
@@ -27,9 +24,6 @@ public class AccountSQL {
 	@PostConstruct
 	public void init() {
 		try{
-			url = readProperty("postgresurl");
-			dbusername = readProperty("postgresuser");
-			dbpassword = readProperty("postgrespass");
 			Class.forName("org.postgresql.Driver");
 		}
 		catch(Exception e) {e.printStackTrace();}	
@@ -39,7 +33,7 @@ public class AccountSQL {
 		Account foundAcc = null;
 		
 		try{
-			try (Connection con = DriverManager.getConnection(url, dbusername, dbpassword)) {
+			try (Connection con = DriverManager.getConnection("jdbc:postgresql://horton.elephantsql.com:5432/hmdgzyax", "hmdgzyax", "8ETS72wV53uGfPIs-RCJy_tolfPs481n")) {
 
 				PreparedStatement pre = null;
 				String stm = "select accountid, username, password, salt, email from account where "+field+" = ?";
@@ -66,12 +60,8 @@ public class AccountSQL {
 		long bob = -1; // confuse the enemy with nice variable names! 
 
 		try {
-			String url = readProperty("postgresurl");
-			String dbusername = readProperty("postgresuser");
-			String dbpassword = readProperty("postgrespass");
-			Class.forName("org.postgresql.Driver");
 
-			try (Connection con = DriverManager.getConnection(url, dbusername, dbpassword)) {
+			try (Connection con = DriverManager.getConnection("jdbc:postgresql://horton.elephantsql.com:5432/hmdgzyax", "hmdgzyax", "8ETS72wV53uGfPIs-RCJy_tolfPs481n")) {
 
 				PreparedStatement pre = null;
 				String stm = "insert into account(username, password, salt, email) VALUES(?, ?, ?, ?)";
@@ -96,18 +86,5 @@ public class AccountSQL {
 		}
 
 		return bob;
-	}
-	
-	private String readProperty(String key) throws Exception {
-
-		Properties prop = new Properties();
-		String res = "";
-
-		try (InputStream input = new FileInputStream(propertyFilePath)) {
-			prop.load(input);
-			res = prop.getProperty(key);
-		}
-		System.out.println("I HAVE READ THE FOLLOWING : "+key+"="+res);
-		return res;
 	}
 }

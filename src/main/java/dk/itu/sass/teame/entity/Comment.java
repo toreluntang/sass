@@ -1,14 +1,16 @@
 package dk.itu.sass.teame.entity;
 
+import java.time.Instant;
+
 public class Comment {
 	
 	private long commentId;
 	private String body;
 	private long userId;
-	private String timestamp;
+	private Instant timestamp;
 	private long imageId;
 
-	public Comment(String body, String timestamp, long userId, long commentId, long imageId) {
+	public Comment(String body, Instant timestamp, long userId, long commentId, long imageId) {
 		this.commentId = commentId;
 		this.body = body;
 		this.userId = userId;
@@ -40,11 +42,11 @@ public class Comment {
 		this.userId = userid;
 	}
 
-	public String getTimestamp() {
+	public Instant getTimestamp() {
 		return this.timestamp;
 	}
 	
-	public void setTimestamp(String timestamp) {
+	public void setTimestamp(Instant timestamp) {
 		this.timestamp = timestamp;
 	}
 

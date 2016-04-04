@@ -34,7 +34,7 @@ public class AccountResource {
 		
 		boolean usernameIsTaken = accountController.validateUsername(username);
 		
-		if(usernameIsTaken)
+		if(!usernameIsTaken)
 			return Response.status(Response.Status.PAYMENT_REQUIRED).build();
 	
 		long result = accountController.insertAccount(username, password, email).getAccountid();
