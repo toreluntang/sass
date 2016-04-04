@@ -25,11 +25,10 @@ public class CommentResource {
 			@FormParam("userId")  long userId,
 			@FormParam("imageId") long imageId
 			){
+
+		long c = commentController.addComment(comment, userId, imageId);
 		
-		commentController.addComment(comment, userId, imageId);
-		
-		
-		return null;
+		return Response.status(Response.Status.ACCEPTED).entity(c).build();
 	}
 
 	@GET
