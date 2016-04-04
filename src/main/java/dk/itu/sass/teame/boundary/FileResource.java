@@ -1,6 +1,5 @@
 package dk.itu.sass.teame.boundary;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -12,27 +11,45 @@ import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.io.IOUtils;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 
+import com.google.gson.JsonObject;
+
 import dk.itu.sass.teame.controller.FileController;
+import dk.itu.sass.teame.entity.File;
 
 @Path("file")
 public class FileResource {
 	
+	private String fileLocation = "/Users/Alexander/Code/Servers/wildfly-10-sass/fakestagram/images";
+	
 	@Inject
 	FileController fc;
 	
-	
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	public Response recieveFile(MultipartFormDataInput input) throws IOException {
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response recieveFile(MultipartFormDataInput input, @QueryParam("userid") String userId) {
 
+		JsonObject json = new JsonObject();
+		
+		Long uid = null;
+		try {
+			uid = Long.parseLong(userId);
+		} catch (Exception e){
+			json.addProperty("Error", "Wrong user id: " + userId);
+			return Response.status(Status.BAD_REQUEST).entity(json.toString()).build();
+		}
+		
 		Map<String, List<InputPart>> maps = input.getFormDataMap();
 		List<InputPart> f = maps.get("file");
 
@@ -41,16 +58,25 @@ public class FileResource {
 		//Hijacking filenames xD Timestamp/uuid to fix - but it's a cool feature.
 		String filename = getFileName(mv);
 		
-		InputStream is = f.get(0).getBody(InputStream.class, null);
-		byte[] barr = IOUtils.toByteArray(is);
-		java.nio.file.Path p = Paths.get("fakestagram","images",filename);//#fail
-		Files.deleteIfExists(p); //#fail
-		Files.createDirectories(p.getParent());//#fail
-		java.nio.file.Path sti = Files.write(p, barr, StandardOpenOption.CREATE_NEW);//#fail
+		java.nio.file.Path sti = null;
+		try {
+			InputStream is = f.get(0).getBody(InputStream.class, null);
+			byte[] barr = IOUtils.toByteArray(is);
+			java.nio.file.Path p = Paths.get(fileLocation,filename);//#fail
+			Files.deleteIfExists(p); //#fail
+			Files.createDirectories(p.getParent());//#fail
+			sti = Files.write(p, barr, StandardOpenOption.CREATE_NEW);//#fail
+		} catch(Exception e){
+			json.addProperty("Error", "Couldn't write file");
+			json.addProperty("Trace", e.getMessage());
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(json.toString()).build();
+		}
 		
-		fc.fuckemallup(1L,sti);
+		File uploaded = fc.uploadFile(uid,sti);
 		
-		return Response.ok().build();
+		json.addProperty("fileUploaded", uploaded.toString());
+		
+		return Response.ok().entity(json.toString()).build();
 	}
 	
 	private String getFileName(MultivaluedMap<String, String> header) {
