@@ -1,5 +1,6 @@
 package dk.itu.sass.teame.controller;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import dk.itu.sass.teame.entity.Comment;
 import dk.itu.sass.teame.postgresql.CommentSQL;
@@ -15,5 +16,14 @@ public class CommentController {
 		newComment.setCommentId(commentId); // Kind of doesnt matter. 
 
 		return commentId;
+	}
+	
+	public String getComments(long imageId){
+		
+		CommentSQL commentSQL = new CommentSQL();
+		
+		List<Comment> comments = commentSQL.getComments(imageId);
+		
+		
 	}
 }

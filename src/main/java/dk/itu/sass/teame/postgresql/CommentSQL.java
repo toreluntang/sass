@@ -48,11 +48,11 @@ public class CommentSQL {
 					
 					while( rs.next() ){
 						
-						int commentid = rs.getInt("commentid");
+						long commentid = rs.getLong("commentid");
 						String body = rs.getString("body");
-						int userid = rs.getInt("userid");
+						long userid = rs.getLong("userid");
 						String timestamp = rs.getString("timestamp");
-						int imageid2 = rs.getInt("imageid");
+						long imageid2 = rs.getLong("imageid");
 						Comment c = new Comment(body,timestamp, userid, commentid,  imageid2);
 						comments.add(c);
 					}
