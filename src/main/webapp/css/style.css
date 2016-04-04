@@ -1,0 +1,84 @@
+body {
+	background-color: #efefef;
+	background: url(../assets/bg.jpg) no-repeat center center;
+	background-size: cover;
+	background-attachment: fixed;
+	font-family: 'Poiret One', cursive;
+	color: #fff;	
+}
+p {
+	color: #fff;	
+	font-size: 20px;
+	font-weight: 900;
+}
+body,
+html {
+	height: 100%;
+}
+.container-fluid {
+	width: 100%;
+	height: 100%;
+}
+.container {
+	height: 100%;
+}
+.container > div {
+	height: 100%;
+}
+.form-control {
+	outline: none;
+	height: 48px;
+	padding: 10px 15px;
+	border-radius: 0px;
+}
+
+/*Buttons start*/
+.btn--default {
+	background-color: transparent;
+	border-radius: 0px;
+	width: auto;
+	padding: 10px 35px;
+	font-size: 20px;
+	font-weight: 900;
+	color: #FC645F;
+	border: 2px solid #FC645F;
+
+	-webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+}
+.btn--default:hover {
+	background-color: #FC645F;
+	color: #fff;
+}
+/*Buttons end*/
+
+/*Login view start*/
+.login-view {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	justify-content: center;
+}
+.login-view .btn--default {
+	width: 100%;
+}
+.login-view-title {
+	text-align: center;
+	font-size: 70px;
+	padding: 50px 0;
+}
+/*Login view end*/
+/*Profile view start*/
+.profile-view {
+	height: 100%;
+	background-color: rgba(255,255,255, 0.8);
+	color: #333;
+
+}
+.profile-view p {
+	color: #333;	
+}
+/*Profile view end*/
