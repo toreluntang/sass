@@ -7,6 +7,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -44,9 +46,9 @@ public class CommentSQL {
 						long commentid = rs.getLong("commentid");
 						String body = rs.getString("body");
 						long userid = rs.getLong("userid");
-						String timestamp = rs.getString("timestamp");
+						long timestamp = rs.getLong("timestamp");
 						long imageid2 = rs.getLong("imageid");
-						Comment c = new Comment(body,timestamp, userid, commentid,  imageid2);
+						Comment c = new Comment(body,Instant.ofEpochMilli(timestamp), userid, commentid,  imageid2);
 						comments.add(c);
 					}
 				}
@@ -67,10 +69,10 @@ public class CommentSQL {
 				PreparedStatement pre = null;
 				String stm = "insert into comment(body, userid, timestamp, imageid) VALUES(?, ?, ?, ?)";
 				pre = con.prepareStatement(stm,Statement.RETURN_GENERATED_KEYS);
-
+				System.out.println("SHEJAHSDLAHSDKJAHSDJKHAJSD "+newComment.getBody());
 				pre.setString(1, newComment.getBody());
 				pre.setLong(2, newComment.getUserId());
-				pre.setString(3, newComment.getTimestamp());
+				pre.setLong(3, newComment.getTimestamp().toEpochMilli());
 				pre.setLong(4, newComment.getImageId());
 				pre.executeUpdate();
 				
