@@ -2,9 +2,12 @@ package dk.itu.sass.teame.controller;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.ejb.Stateless;
+
 import dk.itu.sass.teame.entity.Comment;
 import dk.itu.sass.teame.postgresql.CommentSQL;
 
+@Stateless
 public class CommentController {
 
 	public long addComment(String body, long userId, long imageId) {
