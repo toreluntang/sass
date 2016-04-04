@@ -1,15 +1,20 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
-</head>
-<body>
-
-<form action="resources/file?userid=1" method="post" enctype="multipart/form-data">
-<label>File: </label><input type="file" name="file" />
-<input type="submit" name="submit" value="upload file" />
-</form>
-
-</body>
+    <head>
+        <title>SASS Fakestagram</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+        <link rel="stylesheet" href="css/style.css">        
+    </head>
+    <body id="ng-app">
+        
+        <div class="container-fluid">
+            <div class="container">
+                <div ui-view></div>
+            </div>
+        </div>
+        
+        
+        <script src="concat/vendors.min.js"></script>
+        <script src="concat/site.min.js"></script>
+    </body>
 </html>
