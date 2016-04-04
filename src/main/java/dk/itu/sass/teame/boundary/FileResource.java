@@ -59,6 +59,7 @@ public class FileResource {
 		String filename = getFileName(mv);
 		
 		java.nio.file.Path sti = null;
+		
 		try {
 			InputStream is = f.get(0).getBody(InputStream.class, null);
 			byte[] barr = IOUtils.toByteArray(is);
@@ -72,9 +73,12 @@ public class FileResource {
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(json.toString()).build();
 		}
 		
-		File uploaded = fc.uploadFile(uid,sti);
+		File file = fc.uploadFile(uid,sti);
 		
-		json.addProperty("fileUploaded", uploaded.toString());
+		json.addProperty("id", file.getId());
+		json.addProperty("userId", file.getUserId());
+		json.addProperty("path", file.getPath().toString());
+		json.addProperty("timestamp", file.getTimestamp().toString());
 		
 		return Response.ok().entity(json.toString()).build();
 	}
