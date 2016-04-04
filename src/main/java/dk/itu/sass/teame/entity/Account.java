@@ -7,6 +7,9 @@ public class Account {
 	private String salt;
 	private String email;
 	
+	public Account() {
+	}
+	
 	public Account(String username, String password, String salt, String email) {
 		this.username = username;
 		this.password = password;
