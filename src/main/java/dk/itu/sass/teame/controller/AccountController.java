@@ -1,5 +1,8 @@
 package dk.itu.sass.teame.controller;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+
 import javax.ejb.Stateless;
 
 import dk.itu.sass.teame.entity.Account;
@@ -7,35 +10,39 @@ import dk.itu.sass.teame.postgresql.AccountSQL;
 
 @Stateless
 public class AccountController {
-
-	public String validateUsername(String username) {
+	
+	public Account getAccount(String username){
 		AccountSQL accountSQL = new AccountSQL();
+		Account a = accountSQL.getAccountByString("username",username);
+		return a;
+	}
+
+	public boolean validateUsername(String username) {
 		
-		Account a = accountSQL.getAccount(username);
-		
-		if(a == null)
-			return "";
-		
-		return a.getUsername();
+		return getAccount(username) == null;
 	}
 	
 	public Account insertAccount(String username, String password, String email){
 		
-		String salt = System.currentTimeMillis()+"_:^D_"+username;
-		String pass = I_CAN_ENCRYPT_MY_SELF(password, salt);
-		Account newAccount = new Account(username, pass, salt, email);
+		try {
+
+			String hashedPassword;
+			hashedPassword = PasswordHash.createHash(password);
+			Account newAccount = new Account(username, hashedPassword, "", email);
+			AccountSQL accountSQL = new AccountSQL();
+			
+			long newAccountId = accountSQL.insertUser(newAccount);
+			newAccount.setAccountid(newAccountId);
+			
+			return newAccount;
+			
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		} catch (InvalidKeySpecException e) {
+			e.printStackTrace();
+		}
 		
-		AccountSQL accountSQL = new AccountSQL();
-		
-		int newAccountId = accountSQL.insertUser(newAccount);
-		newAccount.setAccountid(newAccountId);
-		
-		return newAccount;
+		return null;
 	}
 
-
-	public String I_CAN_ENCRYPT_MY_SELF(String password, String salt){
-		// Dont worry, i have taken 7 weeks of linear algebra.
-		return password + ":" + salt;
-	}
 }

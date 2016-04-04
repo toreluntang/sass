@@ -18,30 +18,24 @@ public class AccountResource {
 	@Inject
     private AccountController accountController;
 	//private AccountController accController = new AccountController();
-	
-	@GET
-	@Path("hello")
-	public Response helloUser(){
-		System.out.println("hello user called");
-		return Response.ok().entity("success").build();
-	}
 
 	@POST
 	@Path("create")
-	public Response createUser(
+	public Response createAccount(
 			@FormParam("username") String username,
 			@FormParam("password") String password,
 			@FormParam("email") String email
-			) {
+			)
+	{
 		
-		if(username == null || password == null){
+		if(username == null || password == null || email == null){
 			return Response.status(Response.Status.BAD_REQUEST).build();
 		}
 		
-		String foundUser = accountController.validateUsername(username);
+		boolean usernameIsTaken = accountController.validateUsername(username);
 		
-		if(!foundUser.isEmpty())
-			return Response.status(Response.Status.PAYMENT_REQUIRED).entity(foundUser).build();
+		if(usernameIsTaken)
+			return Response.status(Response.Status.PAYMENT_REQUIRED).build();
 	
 		long result = accountController.insertAccount(username, password, email).getAccountid();
 

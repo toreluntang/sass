@@ -14,7 +14,7 @@ public class Account {
 		this.email = email;
 	}
 	
-	public Account(long accountid, String username, String password, String salt, String email) {
+	public Account(int accountid, String username, String password, String salt, String email) {
 		this.accountid = accountid;
 		this.username = username;
 		this.password = password;

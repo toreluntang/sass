@@ -1,53 +1,58 @@
 package dk.itu.sass.teame.entity;
 
 public class Comment {
-	private int commentid;
+	
+	private long commentId;
 	private String body;
-	private int userid;
+	private long userId;
 	private String timestamp;
-	private int imageid;
+	private long imageId;
 
-	public Comment(String body, String timestamp, int userid, int commentid, int imageid) {
-		this.commentid = commentid;
+	public Comment(String body, String timestamp, long userId, long commentId, long imageId) {
+		this.commentId = commentId;
 		this.body = body;
-		this.userid = userid;
+		this.userId = userId;
 		this.timestamp = timestamp;
-		this.imageid = imageid;
+		this.imageId = imageId;
 	}
-	public int getCommentid() {
-		return this.commentid;
+	
+	public long getCommentId() {
+		return this.commentId;
 	}
-	public void setCommentid(int commentid) {
-		this.commentid = commentid;
+	
+	public void setCommentId(long commentid) {
+		this.commentId = commentid;
 	}
 
 	public String getBody() {
 		return this.body;
 	}
+	
 	public void setBody(String body) {
 		this.body = body;
 	}
 
-	public int getUserid() {
-		return this.userid;
+	public long getUserId() {
+		return this.userId;
 	}
-	public void setUserid(int userid) {
-		this.userid = userid;
+	
+	public void setUserId(int userid) {
+		this.userId = userid;
 	}
 
 	public String getTimestamp() {
 		return this.timestamp;
 	}
+	
 	public void setTimestamp(String timestamp) {
 		this.timestamp = timestamp;
 	}
 
-	public int getImageid() {
-		return this.imageid;
+	public long getImageId() {
+		return this.imageId;
 	}
-	public void setImageid(int imageid) {
-		this.imageid = imageid;
+	
+	public void setImageId(int imageid) {
+		this.imageId = imageid;
 	}
-
-
 }
