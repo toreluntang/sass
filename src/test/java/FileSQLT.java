@@ -1,3 +1,5 @@
+import java.nio.file.Paths;
+import java.time.Instant;
 import java.util.List;
 
 import org.junit.Assert;
@@ -17,21 +19,16 @@ public class FileSQLT {
 	
 	@Test
 	public void test(){
+		java.nio.file.Path  p = Paths.get("/home/");
 		
-		CommentController cc = new CommentController();
-		String s = cc.getComments(1L);
+		File f = new File();
+		f.setPath(p);
+		f.setTimestamp(Instant.now());
+		f.setUserId(1337);
 		
-		
-		FileSQL fileSQL = new FileSQL();
-		List<File> images = fileSQL.selectFilesByUserId(1L);
-		Assert.assertEquals("images should be 3, and was: " + images.size(), 3, images.size());
-		
-		FileController fc = new FileController();
-		
-		String json = fc.getFilesByUser(1L);
-		JsonArray jsonArr = new Gson().fromJson(json, JsonArray.class);
-		
-		Assert.assertEquals("was: "+jsonArr, 3, jsonArr.size());
+		FileSQL filesql = new FileSQL();
+		f = filesql.insertFile(f);
+		System.out.println("test done ");
 
 	}
 

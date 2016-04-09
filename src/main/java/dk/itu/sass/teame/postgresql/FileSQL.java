@@ -54,6 +54,13 @@ public class FileSQL {
 				file.setId(rs.getLong("id"));
 			}
 			
+			//Should the following be pulled out in its own try-with ?
+			PreparedStatement stmt1 = con .prepareStatement("INSERT INTO image_shared_with(imageid, userid) VALUES(?,?)");
+			stmt1.setLong(1, file.getId());
+			stmt1.setLong(2, file.getUserId());
+			stmt1.executeUpdate();
+			
+			
 			return file;
 		} catch (SQLException e) {
 			return null;
