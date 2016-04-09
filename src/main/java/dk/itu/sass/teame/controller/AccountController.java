@@ -59,7 +59,7 @@ public class AccountController {
 	}
 
 	public String getAllusers() {
-		
+		accountSQL = new AccountSQL();
 		JsonArray jsonArray = new JsonArray();
 		for(Account a : accountSQL.getAllAccounts()){
 			
