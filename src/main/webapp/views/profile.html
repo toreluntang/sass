@@ -10,19 +10,19 @@
 			<div class="col-md-8">
 				<div class="wrapper">
 					<div class="upload-container">
-						<!-- <form action="resources/file?userid={{profile.userId}}" method="post" enctype="multipart/form-data">
+						<form action="resources/file?userid=1" method="post" enctype="multipart/form-data">
 						<input type="file" name="file" />
 						<input type="submit" name="submit" value="Upload picture" />
-						</form> -->
-						<form  enctype="multipart/form-data">
+						</form>
+						<!-- <form  enctype="multipart/form-data">
 							<input type="file" file-model="profile.myPic" name="file" />
 							<button type="submit" ng-click="profile.uploadPic(profile.myPic)">Upload pic test</button>
-						</form>
+						</form> -->
 					</div>
 					<div class="images-container">
 						<div class="image" ng-repeat="pic in profile.pictures">
 							<p class="image-icon"><span class="glyphicon glyphicon-tags" aria-hidden="true"></span></p> 
-							<img ng-src="assets/{{pic.path}}" alt="">
+							<img ng-src="{{pic.path}}" alt="">
 							<p class="image-details">
 								<span class="glyphicon glyphicon-comment" ng-click="pic.showComments = !pic.showComments"></span>
 								<span class="timestamp">{{::pic.timestamp}}</span>, 

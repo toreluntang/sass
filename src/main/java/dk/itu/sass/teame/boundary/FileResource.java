@@ -34,7 +34,7 @@ import net.jalg.hawkj.AuthorizationHeader;
 @Path("file")
 public class FileResource {
 
-	private final String FILE_LOCATION = "\\Irina\\ITU\\Sem_1\\Security\\SASS\\sass-fakestagram\\src\\main\\src\\assets";
+	private final String FILE_LOCATION = "\\assets";
 
 	@Inject
 	FileController fc;
