@@ -30,12 +30,16 @@ public class CommentSQL {
 	public List<Comment> getComments(long imageId) {
 		List<Comment> comments = new ArrayList<>(); 
 		
+		String query = "SELECT commentid, body, userid, imageid, timestamp, username" +"\n"+
+					   "FROM comment c, account a" +"\n"+
+					   "WHERE c.userid = a.accountid" +"\n"+
+					   "AND imageid = ?";
 		try {
 
 			try (Connection con = DriverManager.getConnection("jdbc:postgresql://horton.elephantsql.com:5432/hmdgzyax", "hmdgzyax", "8ETS72wV53uGfPIs-RCJy_tolfPs481n")) {
 
 				PreparedStatement pre = null;
-				String stm = "select commentid, body, userid, timestamp, imageid from comment where imageid = ?";
+				String stm = query;
 				pre = con.prepareStatement(stm);
 				pre.setLong(1, imageId);
 
@@ -48,7 +52,9 @@ public class CommentSQL {
 						long userid = rs.getLong("userid");
 						long timestamp = rs.getLong("timestamp");
 						long imageid2 = rs.getLong("imageid");
+						String username = rs.getString("username");
 						Comment c = new Comment(body,Instant.ofEpochMilli(timestamp), userid, commentid,  imageid2);
+						c.setUsername(username);
 						comments.add(c);
 					}
 				}
