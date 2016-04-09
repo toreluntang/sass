@@ -45,6 +45,7 @@ public class CommentController {
 			o.addProperty("userId", c.getUserId());
 			o.addProperty("timestamp", c.getTimestamp().toString());
 			o.addProperty("imageId", c.getImageId());
+			o.addProperty("username", c.getUsername());
 			
 			jsonArray.add(o);
 		}

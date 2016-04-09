@@ -139,7 +139,7 @@ public class FileResource {
 		JsonObject json = new JsonObject();
 		json.addProperty("id", f.getId());
 		json.addProperty("userId", f.getUserId());
-		json.addProperty("path", f.getPath().toString());
+		json.addProperty("path", f.getPath().getFileName().toString());
 		json.addProperty("timestamp", f.getTimestamp().toString());
 		return json;
 	}
