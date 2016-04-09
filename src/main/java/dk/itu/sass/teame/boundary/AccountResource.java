@@ -13,6 +13,7 @@ import com.google.gson.JsonObject;
 
 import dk.itu.sass.teame.controller.AccountController;
 import dk.itu.sass.teame.entity.Account;
+import net.jalg.hawkj.AuthorizationHeader;
 
 @Path("account")
 @Produces(MediaType.APPLICATION_JSON)
@@ -52,16 +53,29 @@ public class AccountResource {
 		JsonObject json = new JsonObject();
 		
 		Account account = accountController.login(username, password);
+		
+		if(account==null)
+			return Response.status(Status.UNAUTHORIZED).build();
+
+		
+		
+		AuthorizationHeader header = AuthorizationHeader.authorization().build();
+		
 		json.addProperty("accountid", account.getAccountid());
 		json.addProperty("username", account.getUsername());
 		json.addProperty("email", account.getEmail());
 		json.addProperty("password", account.getPassword());
 		json.addProperty("salt", account.getSalt());
 		
-		if(account==null)
-			return Response.status(Status.UNAUTHORIZED).build();
+		JsonObject authHeader = new JsonObject();
+		authHeader.addProperty("hash", header.getHash());
+		authHeader.addProperty("mac", header.getMac());
+		authHeader.addProperty("ts",	header.getTs());
+		authHeader.addProperty("nonce", header.getNonce());
 		
-		return Response.ok().entity(account.toString()).build();
+		json.add("Auth", authHeader);
+		
+		return Response.ok().entity(json.toString()).build();
 	}
 
 }

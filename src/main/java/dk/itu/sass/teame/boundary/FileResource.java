@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -27,6 +28,8 @@ import com.google.gson.JsonObject;
 
 import dk.itu.sass.teame.controller.FileController;
 import dk.itu.sass.teame.entity.File;
+import net.jalg.hawkj.AuthHeaderParsingException;
+import net.jalg.hawkj.AuthorizationHeader;
 
 @Path("file")
 public class FileResource {
@@ -37,10 +40,17 @@ public class FileResource {
 	FileController fc;
 
 	@GET
-	public Response getFile(@QueryParam("id") String id) {
-
+	public Response getFile(@QueryParam("id") String id, @HeaderParam("Server-Authorization") String serverAuth) {
+		
+		AuthorizationHeader header = null;
+		try {
+			header = AuthorizationHeader.authorization(serverAuth);
+		} catch (AuthHeaderParsingException e1) {
+			e1.printStackTrace();
+		}	
+		
 		JsonObject json = new JsonObject();
-
+		
 		Long fid = null;
 		try {
 			fid = Long.parseLong(id);
@@ -53,8 +63,16 @@ public class FileResource {
 		
 		if(file==null)
 			Response.status(Status.INTERNAL_SERVER_ERROR).build();
+		
+		JsonObject jsonResponse = fileToJsonObject(file);
+		jsonResponse.addProperty("auth", serverAuth);
+		jsonResponse.addProperty("id", header.getId());
+		jsonResponse.addProperty("dlg", header.getDlg());
+		jsonResponse.addProperty("hash", header.getHash());
+		jsonResponse.addProperty("mac", header.getMac());
+		jsonResponse.addProperty("ts", header.getTs());
 
-		return Response.ok().entity(fileToJsonObject(file).toString()).build();
+		return Response.ok().entity(jsonResponse.toString()).build();
 	}
 
 	@POST
@@ -124,6 +142,19 @@ public class FileResource {
 		json.addProperty("path", f.getPath().toString());
 		json.addProperty("timestamp", f.getTimestamp().toString());
 		return json;
+	}
+	
+	@GET
+	@Path("getallimages")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAllImagesFromUser(@QueryParam("id") String id){
+		
+		if(id.isEmpty() || id == null) {
+			Response.status(Response.Status.BAD_REQUEST).build();
+		}
+		
+		String json = fc.getFilesByUser(Long.parseLong(id));
+		return Response.status(Response.Status.ACCEPTED).entity(json).build();		
 	}
 
 }

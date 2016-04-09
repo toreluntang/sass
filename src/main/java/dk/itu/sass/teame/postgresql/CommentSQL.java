@@ -69,7 +69,6 @@ public class CommentSQL {
 				PreparedStatement pre = null;
 				String stm = "insert into comment(body, userid, timestamp, imageid) VALUES(?, ?, ?, ?)";
 				pre = con.prepareStatement(stm,Statement.RETURN_GENERATED_KEYS);
-				System.out.println("SHEJAHSDLAHSDKJAHSDJKHAJSD "+newComment.getBody());
 				pre.setString(1, newComment.getBody());
 				pre.setLong(2, newComment.getUserId());
 				pre.setLong(3, newComment.getTimestamp().toEpochMilli());

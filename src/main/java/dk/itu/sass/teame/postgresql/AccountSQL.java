@@ -87,11 +87,15 @@ public class AccountSQL {
 
 	public Account checkLogin(Account acc) {
 
+		System.out.println("1");
+		
 		try (
 			Connection con = DriverManager.getConnection("jdbc:postgresql://horton.elephantsql.com:5432/hmdgzyax", "hmdgzyax", "8ETS72wV53uGfPIs-RCJy_tolfPs481n");
 			PreparedStatement stmt = con.prepareStatement("SELECT accountid, username, password, email FROM account WHERE username=? AND password=?");
 		) {
 			
+			
+			System.out.println("2");
 			stmt.setString(1, acc.getUsername());
 			stmt.setString(2, acc.getPassword());
 			
@@ -99,12 +103,14 @@ public class AccountSQL {
 			if(rs.next()) {
 				acc.setAccountid(rs.getLong("accountid"));
 				acc.setEmail(rs.getString("email"));
+				System.out.println("3");
 				return acc;
 			}
 		} catch (Exception e) {
+			System.out.println("4");
 			e.printStackTrace();
 		}
-		
+		System.out.println("5");
 		return null;
 	}
 	

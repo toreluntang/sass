@@ -3,9 +3,14 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 
+
 import javax.ejb.Stateless;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import dk.itu.sass.teame.entity.Comment;
@@ -21,21 +26,29 @@ public class CommentController {
 		long commentId = commentSQL.insertComment(newComment);
 		newComment.setCommentId(commentId); // Kind of doesnt matter. 
 
-		
-		
 		return commentId;
 	}
-	
+		
 	public String getComments(long imageId){
 		
 		CommentSQL commentSQL = new CommentSQL();
 		
 		List<Comment> comments = commentSQL.getComments(imageId);
+		JsonArray jsonArray = new JsonArray();
 		
-		Gson gson = new Gson();
+		for(Comment c : comments){
+			JsonObject o = new JsonObject();
+			c.setBody(StringEscapeUtils.escapeHtml4( c.getBody() ));
+			
+			o.addProperty("commentId", c.getCommentId());
+			o.addProperty("body", c.getBody());
+			o.addProperty("userId", c.getUserId());
+			o.addProperty("timestamp", c.getTimestamp().toString());
+			o.addProperty("imageId", c.getImageId());
+			
+			jsonArray.add(o);
+		}
 		
-		String json = gson.toJson(comments);
-		
-		return json;
+		return jsonArray.toString();
 	}
 }
