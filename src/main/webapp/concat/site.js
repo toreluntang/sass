@@ -96,6 +96,7 @@ function ProfileCtrl($rootScope, $scope, DataService, CrudService) {
     vm.myPic = "";
     vm.userId = '1';
     vm.imageId = '1';
+    vm.mySharer = "Test mySharer";
     // vm.showComments = false;
 
 
@@ -144,7 +145,8 @@ function ProfileCtrl($rootScope, $scope, DataService, CrudService) {
 
 
     function onLoadUsersSuccess(usersData) {
-        console.log("onLoadUsersSuccess", usersData)
+        console.log("onLoadUsersSuccess USEEEEERS", usersData)
+        vm.users = usersData;
     }
     function onLoadUsersError(error) {
         console.log("onLoadUsersError", error)
@@ -179,11 +181,12 @@ function ProfileCtrl($rootScope, $scope, DataService, CrudService) {
             .then(angular.bind(this, onLoadImagesSuccess), angular.bind(this, onLoadImagesError));
     }
     function getAllUsers() {
-        DataService.loadStuff('http://localhost:8080/sec/resources/file/accounts')
+        DataService.loadStuff('http://localhost:8080/sec/resources/account/getallusers')
             .then(angular.bind(this, onLoadUsersSuccess), angular.bind(this, onLoadUsersError));
     }
 
    getAllImages(vm.userId);
+   getAllUsers();
 
 }
 /**
