@@ -38,7 +38,7 @@ public class CommentController {
 		
 		for(Comment c : comments){
 			JsonObject o = new JsonObject();
-			c.setBody(StringEscapeUtils.escapeHtml4( c.getBody() ));
+			//c.setBody(StringEscapeUtils.escapeHtml4( c.getBody() ));
 			
 			o.addProperty("commentId", c.getCommentId());
 			o.addProperty("body", c.getBody());
