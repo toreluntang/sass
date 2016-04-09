@@ -18,6 +18,11 @@ html {
 .container-fluid {
 	width: 100%;
 	height: 100%;
+	padding-left: 0;
+	padding-right: 0;
+}
+.container-fluid > div {
+	height: 100%;
 }
 .container {
 	height: 100%;
@@ -82,3 +87,68 @@ html {
 	color: #333;	
 }
 /*Profile view end*/
+
+/*Header start*/
+.header {
+	background-color: #fff;
+	height: 70px;
+	    border-bottom: 1px solid #dee0df;
+	height: 85px !important;
+}
+.header > .container {
+	display: flex;
+	flex-wrap: nowrap;
+	flex-direction: row;
+}
+.header .container .left,
+.header .container .right
+{
+	width: 50%;
+	line-height: 85px;
+}
+.header .container .right {
+	text-align: right;
+}
+.header .container .left p {
+	font-size: 35px;
+	font-weight: 800;
+}
+/*Header end*/
+/*Profile start*/
+.profile-info {
+	padding: 20px;
+	margin: 60px 0 50px 0;	
+	    border: 1px solid #dee0df;
+	background-color: #fff;
+	position: relative;
+
+}
+.profile-info img {
+	width: 80px;
+	height: 80px;
+	position: absolute;
+	top: -40px;
+	right: 50%;
+	border: 5px solid #fff;
+	border-radius: 50%;
+	margin-right: -40px;
+}
+.personal-details {
+	margin-top: 20px;
+	padding: 10px;
+}
+i {
+	font-size: 20px;
+	color: #333;
+	margin-right: 10px;
+}
+/*Profile end*/
+/*Upload start*/
+.upload-container{
+	padding: 20px;
+	margin: 60px 0 50px 0;
+	    border: 1px solid #dee0df;
+	background-color: #fff;
+	position: relative;
+}
+/*Upload end*/

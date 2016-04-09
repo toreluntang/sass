@@ -1,9 +1,40 @@
-<div class="row profile-view">
-	<div class="col-md-12">
-		<div class="wrapper">
-			<h1 class="login-view-title">Your profile</h1>
-		  	<p>Comments for image 1 go here:</p>
-		  	<p>{{profile.profiletest}}</p>
+<div class="container-fluid profile-view">
+	<div class="header">
+		<div class="container">
+			<div class="left"><p>Fakestagram</p></div>
+			<div class="right"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></div>
+		</div>
+	</div>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-8">
+				<div class="wrapper">
+					<div class="upload-container">
+						<!-- <form action="resources/file?userid={{profile.userId}}" method="post" enctype="multipart/form-data">
+						<input type="file" name="file" />
+						<input type="submit" name="submit" value="Upload picture" />
+						</form> -->
+						<form  enctype="multipart/form-data">
+						<input type="file" file-model="profile.myPic" name="file" />
+						<button type="submit" ng-click="profile.uploadPic(profile.myPic)">Upload pic</button>
+						</form>
+					</div>
+					<div class="images-container">	
+						<h1 class="profile-view-title">wsxs Your profile</h1>
+					  	<p>Comments for image 1 blaaago here:</p>
+					  	<p>{{profile.profiletest}}</p>
+					</div>
+				</div>
+			</div> <!-- END col-md-8 -->
+			<div class="col-md-4">
+			    <div class="profile-info">
+			      <img src="assets/profile.png" alt="">
+			      <div class="personal-details">
+			        <p class="name"><i class="fa fa-user"></i>Some user i ll die stuff go here<!-- {{main.userLS.name}} --></p>
+			        </div>
+			      </div>                      
+			    </div>
+			</div> <!-- END col-md-4 -->
 		</div>
 	</div>
 </div>

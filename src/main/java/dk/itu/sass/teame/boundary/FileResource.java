@@ -31,7 +31,7 @@ import dk.itu.sass.teame.entity.File;
 @Path("file")
 public class FileResource {
 
-	private final String FILE_LOCATION = "/Users/Alexander/Code/Servers/wildfly-10-sass/fakestagram/images";
+	private final String FILE_LOCATION = "\\Irina\\ITU\\Sem_1\\Security\\SASS\\sass-fakestagram\\src\\main\\src\\assets";
 
 	@Inject
 	FileController fc;
