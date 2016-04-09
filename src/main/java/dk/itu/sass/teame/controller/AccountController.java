@@ -6,6 +6,9 @@ import java.security.spec.InvalidKeySpecException;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
 import dk.itu.sass.teame.entity.Account;
 import dk.itu.sass.teame.postgresql.AccountSQL;
 
@@ -53,6 +56,21 @@ public class AccountController {
 		acc.setPassword(password);
 		
 		return accountSQL.checkLogin(acc);
+	}
+
+	public String getAllusers() {
+		
+		JsonArray jsonArray = new JsonArray();
+		for(Account a : accountSQL.getAllAccounts()){
+			
+			JsonObject o = new JsonObject();
+			o.addProperty("accountid", a.getAccountid());
+			o.addProperty("username", a.getUsername());
+			
+			jsonArray.add(o);
+		}
+		
+		return jsonArray.toString();
 	}
 
 }
