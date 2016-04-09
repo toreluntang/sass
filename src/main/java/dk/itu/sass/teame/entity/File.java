@@ -10,6 +10,8 @@ public class File {
 	private Path path;
 	private Instant timestamp;
 	
+	private String username; // SEE COMMENT ON GETTERSETTER
+	
 	public File() {
 	}
 	
@@ -49,6 +51,16 @@ public class File {
 	@Override
 	public String toString() {
 		return "File [id=" + id + ", userId=" + userId + ", path=" + path + ", timestamp=" + timestamp + "]";
+	}
+
+	
+	// DOESNT BELONG IN FILE OR COMMENT (SHOULD BE IN DTO)
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
 	}
 	
 	

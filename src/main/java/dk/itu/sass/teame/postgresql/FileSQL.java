@@ -92,7 +92,7 @@ public class FileSQL {
 	
 	public List<File> selectFilesByUserId(long userId){
 		List<File> images = new ArrayList<>();
-		String query =  "SELECT I.id, I.id_user, I.path, I.timestamp" + "\n" +
+		String query =  "SELECT I.id, I.id_user, I.path, I.timestamp, A.username" + "\n" +
 						"FROM account A, img I, image_shared_with ISW" + "\n" +
 						"WHERE ISW.imageid = I.id" + "\n" +
 						"AND ISW.userid = A.accountid" + "\n" +
@@ -111,6 +111,7 @@ public class FileSQL {
 					image.setPath(Paths.get(rs.getString("path")));
 					image.setTimestamp(Instant.ofEpochMilli(rs.getLong("timestamp")));
 					image.setUserId(rs.getLong("id_user")); // author
+					image.setUsername(rs.getString("username"));
 					
 					images.add(image);
 				}
