@@ -8,8 +8,11 @@ body {
 }
 p {
 	color: #fff;	
-	font-size: 20px;
 	font-weight: 900;
+	font-family: 'Open Sans', sans-serif;
+	font-size: 16px;
+	line-height: 25px;
+	font-weight: 600;
 }
 body,
 html {
@@ -79,7 +82,7 @@ html {
 /*Profile view start*/
 .profile-view {
 	height: 100%;
-	background-color: rgba(255,255,255, 0.8);
+	/*background-color: rgba(255,255,255, 0.8);*/
 	color: #333;
 
 }
@@ -111,6 +114,7 @@ html {
 }
 .header .container .left p {
 	font-size: 35px;
+    line-height: 79px;
 	font-weight: 800;
 }
 /*Header end*/
@@ -152,3 +156,86 @@ i {
 	position: relative;
 }
 /*Upload end*/
+/*Images start*/
+.images-container{
+	margin: 60px 0 50px 0;
+	position: relative;
+}
+.image {
+	border-bottom: 1px solid #dee0df;
+	background-color: #fff;
+	margin-bottom: 20px;
+}
+.image:last-of-type {
+	border-bottom: none;
+}
+.image img {
+	max-width: 100%;
+	height: auto;
+}
+.image-details {
+	text-align: right;
+	padding: 10px 15px 0 0;
+}
+.image .image-icon {
+	text-align: right;
+	padding: 10px 15px 0 0;
+
+}
+
+/*Images end*/
+/*Comments start*/
+.comment-details {
+	text-align: right;
+	font-style: italic;
+	font-size: 14px;
+}
+.image-comment {
+	background-color: #fafafa;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	justify-content: center;
+	align-items: flex-start;
+	border-bottom: 1px solid #efefef;
+}
+.image-comment-left {
+	width: 10%;
+}
+.image-comment-left img {
+	border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    border: 3px solid #efefef;
+    margin: 10px auto;
+    display: block;
+}
+.image-comment-left span {
+	font-size: 40px;
+}
+
+.image-comment-right {
+	padding: 10px 20px 0 10px;
+	width: 90%;
+}
+
+.post-comment input {
+	outline: none;
+	border: 1px solid #333;
+	margin: 2% 2% -2% 2%;
+	width: 96%;
+	height: 47px;
+	padding: 10px;
+	font-weight: 900;
+	font-family: 'Open Sans', sans-serif;
+}
+.post-comment button {
+	margin: 0% 2% 2% 2%;
+    width: 96%;
+    background-color: #fafafa;
+}
+.glyphicon .glyphicon-comment {
+	font-size: 18px;
+	margin-left: 7px;
+}
+/*Comments end*/

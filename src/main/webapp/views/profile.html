@@ -15,14 +15,48 @@
 						<input type="submit" name="submit" value="Upload picture" />
 						</form> -->
 						<form  enctype="multipart/form-data">
-						<input type="file" file-model="profile.myPic" name="file" />
-						<button type="submit" ng-click="profile.uploadPic(profile.myPic)">Upload pic</button>
+							<input type="file" file-model="profile.myPic" name="file" />
+							<button type="submit" ng-click="profile.uploadPic(profile.myPic)">Upload pic test</button>
 						</form>
 					</div>
-					<div class="images-container">	
-						<h1 class="profile-view-title">wsxs Your profile</h1>
-					  	<p>Comments for image 1 blaaago here:</p>
-					  	<p>{{profile.profiletest}}</p>
+					<div class="images-container">
+						<div class="image" ng-repeat="pic in profile.pictures">
+							<p class="image-icon"><span class="glyphicon glyphicon-tags" aria-hidden="true"></span></p> 
+							<img ng-src="assets/{{pic.path}}" alt="">
+							<p class="image-details">
+								<span class="glyphicon glyphicon-comment" ng-click="pic.showComments = !pic.showComments"></span>
+								<span class="timestamp">{{::pic.timestamp}}</span>, 
+								<span class="author">By {{::pic.author}}</span>	
+							</p>
+							<p class="share-with">
+								<div class="select-category">
+								    <select class="cs-select cs-skin-border" ng-model="mySharer.name" ng-change="profile.shareWith(mySharer)">
+								        <option ng-repeat="user in profile.users" value="{{user.name}}">{{user.name}}</option>								        
+								    </select>
+								</div>
+							</p>
+
+							<div class="image-comments" ng-if="pic.showComments">
+								<div class="post-comment">
+									<div class="form-group group">
+									<input type="text" ng-model="profile.commBody">
+									</div>
+									<button class="btn btn--default" ng-click="profile.addComment(profile.commBody, pic.imageid)">Comment</button>								
+								</div>
+								<div class="image-comment" ng-repeat="comm in pic.imageComments  | orderBy:'-timestamp'">
+									<div class="image-comment-left">
+										<img src="assets/profile.png" alt="">
+									</div>
+									<div class="image-comment-right">
+										<p class="body">{{comm.body}}</p>
+										<p class="comment-details">
+											<span class="timestamp">{{comm.timestamp}}</span>, 
+											<span class="author">By {{comm.userId}}</span>
+										</p>
+									</div>									
+								</div>
+							</div>		
+						</div>
 					</div>
 				</div>
 			</div> <!-- END col-md-8 -->
@@ -30,7 +64,7 @@
 			    <div class="profile-info">
 			      <img src="assets/profile.png" alt="">
 			      <div class="personal-details">
-			        <p class="name"><i class="fa fa-user"></i>Some user i ll die stuff go here<!-- {{main.userLS.name}} --></p>
+			        <p class="name"><i class="fa fa-user"></i>"Picture your life as you wish on Fakestagram!"<!-- {{main.userLS.name}} --></p>
 			        </div>
 			      </div>                      
 			    </div>

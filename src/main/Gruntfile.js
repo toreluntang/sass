@@ -24,12 +24,12 @@ module.exports = function(grunt) {
             },
             vendors : {
                 src : [               
-                    'bower_components/jquery/dist/jquery.js',      
+                    'bower_components/lodash/lodash.js',    
+                    'bower_components/jquery/dist/jquery.js',  
                     'bower_components/angular/angular.js',
                     'bower_components/angular-animate/angular-animate.js',
                     'bower_components/angular-ui-router/release/angular-ui-router.js',
-                    'bower_components/angular-ui-router/release/angular-ui-router.js',
-                    'bower_components/hawk/browser.js'
+                    // 'bower_components/hawk/browser.js'
                 ],
                 dest : 'webapp/concat/vendors.js',
                 nonull : true
