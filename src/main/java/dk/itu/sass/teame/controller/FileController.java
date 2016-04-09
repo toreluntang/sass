@@ -52,6 +52,7 @@ public class FileController {
 			o.addProperty("author", f.getUserId());
 			o.addProperty("path", f.getPath().toString());
 			o.addProperty("timestamp", f.getTimestamp().toString());
+			o.addProperty("username", f.getUsername());
 			System.out.println(o);
 			jsonArray.add(o);
 		}
