@@ -143,5 +143,18 @@ public class FileResource {
 		json.addProperty("timestamp", f.getTimestamp().toString());
 		return json;
 	}
+	
+	@GET
+	@Path("getallimages")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAllImagesFromUser(@QueryParam("id") String id){
+		
+		if(id.isEmpty() || id == null) {
+			Response.status(Response.Status.BAD_REQUEST).build();
+		}
+		
+		String json = fc.getFilesByUser(Long.parseLong(id));
+		return Response.status(Response.Status.ACCEPTED).entity(json).build();		
+	}
 
 }

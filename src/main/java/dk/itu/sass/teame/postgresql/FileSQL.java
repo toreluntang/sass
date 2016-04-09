@@ -8,6 +8,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
@@ -79,7 +81,37 @@ public class FileSQL {
 		} catch(SQLException e) {
 			return null;
 		}
-
+	}
+	
+	public List<File> selectFilesByUserId(long userId){
+		List<File> images = new ArrayList<>();
+		String query =  "SELECT I.id, I.id_user, I.path, I.timestamp" + "\n" +
+						"FROM account A, img I, image_shared_with ISW" + "\n" +
+						"WHERE ISW.imageid = I.id" + "\n" +
+						"AND ISW.userid = A.accountid" + "\n" +
+						"AND A.accountid = ?";
+		try (
+				Connection con = DriverManager.getConnection(CONNECTION_URL,CONNECTION_USERNAME,CONNECTION_PASSWORD);
+				PreparedStatement stmt = con.prepareStatement(query);
+			){
+				stmt.setLong(1, userId);
+				ResultSet rs = stmt.executeQuery();
+				
+				while(rs.next()) {
+					File image = new File();
+					
+					image.setId(rs.getLong("id"));
+					image.setPath(Paths.get(rs.getString("path")));
+					image.setTimestamp(Instant.ofEpochMilli(rs.getLong("timestamp")));
+					image.setUserId(rs.getLong("id_user")); // author
+					
+					images.add(image);
+				}
+				
+				return images;
+			} catch(SQLException e) {
+				return null;
+			}
 	}
 	
 }

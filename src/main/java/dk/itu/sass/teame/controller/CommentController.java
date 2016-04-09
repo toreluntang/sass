@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import dk.itu.sass.teame.entity.Comment;
@@ -25,8 +26,6 @@ public class CommentController {
 		long commentId = commentSQL.insertComment(newComment);
 		newComment.setCommentId(commentId); // Kind of doesnt matter. 
 
-		
-		
 		return commentId;
 	}
 		
@@ -35,15 +34,21 @@ public class CommentController {
 		CommentSQL commentSQL = new CommentSQL();
 		
 		List<Comment> comments = commentSQL.getComments(imageId);
+		JsonArray jsonArray = new JsonArray();
 		
 		for(Comment c : comments){
+			JsonObject o = new JsonObject();
 			c.setBody(StringEscapeUtils.escapeHtml4( c.getBody() ));
+			
+			o.addProperty("commentId", c.getCommentId());
+			o.addProperty("body", c.getBody());
+			o.addProperty("userId", c.getUserId());
+			o.addProperty("timestamp", c.getTimestamp().toString());
+			o.addProperty("imageId", c.getImageId());
+			
+			jsonArray.add(o);
 		}
 		
-//		Gson gson = new Gson();
-		Gson gson = new GsonBuilder().disableHtmlEscaping().create(); 
-		String json = gson.toJson(comments);
-		
-		return json;
+		return jsonArray.toString();
 	}
 }
