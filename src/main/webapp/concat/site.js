@@ -94,7 +94,7 @@ function ProfileCtrl($rootScope, $scope, DataService, CrudService) {
 
     vm.profiletest = "Profile Test";
     vm.myPic = "";
-    vm.userId = '1';
+    vm.userId = '2';
     vm.imageId = '1';
     vm.mySharer = "Test mySharer";
     // vm.showComments = false;
