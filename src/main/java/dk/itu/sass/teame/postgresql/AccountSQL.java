@@ -1,15 +1,21 @@
 package dk.itu.sass.teame.postgresql;
 
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 
 import dk.itu.sass.teame.entity.Account;
+import dk.itu.sass.teame.entity.File;
 
 @Stateless
 public class AccountSQL {
@@ -17,6 +23,10 @@ public class AccountSQL {
 	//Empty constructor for injecting
 	public AccountSQL(){
 	}
+	
+	private final String CONNECTION_URL = "jdbc:postgresql://horton.elephantsql.com:5432/hmdgzyax";
+	private final String CONNECTION_USERNAME = "hmdgzyax";
+	private final String CONNECTION_PASSWORD = "8ETS72wV53uGfPIs-RCJy_tolfPs481n";
 	
 	@PostConstruct
 	public void init() {
@@ -33,7 +43,7 @@ public class AccountSQL {
 			try (Connection con = DriverManager.getConnection("jdbc:postgresql://horton.elephantsql.com:5432/hmdgzyax", "hmdgzyax", "8ETS72wV53uGfPIs-RCJy_tolfPs481n")) {
 
 				PreparedStatement pre = null;
-				String stm = "select accountid, username, password, salt, email from account where "+field+" = ?";
+				String stm = "select accountid, username, password, email from account where "+field+" = ?";
 				pre = con.prepareStatement(stm);
 				pre.setString(1, value);
 
@@ -42,7 +52,7 @@ public class AccountSQL {
 						int id = rs.getInt("accountid");
 						String name = rs.getString("username");
 						String password = rs.getString("password");
-						String salt = rs.getString("salt");
+						String salt = "";//rs.getString("salt");
 						String email = rs.getString("email");
 						foundAcc = new Account(id, name,password,salt, email);
 					}
@@ -114,7 +124,32 @@ public class AccountSQL {
 		return null;
 	}
 	
-	
+	public List<Account> getAllAccounts(){
+		
+		List<Account> accounts = new ArrayList<>();
+		String query = "select * from account";
+		
+		try (
+				Connection con = DriverManager.getConnection(CONNECTION_URL,CONNECTION_USERNAME,CONNECTION_PASSWORD);
+				PreparedStatement stmt = con.prepareStatement(query);
+			){
+				
+				ResultSet rs = stmt.executeQuery();
+				
+				while(rs.next()) {
+					Account account = new Account();
+					
+					account.setAccountid(rs.getLong("accountid"));
+					account.setUsername(rs.getString("username"));
+					
+					accounts.add(account);
+				}
+				
+				return accounts;
+			} catch(SQLException e) {
+				return null;
+			}
+	}
 	
 	
 	

@@ -2,6 +2,7 @@ package dk.itu.sass.teame.boundary;
 
 import javax.inject.Inject;
 import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -57,8 +58,6 @@ public class AccountResource {
 		if(account==null)
 			return Response.status(Status.UNAUTHORIZED).build();
 
-		
-		
 		AuthorizationHeader header = AuthorizationHeader.authorization().build();
 		
 		json.addProperty("accountid", account.getAccountid());
@@ -76,6 +75,15 @@ public class AccountResource {
 		json.add("Auth", authHeader);
 		
 		return Response.ok().entity(json.toString()).build();
+	}
+	
+	@GET
+	@Path("getallusers")
+	public Response getAllUsers(){
+		//Something with authentications
+		
+		String json = accountController.getAllusers();
+		return Response.ok().entity(json).build();
 	}
 
 }

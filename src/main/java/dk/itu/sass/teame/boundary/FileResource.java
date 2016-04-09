@@ -156,5 +156,28 @@ public class FileResource {
 		String json = fc.getFilesByUser(Long.parseLong(id));
 		return Response.status(Response.Status.ACCEPTED).entity(json).build();		
 	}
+	
+	@GET
+	@Path("shareimage")
+	public Response shareImage(@QueryParam("imageId") String imageId, 
+							   @QueryParam("author") String authorId, 
+							   @QueryParam("victim") String shareWithId){
+		
+		JsonObject o = new JsonObject();
+		o.addProperty("author", authorId);
+		o.addProperty("sharedwith", shareWithId);
+		o.addProperty("imageid", imageId);
+		
+		if((imageId.isEmpty()  || imageId == null ) || 
+		   (authorId.isEmpty() || authorId == null ) || 
+		   (shareWithId.isEmpty() || shareWithId == null) ){
+			Response.status(Response.Status.BAD_REQUEST).build();
+		}
+		
+		boolean b = fc.shareImage(Long.parseLong(imageId), Long.parseLong(authorId), Long.parseLong(shareWithId));
+		
+		if(b) return Response.status(Response.Status.ACCEPTED).entity(o).build();
+		else return Response.status(Response.Status.BAD_REQUEST).build();
+	}
 
 }
