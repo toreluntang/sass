@@ -120,5 +120,23 @@ public class FileSQL {
 				return null;
 			}
 	}
+
+	public int shareImage(long imageId, long shareWithId) {
+		String query = "INSERT INTO image_shared_with(imageid, userid) VALUES(?,?)";
+		
+		try (
+				Connection con = DriverManager.getConnection(CONNECTION_URL,CONNECTION_USERNAME,CONNECTION_PASSWORD);
+				PreparedStatement stmt = con.prepareStatement(query);
+			){
+				stmt.setLong(1, imageId);
+				stmt.setLong(2, shareWithId);
+				int rs = stmt.executeUpdate();
+				
+				return rs;
+				
+			} catch(SQLException e) {
+				return 0;
+			}
+	}
 	
 }

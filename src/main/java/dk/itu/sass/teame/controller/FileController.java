@@ -7,10 +7,6 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import org.apache.http.impl.io.SocketOutputBuffer;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -61,6 +57,20 @@ public class FileController {
 		}
 		
 		return jsonArray.toString();
+	}
+
+	public boolean shareImage(long imageId, long authorId, long shareWithId) {
+		
+		boolean res = false;
+		File f = getFile(imageId);
+		
+		if(f.getUserId() == authorId){
+			int rows = fileSQL.shareImage(imageId, shareWithId);
+			if(rows > 0) 
+				res = true;
+		}
+		
+		return res;
 	}
 
 }
