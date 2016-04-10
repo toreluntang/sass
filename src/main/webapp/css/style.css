@@ -14,9 +14,16 @@ p {
 	line-height: 25px;
 	font-weight: 600;
 }
+.brand {
+	color: #FC645F;
+	font-weight: 900;
+}
 body,
 html {
 	height: 100%;
+}
+body {
+	overflow-x: hidden;
 }
 .container-fluid {
 	width: 100%;
@@ -174,13 +181,38 @@ i {
 	height: auto;
 }
 .image-details {
-	text-align: right;
-	padding: 10px 15px 0 0;
+	/*text-align: right;*/
+	padding: 10px 15px;
+
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	justify-content: center;
+	align-items: flex-start;
 }
 .image .image-icon {
 	text-align: right;
 	padding: 10px 15px 0 0;
 
+}
+.image-details-left,
+.image-details-right {
+	background-color: #fff;
+	width: 50%;
+}
+.image-details-left button {
+	padding: 0 5px;
+	margin-top: -2px;
+}
+.image-details-left select {
+	min-width: 100px;
+	min-height: 31px;
+	border: 2px solid #FC645F;
+	outline: none;	
+    font-weight: 900;
+}
+.image-details-right {
+	text-align: right;
 }
 
 /*Images end*/

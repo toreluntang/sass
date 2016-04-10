@@ -178,7 +178,7 @@ public class FileResource {
 		
 		boolean b = fc.shareImage(Long.parseLong(imageId), Long.parseLong(authorId), Long.parseLong(shareWithId));
 		
-		if(b) return Response.status(Response.Status.ACCEPTED).entity(o).build();
+		if(b) return Response.status(Response.Status.ACCEPTED).entity(o.toString()).build();
 		else return Response.status(Response.Status.BAD_REQUEST).build();
 	}
 
