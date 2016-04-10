@@ -39,7 +39,9 @@ import net.jalg.hawkj.HawkContext.HawkContextBuilder_B;
 public class FileResource {
 
 	// private final String FILE_LOCATION = "";
-	private final String FILE_LOCATION = "/Users/Alexander/Code/Servers/wildfly-10-sass/fakestagram/images/";
+
+	private final String FILE_LOCATION = "\\Irina\\ITU\\Sem_1\\Security\\wildfly-10.0.0.Final\\Pictures";
+
 
 	@Inject
 	FileController fc;
