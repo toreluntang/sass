@@ -9,6 +9,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -37,7 +38,8 @@ import net.jalg.hawkj.HawkContext.HawkContextBuilder_B;
 @Path("file")
 public class FileResource {
 
-	private final String FILE_LOCATION = "/Users/Alexander/Code/Servers/wildfly-10-sass/fakestagram/images";
+	// private final String FILE_LOCATION = "";
+	private final String FILE_LOCATION = "\\Irina\\ITU\\Sem_1\\Security\\SASS\\sass-fakestagram\\src\\main\\webapp\\assets";
 
 	@Inject
 	FileController fc;
@@ -170,9 +172,45 @@ public class FileResource {
 		JsonObject json = new JsonObject();
 		json.addProperty("id", f.getId());
 		json.addProperty("userId", f.getUserId());
-		json.addProperty("path", f.getPath().toString());
+		json.addProperty("path", f.getPath().getFileName().toString());
 		json.addProperty("timestamp", f.getTimestamp().toString());
 		return json;
+	}
+	
+	@GET
+	@Path("getallimages")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAllImagesFromUser(@QueryParam("id") String id){
+		
+		if(id.isEmpty() || id == null) {
+			Response.status(Response.Status.BAD_REQUEST).build();
+		}
+		
+		String json = fc.getFilesByUser(Long.parseLong(id));
+		return Response.status(Response.Status.ACCEPTED).entity(json).build();		
+	}
+	
+	@POST
+	@Path("shareimage")
+	public Response shareImage(@FormParam("imageId") String imageId, 
+							   @FormParam("author") String authorId, 
+							   @FormParam("victim") String shareWithId){
+		
+		JsonObject o = new JsonObject();
+		o.addProperty("author", authorId);
+		o.addProperty("sharedwith", shareWithId);
+		o.addProperty("imageid", imageId);
+		
+		if((imageId.isEmpty()  || imageId == null ) || 
+		   (authorId.isEmpty() || authorId == null ) || 
+		   (shareWithId.isEmpty() || shareWithId == null) ){
+			Response.status(Response.Status.BAD_REQUEST).build();
+		}
+		
+		boolean b = fc.shareImage(Long.parseLong(imageId), Long.parseLong(authorId), Long.parseLong(shareWithId));
+		
+		if(b) return Response.status(Response.Status.ACCEPTED).entity(o.toString()).build();
+		else return Response.status(Response.Status.BAD_REQUEST).build();
 	}
 
 }

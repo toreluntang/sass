@@ -9,6 +9,7 @@ public class Comment {
 	private long userId;
 	private Instant timestamp;
 	private long imageId;
+	private String username;
 
 	public Comment(String body, Instant timestamp, long userId, long commentId, long imageId) {
 		this.commentId = commentId;
@@ -56,5 +57,13 @@ public class Comment {
 	
 	public void setImageId(int imageid) {
 		this.imageId = imageid;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
 	}
 }

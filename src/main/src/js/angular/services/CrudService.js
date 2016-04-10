@@ -34,17 +34,14 @@ function CrudService($q, $http) {
     }
 
     // implementation
-     function createItem(objData, url) {
+    function createItem(objData, url) {
         var def = $q.defer();
         console.log(objData)
-        var header = createAuthorizationHeader(url,'POST');
-        $http.post(url, objData, {
-            transformRequest: angular.identity,
-            headers: {
-                'Content-Type': undefined,
-                'XRequestHeaderToProtect': 'secret',
-                'Authorization': header.field
-            }
+        $http({
+            method: 'POST',
+            url: url,
+            headers: { 'Content-Type' : 'application/x-www-form-urlencoded' },
+            data: $.param(objData)
         })
         .success(function(data) {
             def.resolve(data);
@@ -54,6 +51,26 @@ function CrudService($q, $http) {
         });
         return def.promise;
     }
+    //  function createItem(objData, url) { // PAUL
+    //     var def = $q.defer();
+    //     console.log(objData)
+    //     var header = createAuthorizationHeader(url,'POST');
+    //     $http.post(url, objData, {
+    //         transformRequest: angular.identity,
+    //         headers: {
+    //             'Content-Type': undefined,
+    //             'XRequestHeaderToProtect': 'secret',
+    //             'Authorization': header.field
+    //         }
+    //     })
+    //     .success(function(data) {
+    //         def.resolve(data);
+    //     })
+    //     .error(function() {
+    //         def.reject("Failed to create item");
+    //     });
+    //     return def.promise;
+    // }
     function updateItem(objData, url) {
         var def = $q.defer();
         var header = createAuthorizationHeader(url,'POST');

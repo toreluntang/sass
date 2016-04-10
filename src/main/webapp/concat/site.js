@@ -12,7 +12,7 @@ if (typeof console === 'undefined') {
 
 config.$inject = ['$stateProvider', '$urlRouterProvider'];
 AuthCtrl.$inject = ['CrudService'];
-ProfileCtrl.$inject = ['DataService'];
+ProfileCtrl.$inject = ['$rootScope', '$scope', 'DataService', 'CrudService', 'fileUpload'];
 CrudService.$inject = ['$q', '$http'];
 DataService.$inject = ['$q', '$http'];angular.element(document).ready(function (event) {
     console.log("angular is ready test");
@@ -28,6 +28,36 @@ DataService.$inject = ['$q', '$http'];angular.element(document).ready(function (
 
         .controller('AuthCtrl', AuthCtrl)
         .controller('ProfileCtrl', ProfileCtrl)
+        .directive('fileModel', ['$parse', function ($parse) {
+            return {
+                restrict: 'A',
+                link: function(scope, element, attrs) {
+                    var model = $parse(attrs.fileModel);
+                    var modelSetter = model.assign;
+                    
+                    element.bind('change', function(){
+                        console.log("UPLOAAAAAAD")
+                        scope.$apply(function(){
+                            modelSetter(scope, element[0].files[0]);
+                        });
+                    });
+                }
+            };
+        }])
+        .service('fileUpload', ['$http', function ($http) {
+            this.uploadFileToUrl = function(file, uploadUrl){
+                var fd = new FormData();
+                fd.append('file', file);
+                $http.post(uploadUrl, fd, {
+                    transformRequest: angular.identity,
+                    headers: {'Content-Type': undefined}
+                })
+                .success(function(){
+                })
+                .error(function(){
+                });
+            }
+        }])
         .factory('CrudService', CrudService)
         .factory('DataService', DataService)
    
@@ -89,21 +119,127 @@ function AuthCtrl(CrudService) {
 /**
  * @ngInject
  */
-function ProfileCtrl(DataService) {
+function ProfileCtrl($rootScope, $scope, DataService, CrudService, fileUpload) {
     vm = this;
 
     vm.profiletest = "Profile Test";
+    vm.myPic = "";
+    vm.userId = '1';
+    vm.imageId = '1';
+    vm.mySharer = "Test mySharer";
+    vm.myFile = "";
+    // vm.showComments = false;
 
 
-    function onLoadImageCommentsSuccess(data) {
-    	console.log("onLoadImageCommentsSuccess", data)
+    
+    function onLoadImagesSuccess(imagesData) {
+    	console.log("onLoadImagsSuccess RIGHT ONE")
+        _(imagesData).forEach(function(n) { 
+            console.log(n)
+            n.showComments = false;
+            DataService.loadStuff('http://localhost:8080/sec/resources/comment?imageId=' + n.imageid)
+            .then(angular.bind(this, onLoadImageCommentsSuccess), angular.bind(this, onLoadImageCommentsError));       
+
+            function onLoadImageCommentsSuccess(data) {
+                console.log("onLoadImageCommentsSuccess", data)
+                n.imageComments = data
+            }
+            function onLoadImageCommentsError(error) {
+                console.log("onLoadImageCommentsError: no comments found for this image", error)
+
+            }
+        });
+        console.log("Images after adding comments are: ", imagesData)
+        vm.pictures = imagesData;
+
+        if(!$scope.$$phase) $scope.$digest();
+
+        
+        
+
+    }
+    function onLoadImagesError(error) {
+    	console.log("onLoadImagsError", error)
+    }
+    function onUploadPicSuccess(data) {
+        console.log("onUploadPicSuccess", data)
     }
     function onLoadImageCommentsError(error) {
-    	console.log("onLoadImageCommentsError", error)
+        console.log("onLoadImageCommentsError", error)
+    }
+    function onCreateCommentSuccess(data) {
+        console.log("onCreateCommentSuccess", data)
+        getAllImages(vm.userId);
+    }
+    function onCreateCommentError(error) {
+        console.log("onCreateCommentError", error)
+    }
+    function onSharePicSuccess(data) {
+        console.log("onSharePicSuccess", data)
+    }
+    function onSharePicError(error) {
+        console.log("onSharePicError", error)
     }
 
-    DataService.loadStuff('http://localhost:8080/sec/resources/comment?imageId=1')
-        .then(angular.bind(this, onLoadImageCommentsSuccess), angular.bind(this, onLoadImageCommentsError));
+
+    function onLoadUsersSuccess(usersData) {
+        console.log("onLoadUsersSuccess USEEEEERS", usersData)
+        vm.users = usersData;
+    }
+    function onLoadUsersError(error) {
+        console.log("onLoadUsersError", error)
+    }
+
+    vm.uploadPic = function uploadPic() { // USERID is HARDCODED
+        console.log("uploadPic IRINA test", vm.myFile)
+        var file = vm.myFile;
+        console.log('file is ' );
+        console.dir(file);
+        var uploadUrl = "resources/file?userid=1";
+        fileUpload.uploadFileToUrl(file, uploadUrl);
+        getAllImages(vm.userId);
+        if(!$scope.$$phase) $scope.$digest();
+        var fd = new FormData();
+        fd.append('file', vm.myPic);
+        CrudService.createItem(fd, '/resources/file?userid=1')
+            .then(angular.bind(this, onUploadPicSuccess), angular.bind(this, onUploadPicError));
+    }
+
+    vm.addComment = function addComment(commBody, imageId) {
+        commentData = {comment: commBody, userId: vm.userId, imageId: imageId};
+        vm.commBody = "";
+        // console.log("commentData to be added is: ", commentData);
+        CrudService.createItem(commentData, 'http://localhost:8080/sec/resources/comment')
+            .then(angular.bind(this, onCreateCommentSuccess), angular.bind(this, onCreateCommentError));
+        
+    }
+
+    vm.shareWith = function shareWith(mySharer, imageid) {
+        console.log("share with", mySharer)
+        var sharingObject = {imageId: imageid, author: vm.userId, victim: mySharer};
+        console.log("sharingObject is: ", sharingObject)
+        CrudService.createItem(sharingObject, 'http://localhost:8080/sec/resources/file/shareimage')
+            .then(angular.bind(this, onSharePicSuccess), angular.bind(this, onSharePicError));
+    }
+
+    // vm.toggleComments = function toggleComments() {
+    //     vm.showComments = !vm.showComments;
+    // }
+
+
+    
+
+    function getAllImages(userId) {
+        DataService.loadStuff('http://localhost:8080/sec/resources/file/getallimages?id='+userId)
+            .then(angular.bind(this, onLoadImagesSuccess), angular.bind(this, onLoadImagesError));
+    }
+    function getAllUsers() {
+        DataService.loadStuff('http://localhost:8080/sec/resources/account/getallusers')
+            .then(angular.bind(this, onLoadUsersSuccess), angular.bind(this, onLoadUsersError));
+    }
+
+   getAllImages(vm.userId);
+   getAllUsers();
 
 }
 /**
@@ -142,17 +278,14 @@ function CrudService($q, $http) {
     }
 
     // implementation
-     function createItem(objData, url) {
+    function createItem(objData, url) {
         var def = $q.defer();
         console.log(objData)
-        var header = createAuthorizationHeader(url,'POST');
-        $http.post(url, objData, {
-            transformRequest: angular.identity,
-            headers: {
-                'Content-Type': undefined,
-                'XRequestHeaderToProtect': 'secret',
-                'Authorization': header.field
-            }
+        $http({
+            method: 'POST',
+            url: url,
+            headers: { 'Content-Type' : 'application/x-www-form-urlencoded' },
+            data: $.param(objData)
         })
         .success(function(data) {
             def.resolve(data);
@@ -162,6 +295,26 @@ function CrudService($q, $http) {
         });
         return def.promise;
     }
+    //  function createItem(objData, url) { // PAUL
+    //     var def = $q.defer();
+    //     console.log(objData)
+    //     var header = createAuthorizationHeader(url,'POST');
+    //     $http.post(url, objData, {
+    //         transformRequest: angular.identity,
+    //         headers: {
+    //             'Content-Type': undefined,
+    //             'XRequestHeaderToProtect': 'secret',
+    //             'Authorization': header.field
+    //         }
+    //     })
+    //     .success(function(data) {
+    //         def.resolve(data);
+    //     })
+    //     .error(function() {
+    //         def.reject("Failed to create item");
+    //     });
+    //     return def.promise;
+    // }
     function updateItem(objData, url) {
         var def = $q.defer();
         var header = createAuthorizationHeader(url,'POST');
