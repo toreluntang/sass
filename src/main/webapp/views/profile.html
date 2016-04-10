@@ -1,7 +1,7 @@
 <div class="container-fluid profile-view">
 	<div class="header">
 		<div class="container">
-			<div class="left"><p>Fakestagram</p></div>
+			<div class="left"><p>Fakestagram tst</p></div>
 			<div class="right"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></div>
 		</div>
 	</div>
@@ -10,32 +10,36 @@
 			<div class="col-md-8">
 				<div class="wrapper">
 					<div class="upload-container">
-						<!-- <form action="resources/file?userid={{profile.userId}}" method="post" enctype="multipart/form-data">
+						<!-- <form action="resources/file?userid=1" method="post" enctype="multipart/form-data">
 						<input type="file" name="file" />
 						<input type="submit" name="submit" value="Upload picture" />
 						</form> -->
-						<form  enctype="multipart/form-data">
+						<!-- <form  enctype="multipart/form-data">
 							<input type="file" file-model="profile.myPic" name="file" />
 							<button type="submit" ng-click="profile.uploadPic(profile.myPic)">Upload pic test</button>
+						</form> -->
+						<form enctype="multipart/form-data">
+						<input type="file" name="file"  file-model="profile.myFile" />
+						<button ng-click="profile.uploadPic()">upload me</button>
+						<!-- <input type="submit" name="submit" value="Upload picture" /> -->
 						</form>
 					</div>
-					<div class="images-container">
+					<div class="images-container">					
 						<div class="image" ng-repeat="pic in profile.pictures">
 							<p class="image-icon"><span class="glyphicon glyphicon-tags" aria-hidden="true"></span></p> 
-							<img ng-src="assets/{{pic.path}}" alt="">
+							<img ng-src="{{pic.path}}" alt="">
 							<p class="image-details">
 								<span class="glyphicon glyphicon-comment" ng-click="pic.showComments = !pic.showComments"></span>
 								<span class="timestamp">{{::pic.timestamp}}</span>, 
 								<span class="author">By {{::pic.author}}</span>	
 							</p>
-							<p class="share-with">
-								<div class="select-category">
-								    <select class="cs-select cs-skin-border" ng-model="mySharer.name" ng-change="profile.shareWith(mySharer)">
-								        <option ng-repeat="user in profile.users" value="{{user.name}}">{{user.name}}</option>								        
-								    </select>
-								</div>
-							</p>
-
+							<div class="share-with">
+								<p><span>Share with</span></p>
+							    <select class="cs-select cs-skin-border" ng-model="pic.mySharer" ng-change="profile.shareWith(pic.mySharer)">
+							        <option ng-repeat="user in profile.users" value="{{user.username}}">{{user.username}}</option>								        
+							    </select>
+							    <button class="btn" ng-click="profile.shareWith(pic.mySharer)">Share</button>
+							</div>
 							<div class="image-comments" ng-if="pic.showComments">
 								<div class="post-comment">
 									<div class="form-group group">
@@ -51,7 +55,7 @@
 										<p class="body">{{comm.body}}</p>
 										<p class="comment-details">
 											<span class="timestamp">{{comm.timestamp}}</span>, 
-											<span class="author">By {{comm.userId}}</span>
+											<span class="author">By {{comm.username}}</span>
 										</p>
 									</div>									
 								</div>

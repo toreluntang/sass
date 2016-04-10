@@ -1,13 +1,15 @@
 /**
  * @ngInject
  */
-function ProfileCtrl($rootScope, $scope, DataService, CrudService) {
+function ProfileCtrl($rootScope, $scope, DataService, CrudService, fileUpload) {
     vm = this;
 
     vm.profiletest = "Profile Test";
     vm.myPic = "";
     vm.userId = '1';
     vm.imageId = '1';
+    vm.mySharer = "Test mySharer";
+    vm.myFile = "";
     // vm.showComments = false;
 
 
@@ -56,14 +58,20 @@ function ProfileCtrl($rootScope, $scope, DataService, CrudService) {
 
 
     function onLoadUsersSuccess(usersData) {
-        console.log("onLoadUsersSuccess", usersData)
+        console.log("onLoadUsersSuccess USEEEEERS", usersData)
+        vm.users = usersData;
     }
     function onLoadUsersError(error) {
         console.log("onLoadUsersError", error)
     }
 
-    vm.uploadPic = function uploadPic(myPic) {
-        console.log("uploadPic clicked!!!", vm.myPic, myPic)
+    vm.uploadPic = function uploadPic() {
+        console.log("uploadPic clicked!!!")
+        var file = vm.myFile;
+        console.log('file is ' );
+        console.dir(file);
+        var uploadUrl = "resources/file?userid=1";
+        fileUpload.uploadFileToUrl(file, uploadUrl);
         // var fd = new FormData();
         // fd.append('file', vm.myPic);
         // CrudService.createItem(fd, '/resources/file?userid=1')
@@ -79,6 +87,10 @@ function ProfileCtrl($rootScope, $scope, DataService, CrudService) {
         
     }
 
+    vm.shareWith = function shareWith(mySharer) {
+        console.log("share with", mySharer)
+    }
+
     // vm.toggleComments = function toggleComments() {
     //     vm.showComments = !vm.showComments;
     // }
@@ -91,10 +103,11 @@ function ProfileCtrl($rootScope, $scope, DataService, CrudService) {
             .then(angular.bind(this, onLoadImagesSuccess), angular.bind(this, onLoadImagesError));
     }
     function getAllUsers() {
-        DataService.loadStuff('http://localhost:8080/sec/resources/file/accounts')
+        DataService.loadStuff('http://localhost:8080/sec/resources/account/getallusers')
             .then(angular.bind(this, onLoadUsersSuccess), angular.bind(this, onLoadUsersError));
     }
 
    getAllImages(vm.userId);
+   getAllUsers();
 
 }
