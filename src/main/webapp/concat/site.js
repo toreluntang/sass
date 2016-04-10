@@ -361,8 +361,12 @@ function CrudService($q, $http) {
         $http({
             method: 'POST',
             url: url,
-            headers: { 'Content-Type' : 'application/x-www-form-urlencoded',
-                        'Authorization' :  authObj},
+            headers: { 
+                'Content-Type' : 'application/x-www-form-urlencoded',
+                'ts' :  authObj.Auth.ts,
+                'nonce' :  authObj.Auth.nonce,
+                'mac' :  authObj.Auth.mac
+            },
             data: $.param(objData)
         })
         .success(function(data) {
