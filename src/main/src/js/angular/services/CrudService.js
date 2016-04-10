@@ -7,7 +7,8 @@ function CrudService($q, $http) {
     var service = {
         createItem: createItem,
         updateItem: updateItem,
-        deleteItem: deleteItem
+        deleteItem: deleteItem,
+        uploadFileToUrl: uploadFileToUrl
     };
     return service;
 
@@ -34,6 +35,26 @@ function CrudService($q, $http) {
     }
 
     // implementation
+    function uploadFileToUrl(file, uploadUrl) {
+        var def = $q.defer();
+
+        var fd = new FormData();
+        fd.append('file', file);
+        $http.post(uploadUrl, fd, {
+            transformRequest: angular.identity,
+            headers: {'Content-Type': undefined}
+        })
+        .success(function(){
+            console.log("SUCCESS : uploadFileToUrl")
+            def.resolve();
+        })
+        .error(function(){
+            console.log("ERROR : uploadFileToUrl")
+            def.reject("Failed to uploadFileToUrl");
+        });
+
+        return def.promise;
+    }
     function createItem(objData, url) {
         var def = $q.defer();
         console.log(objData)

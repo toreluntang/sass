@@ -2,7 +2,7 @@
 	<div class="header">
 		<div class="container">
 			<div class="left"><p><span class="brand">Fake</span>stagram</p></div>
-			<div class="right"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span></div>
+			<div class="right"><span class="glyphicon glyphicon-log-out" aria-hidden="true" ng-click="profile.logout()"></span></div>
 		</div>
 	</div>
 	<div class="container">
@@ -18,28 +18,29 @@
 							<input type="file" file-model="profile.myPic" name="file" />
 							<button type="submit" ng-click="profile.uploadPic(profile.myPic)">Upload pic test</button>
 						</form> -->
-						<form enctype="multipart/form-data">
-						<input type="file" name="file"  file-model="profile.myFile" />
-						<button class="btn btn--default" ng-click="profile.uploadPic()">upload me</button>
+						<form enctype="multipart/form-data" id="upload-form">
+						<input type="file" class="inputfile inputfile-2" name="file"  file-model="profile.myFile" />
+						<label for="file"><span>Choose file</span></label>
+						<button class="btn btn--default" ng-click="profile.uploadPic()" id="upload">Upload fakestagram</button>
 						<!-- <input type="submit" name="submit" value="Upload picture" /> -->
 						</form>
 					</div>
 					<div class="images-container">					
-						<div class="image" ng-repeat="pic in profile.pictures | orderBy:'-timestamp'">
+						<div class="image" ng-repeat="pic in profile.pictures | orderBy:'-timestamp'" ng-if="pic.path">
 							<p class="image-icon"><span class="glyphicon glyphicon-tags" aria-hidden="true"></span></p> 
-							<img ng-src="assets/{{pic.path}}" alt="">
-							<p>Image id is: {{::pic.imageid}}</p>
+							<img ng-src="http://localhost:8080/img/{{pic.path}}" alt="">
+							<!-- <p>Image id is: {{::pic.imageid}}</p> -->
 							<div class="image-details">
 								<div class="image-details-left">
+									<button class="btn btn--default" ng-click="profile.shareWith(pic.mySharer, pic.imageid)">Share with</button>
 									<select class="cs-select cs-skin-border" ng-model="pic.mySharer">
 									    <option ng-repeat="user in profile.users" value="{{::user.accountid}}">{{user.username}}</option>								        
 									</select>
-									<button class="btn btn--default" ng-click="profile.shareWith(pic.mySharer, pic.imageid)">Share with mage id is: {{::pic.imageid}}</button>
 								</div>
 								<div class="image-details-right">
 									<span class="glyphicon glyphicon-comment" ng-click="pic.showComments = !pic.showComments"></span>
 									<span class="timestamp">{{::pic.timestamp}}</span>, 
-									<span class="author">By {{::pic.author}}</span>	
+									<span class="author">By {{::pic.username}}</span>	
 								</div>
 							</div>
 							<div class="image-comments" ng-if="pic.showComments">
