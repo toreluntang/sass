@@ -69,7 +69,7 @@ public class AccountResource {
 		long ts = 123;
 		String nonce = "piggybank";
 		String id = account.getAccountid()+""; //Userid???
-		String key = account.getPassword(); //Password?? SOMETHING ELSE
+		String key = "car"; //Password?? SOMETHING ELSE
 		Algorithm algorithm = Algorithm.SHA_256;
 		String hash = HawkContextBuilder.generateHash(algorithm, "what body".getBytes(), "text/plain");
 		String ext = "no one noes";

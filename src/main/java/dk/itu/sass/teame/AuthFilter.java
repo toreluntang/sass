@@ -1,6 +1,7 @@
 package dk.itu.sass.teame;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.Enumeration;
 
 import javax.servlet.Filter;
@@ -13,6 +14,11 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.jalg.hawkj.Algorithm;
+import net.jalg.hawkj.AuthorizationHeader;
+import net.jalg.hawkj.HawkContext;
+import net.jalg.hawkj.HawkContext.HawkContextBuilder_B;
+
 @WebFilter(urlPatterns = "/*")
 public class AuthFilter implements Filter {
 
@@ -24,32 +30,51 @@ public class AuthFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 		
-		System.out.println("FILTER");
-		
-		System.out.println(request.getContentType());
-		System.out.println(request.getServerPort());
-		System.out.println(request.getServerName());
-		System.out.println(request.getServletContext());
-		
 		if (request instanceof HttpServletRequest) {
 			HttpServletRequest r = (HttpServletRequest) request;
 			HttpServletResponse res = (HttpServletResponse) response;
 			
-			System.out.println(r.getHeader("mac"));
+			String hmac = r.getHeader("mac");
+			String accountId = r.getHeader("accountId");
+			Long ts = null;
+			try {
+				ts = Long.parseLong(r.getHeader("ts"));
+			}catch(Exception e) { 
+				res.getWriter().write("Wrong ts");
+				return;
+			}
+			String nonce = r.getHeader("nonce");
+			String method = "POST";
+			String path = "login";
+			String host = "localhost";
+			int port = 8080;
+			String id = accountId; //Userid???
+			String key = "car"; //Password?? SOMETHING ELSE
+			Algorithm algorithm = Algorithm.SHA_256;
 			
-			Enumeration<String> heads = r.getHeaderNames();
-			while(heads.hasMoreElements()) {
-				String elem = heads.nextElement();
-				System.out.println(elem + " : " + r.getHeader(elem));
+			HawkContext hawk = HawkContext.request(method, path,
+			                                       host, port)
+			                     .credentials(id, key, algorithm)
+			                     .tsAndNonce(ts, nonce)
+			                     .hash(null).build();
+
+			/*
+			 * Now we use the created Hawk to validate the HMAC sent by the client
+			 * in the Authorization header.
+			 */
+			if (!hawk.isValidMac(hmac)) {
+				res.getWriter().write("Nice try Script kiddie!");
+			    return;
 			}
 			
+			chain.doFilter(request, response);
 			//res.getWriter().write("Wrong authentication");
 			//return;
 		}
 
-		System.out.println("FILTER END");
-		
-		chain.doFilter(request, response);
+		//chain.doFilter(request, response);
+		response.getWriter().write("WTF happend there dude. To crazy - the club can't even handle me right naaaaw");
+		return;
 	}
 
 	@Override
