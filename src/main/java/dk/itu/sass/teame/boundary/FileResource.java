@@ -29,14 +29,19 @@ import com.google.gson.JsonObject;
 
 import dk.itu.sass.teame.controller.FileController;
 import dk.itu.sass.teame.entity.File;
+import net.jalg.hawkj.Algorithm;
 import net.jalg.hawkj.AuthHeaderParsingException;
 import net.jalg.hawkj.AuthorizationHeader;
+import net.jalg.hawkj.HawkContext;
+import net.jalg.hawkj.HawkContext.HawkContextBuilder_B;
 
 @Path("file")
 public class FileResource {
 
 	// private final String FILE_LOCATION = "";
-	private final String FILE_LOCATION = "";
+
+	private final String FILE_LOCATION = "/Users/Alexander/Code/Servers/wildfly-10-sass/fakestagram/images/";
+
 
 	@Inject
 	FileController fc;
@@ -46,7 +51,33 @@ public class FileResource {
 		
 		AuthorizationHeader header = null;
 		try {
-			header = AuthorizationHeader.authorization(serverAuth);
+			AuthorizationHeader header2 = AuthorizationHeader.authorization("Hawk");
+			
+			String method = "POST";
+			String path = "login";
+			String host = "localhost";
+			int port = 8080;
+			
+			String userid = "1";
+			String key = "admin";
+			Algorithm algorithm = Algorithm.SHA_256;
+			
+			HawkContext hawk = HawkContext.request("POST", "login",
+			                                       "localhost", 8080)
+			                     .credentials(userid, "tis", algorithm)
+			                     .tsAndNonce(1460203791L, "A0612D128F09")
+			                     .hash(null).build();
+			
+			if(hawk.isValidMac(serverAuth)) {
+				System.out.println("VALID");
+			} else {
+				System.out.println("NOT VALID");
+			}
+			
+			header = hawk.createAuthorizationHeader();
+
+			
+			
 		} catch (AuthHeaderParsingException e1) {
 			e1.printStackTrace();
 		}	
