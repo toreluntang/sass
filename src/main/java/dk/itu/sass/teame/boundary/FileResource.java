@@ -158,11 +158,11 @@ public class FileResource {
 		return Response.status(Response.Status.ACCEPTED).entity(json).build();		
 	}
 	
-	@GET
+	@POST
 	@Path("shareimage")
-	public Response shareImage(@QueryParam("imageId") String imageId, 
-							   @QueryParam("author") String authorId, 
-							   @QueryParam("victim") String shareWithId){
+	public Response shareImage(@FormParam("imageId") String imageId, 
+							   @FormParam("author") String authorId, 
+							   @FormParam("victim") String shareWithId){
 		
 		JsonObject o = new JsonObject();
 		o.addProperty("author", authorId);
@@ -177,7 +177,7 @@ public class FileResource {
 		
 		boolean b = fc.shareImage(Long.parseLong(imageId), Long.parseLong(authorId), Long.parseLong(shareWithId));
 		
-		if(b) return Response.status(Response.Status.ACCEPTED).entity(o).build();
+		if(b) return Response.status(Response.Status.ACCEPTED).entity(o.toString()).build();
 		else return Response.status(Response.Status.BAD_REQUEST).build();
 	}
 

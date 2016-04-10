@@ -34,6 +34,7 @@ function ProfileCtrl($rootScope, $scope, DataService, CrudService, fileUpload) {
         console.log("Images after adding comments are: ", imagesData)
         vm.pictures = imagesData;
 
+        if(!$scope.$$phase) $scope.$digest();
 
         
         
@@ -55,6 +56,12 @@ function ProfileCtrl($rootScope, $scope, DataService, CrudService, fileUpload) {
     function onCreateCommentError(error) {
         console.log("onCreateCommentError", error)
     }
+    function onSharePicSuccess(data) {
+        console.log("onSharePicSuccess", data)
+    }
+    function onSharePicError(error) {
+        console.log("onSharePicError", error)
+    }
 
 
     function onLoadUsersSuccess(usersData) {
@@ -65,17 +72,19 @@ function ProfileCtrl($rootScope, $scope, DataService, CrudService, fileUpload) {
         console.log("onLoadUsersError", error)
     }
 
-    vm.uploadPic = function uploadPic() {
-        console.log("uploadPic clicked!!!")
+    vm.uploadPic = function uploadPic() { // USERID is HARDCODED
+        console.log("uploadPic IRINA test", vm.myFile)
         var file = vm.myFile;
         console.log('file is ' );
         console.dir(file);
         var uploadUrl = "resources/file?userid=1";
         fileUpload.uploadFileToUrl(file, uploadUrl);
-        // var fd = new FormData();
-        // fd.append('file', vm.myPic);
-        // CrudService.createItem(fd, '/resources/file?userid=1')
-        //     .then(angular.bind(this, onUploadPicSuccess), angular.bind(this, onUploadPicError));
+        getAllImages(vm.userId);
+        if(!$scope.$$phase) $scope.$digest();
+        var fd = new FormData();
+        fd.append('file', vm.myPic);
+        CrudService.createItem(fd, '/resources/file?userid=1')
+            .then(angular.bind(this, onUploadPicSuccess), angular.bind(this, onUploadPicError));
     }
 
     vm.addComment = function addComment(commBody, imageId) {
@@ -87,8 +96,12 @@ function ProfileCtrl($rootScope, $scope, DataService, CrudService, fileUpload) {
         
     }
 
-    vm.shareWith = function shareWith(mySharer) {
+    vm.shareWith = function shareWith(mySharer, imageid) {
         console.log("share with", mySharer)
+        var sharingObject = {imageId: imageid, author: vm.userId, victim: mySharer};
+        console.log("sharingObject is: ", sharingObject)
+        CrudService.createItem(sharingObject, 'http://localhost:8080/sec/resources/file/shareimage')
+            .then(angular.bind(this, onSharePicSuccess), angular.bind(this, onSharePicError));
     }
 
     // vm.toggleComments = function toggleComments() {

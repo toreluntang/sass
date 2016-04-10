@@ -43,7 +43,7 @@ public class FileSQL {
 			PreparedStatement stmt = con.prepareStatement("INSERT INTO img (id_user, path, timestamp) VALUES (?,?,?)", Statement.RETURN_GENERATED_KEYS);
 			){
 			stmt.setLong(1, file.getUserId());
-			stmt.setString(2, file.getPath().toString());
+			stmt.setString(2, file.getPath().getFileName().toString());
 			stmt.setLong(3, file.getTimestamp().toEpochMilli());
 			
 			stmt.executeUpdate();
