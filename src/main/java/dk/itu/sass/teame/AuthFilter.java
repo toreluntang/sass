@@ -64,6 +64,7 @@ public class AuthFilter implements Filter {
 			}
 			
 			chain.doFilter(request, response);
+			return;
 			//res.getWriter().write("Wrong authentication");
 			//return;
 		}
