@@ -12,6 +12,8 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.gson.JsonObject;
+
 import net.jalg.hawkj.Algorithm;
 import net.jalg.hawkj.HawkContext;
 
@@ -25,6 +27,9 @@ public class AuthFilter implements Filter {
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
+
+		JsonObject jsonObject = new JsonObject();
+		String errKey = "error";
 		
 		if (request instanceof HttpServletRequest) {
 			HttpServletRequest r = (HttpServletRequest) request;
@@ -36,7 +41,8 @@ public class AuthFilter implements Filter {
 			try {
 				ts = Long.parseLong(r.getHeader("ts"));
 			}catch(Exception e) { 
-				res.getWriter().write("Wrong ts");
+				jsonObject.addProperty(errKey, "Wrong ts format");
+				res.getWriter().write(jsonObject.toString());
 				return;
 			}
 			String nonce = r.getHeader("nonce");
@@ -59,18 +65,17 @@ public class AuthFilter implements Filter {
 			 * in the Authorization header.
 			 */
 			if (!hawk.isValidMac(hmac)) {
-				res.getWriter().write("Nice try Script kiddie!");
+				jsonObject.addProperty(errKey, "Nice try Script kiddie!");
+				res.getWriter().write(jsonObject.toString());
 			    return;
 			}
 			
 			chain.doFilter(request, response);
 			return;
-			//res.getWriter().write("Wrong authentication");
-			//return;
 		}
 
-		//chain.doFilter(request, response);
-		response.getWriter().write("WTF happend there dude. To crazy - the club can't even handle me right naaaaw");
+		jsonObject.addProperty(errKey, "Only HttpServletRequest is allowed");
+		response.getWriter().write(jsonObject.toString());
 		return;
 	}
 
