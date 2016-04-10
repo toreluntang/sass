@@ -157,15 +157,15 @@ i {
 /*Upload start*/
 .upload-container{
 	padding: 20px;
-	margin: 60px 0 50px 0;
-	    border: 1px solid #dee0df;
+	margin: 60px 0 35px 0;
+	border: 1px solid #dee0df;
 	background-color: #fff;
 	position: relative;
 }
 /*Upload end*/
 /*Images start*/
 .images-container{
-	margin: 60px 0 50px 0;
+	margin: 0 0 50px 0;
 	position: relative;
 }
 .image {
@@ -322,4 +322,35 @@ i {
 
 #upload-form {
 	display: flex;
+}
+
+#upload-form label {
+	max-width: 80%;
+	font-size: 1.75rem;
+	font-weight: 700;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	cursor: pointer;
+	display: inline-block;
+	overflow: hidden;
+	padding: 0.625rem 1.25rem;
+	color: #FC645F;
+	border: 2px solid #FC645F;
+	height: 43px;
+	
+}
+#upload-form input {
+	width: 112px;
+	height: 42px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	cursor: pointer;
+
+}
+
+#upload-form .btn {
+	padding: 6px 15px;
+	height: 43px;
+	margin-left: 8px;
 }
