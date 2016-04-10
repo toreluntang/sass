@@ -1,8 +1,6 @@
 package dk.itu.sass.teame;
 
 import java.io.IOException;
-import java.net.URI;
-import java.util.Enumeration;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -15,11 +13,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.jalg.hawkj.Algorithm;
-import net.jalg.hawkj.AuthorizationHeader;
 import net.jalg.hawkj.HawkContext;
-import net.jalg.hawkj.HawkContext.HawkContextBuilder_B;
 
-@WebFilter(urlPatterns = "/*")
+@WebFilter(urlPatterns = "/protected/*")
 public class AuthFilter implements Filter {
 
 	@Override

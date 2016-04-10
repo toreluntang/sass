@@ -12,7 +12,7 @@ import javax.ws.rs.core.Response;
 
 import dk.itu.sass.teame.controller.CommentController;
 
-@Path("comment")
+@Path("protected/comment")
 @Produces(MediaType.APPLICATION_JSON)
 public class CommentResource {
 	
