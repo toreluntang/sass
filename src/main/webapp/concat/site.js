@@ -12,7 +12,7 @@ if (typeof console === 'undefined') {
 
 config.$inject = ['$stateProvider', '$urlRouterProvider'];
 AuthCtrl.$inject = ['CrudService'];
-ProfileCtrl.$inject = ['$rootScope', '$scope', 'DataService', 'CrudService'];
+ProfileCtrl.$inject = ['$rootScope', '$scope', 'DataService', 'CrudService', 'fileUpload'];
 CrudService.$inject = ['$q', '$http'];
 DataService.$inject = ['$q', '$http'];angular.element(document).ready(function (event) {
     console.log("angular is ready test");
@@ -28,6 +28,36 @@ DataService.$inject = ['$q', '$http'];angular.element(document).ready(function (
 
         .controller('AuthCtrl', AuthCtrl)
         .controller('ProfileCtrl', ProfileCtrl)
+        .directive('fileModel', ['$parse', function ($parse) {
+            return {
+                restrict: 'A',
+                link: function(scope, element, attrs) {
+                    var model = $parse(attrs.fileModel);
+                    var modelSetter = model.assign;
+                    
+                    element.bind('change', function(){
+                        console.log("UPLOAAAAAAD")
+                        scope.$apply(function(){
+                            modelSetter(scope, element[0].files[0]);
+                        });
+                    });
+                }
+            };
+        }])
+        .service('fileUpload', ['$http', function ($http) {
+            this.uploadFileToUrl = function(file, uploadUrl){
+                var fd = new FormData();
+                fd.append('file', file);
+                $http.post(uploadUrl, fd, {
+                    transformRequest: angular.identity,
+                    headers: {'Content-Type': undefined}
+                })
+                .success(function(){
+                })
+                .error(function(){
+                });
+            }
+        }])
         .factory('CrudService', CrudService)
         .factory('DataService', DataService)
    
@@ -89,14 +119,15 @@ function AuthCtrl(CrudService) {
 /**
  * @ngInject
  */
-function ProfileCtrl($rootScope, $scope, DataService, CrudService) {
+function ProfileCtrl($rootScope, $scope, DataService, CrudService, fileUpload) {
     vm = this;
 
     vm.profiletest = "Profile Test";
     vm.myPic = "";
-    vm.userId = '2';
+    vm.userId = '1';
     vm.imageId = '1';
     vm.mySharer = "Test mySharer";
+    vm.myFile = "";
     // vm.showComments = false;
 
 
@@ -152,8 +183,13 @@ function ProfileCtrl($rootScope, $scope, DataService, CrudService) {
         console.log("onLoadUsersError", error)
     }
 
-    vm.uploadPic = function uploadPic(myPic) {
-        console.log("uploadPic clicked!!!", vm.myPic, myPic)
+    vm.uploadPic = function uploadPic() {
+        console.log("uploadPic clicked!!!")
+        var file = vm.myFile;
+        console.log('file is ' );
+        console.dir(file);
+        var uploadUrl = "resources/file?userid=1";
+        fileUpload.uploadFileToUrl(file, uploadUrl);
         // var fd = new FormData();
         // fd.append('file', vm.myPic);
         // CrudService.createItem(fd, '/resources/file?userid=1')
@@ -167,6 +203,10 @@ function ProfileCtrl($rootScope, $scope, DataService, CrudService) {
         CrudService.createItem(commentData, 'http://localhost:8080/sec/resources/comment')
             .then(angular.bind(this, onCreateCommentSuccess), angular.bind(this, onCreateCommentError));
         
+    }
+
+    vm.shareWith = function shareWith(mySharer) {
+        console.log("share with", mySharer)
     }
 
     // vm.toggleComments = function toggleComments() {
