@@ -9,6 +9,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -157,11 +158,11 @@ public class FileResource {
 		return Response.status(Response.Status.ACCEPTED).entity(json).build();		
 	}
 	
-	@GET
+	@POST
 	@Path("shareimage")
-	public Response shareImage(@QueryParam("imageId") String imageId, 
-							   @QueryParam("author") String authorId, 
-							   @QueryParam("victim") String shareWithId){
+	public Response shareImage(@FormParam("imageId") String imageId, 
+							   @FormParam("author") String authorId, 
+							   @FormParam("victim") String shareWithId){
 		
 		JsonObject o = new JsonObject();
 		o.addProperty("author", authorId);

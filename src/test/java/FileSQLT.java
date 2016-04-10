@@ -10,17 +10,7 @@ public class FileSQLT {
 	
 	@Test
 	public void test(){
-		AccountSQL a = new AccountSQL();
 		
-		List<Account> al = a.getAllAccounts();
-		
-		for(Account aa : al)
-			System.out.println(aa.getUsername());
-		
-		AccountController ac = new AccountController();
-		
-		String s = ac.getAllusers();
-		System.out.println("se her " + s);
 
 	}
 
