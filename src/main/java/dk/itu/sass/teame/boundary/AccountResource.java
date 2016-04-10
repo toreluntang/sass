@@ -14,7 +14,11 @@ import com.google.gson.JsonObject;
 
 import dk.itu.sass.teame.controller.AccountController;
 import dk.itu.sass.teame.entity.Account;
+import net.jalg.hawkj.Algorithm;
 import net.jalg.hawkj.AuthorizationHeader;
+import net.jalg.hawkj.HawkContext;
+import net.jalg.hawkj.HawkContext.HawkContextBuilder;
+import net.jalg.hawkj.HawkContext.HawkContextBuilder_B;
 
 @Path("account")
 @Produces(MediaType.APPLICATION_JSON)
@@ -58,13 +62,30 @@ public class AccountResource {
 		if(account==null)
 			return Response.status(Status.UNAUTHORIZED).build();
 
-		AuthorizationHeader header = AuthorizationHeader.authorization().build();
+		String method = "POST";
+		String path = "login";
+		String host = "localhost";
+		int port = 8080;
+		long ts = 123;
+		String nonce = "piggybank";
+		String id = account.getAccountid()+""; //Userid???
+		String key = account.getPassword(); //Password?? SOMETHING ELSE
+		Algorithm algorithm = Algorithm.SHA_256;
+		String hash = HawkContextBuilder.generateHash(algorithm, "what body".getBytes(), "text/plain");
+		String ext = "no one noes";
+		String app = "app wtf";
+		String dlg = "doed bjorn";
+		long offset = 4l;
+		
+		//new HawkContext(method,path,host,port,ts,nonce,id,key,algorithm,hash,ext,app,dlg,offset);
+		
+		HawkContextBuilder_B b = HawkContext.request(method, path, host, port);
+		HawkContext context = b.credentials(id, key, algorithm).build();
+		AuthorizationHeader header = context.createAuthorizationHeader();
 		
 		json.addProperty("accountid", account.getAccountid());
 		json.addProperty("username", account.getUsername());
 		json.addProperty("email", account.getEmail());
-		json.addProperty("password", account.getPassword());
-		json.addProperty("salt", account.getSalt());
 		
 		JsonObject authHeader = new JsonObject();
 		authHeader.addProperty("hash", header.getHash());

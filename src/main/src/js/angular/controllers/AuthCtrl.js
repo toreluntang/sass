@@ -9,15 +9,24 @@ function AuthCtrl(CrudService) {
 
     vm.login = function login(username, password) {
         console.log("login clicked!!!", username, password)
-        if(username != *)
-        var authObj = {username: username, password: password};
-        // CrudService.createItem(authObj, 'http://localhost:8080/sec/resources/account/login')
-        //     .then(angular.bind(this, onLoginSuccess), angular.bind(this, onLoginError));
+        if(username != "" && password != "") {
+            var authObj = {username: username, password: password};
+            var loginRequestPath = 'http://localhost:8080/sec/resources/account/login';
+            CrudService.createItemAuth(authObj, loginRequestPath)
+                .then(angular.bind(this, onLoginSuccess), angular.bind(this, onLoginError));
+            
+        } else {
+            console.log("username and pass are required")
+        }
 
     }
 
-    function onLoginSuccess() {
-        console.log("onLoginSuccess")
+    function onLoginSuccess(data) {
+        console.log("onLoginSuccess", data)
+
+        var newkgjsh = {"accountid":data.accountid,"Auth":data.Auth};
+
+        localStorage.setItem('kgjsh', JSON.stringify(newkgjsh));
     }
     function onLoginError(error) {
         console.log("onLoginError", error)

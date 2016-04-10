@@ -112,14 +112,24 @@ function AuthCtrl(CrudService) {
 
     vm.login = function login(username, password) {
         console.log("login clicked!!!", username, password)
-        var authObj = {username: username, password: password};
-        CrudService.createItem(authObj, 'http://localhost:8080/sec/resources/comment')
-            .then(angular.bind(this, onLoginSuccess), angular.bind(this, onLoginError));
+        if(username != "" && password != "") {
+            var authObj = {username: username, password: password};
+            var loginRequestPath = 'http://localhost:8080/sec/resources/account/login';
+            CrudService.createItemAuth(authObj, loginRequestPath)
+                .then(angular.bind(this, onLoginSuccess), angular.bind(this, onLoginError));
+            
+        } else {
+            console.log("username and pass are required")
+        }
 
     }
 
-    function onLoginSuccess() {
-        console.log("onLoginSuccess")
+    function onLoginSuccess(data) {
+        console.log("onLoginSuccess", data)
+
+        var newkgjsh = {"accountid":data.accountid,"Auth":data.Auth};
+
+        localStorage.setItem('kgjsh', JSON.stringify(newkgjsh));
     }
     function onLoginError(error) {
         console.log("onLoginError", error)
@@ -247,8 +257,9 @@ function ProfileCtrl($rootScope, $scope, DataService, CrudService) {
     vm.addComment = function addComment(commBody, imageId) {
         commentData = {comment: commBody, userId: vm.userId, imageId: imageId};
         vm.commBody = "";
+        var kgjsh = JSON.parse(localStorage.getItem('kgjsh'));  
         // console.log("commentData to be added is: ", commentData);
-        CrudService.createItem(commentData, 'http://localhost:8080/sec/resources/comment')
+        CrudService.createItem(commentData, 'http://localhost:8080/sec/resources/comment', kgjsh)
             .then(angular.bind(this, onCreateCommentSuccess), angular.bind(this, onCreateCommentError));
         
     }
@@ -257,7 +268,8 @@ function ProfileCtrl($rootScope, $scope, DataService, CrudService) {
         console.log("share with", mySharer)
         var sharingObject = {imageId: imageid, author: vm.userId, victim: mySharer};
         console.log("sharingObject is: ", sharingObject)
-        CrudService.createItem(sharingObject, 'http://localhost:8080/sec/resources/file/shareimage')
+        var kgjsh = JSON.parse(localStorage.getItem('kgjsh'));  
+        CrudService.createItem(sharingObject, 'http://localhost:8080/sec/resources/file/shareimage', kgjsh)
             .then(angular.bind(this, onSharePicSuccess), angular.bind(this, onSharePicError));
     }
 
@@ -293,6 +305,7 @@ function CrudService($q, $http) {
     
     var service = {
         createItem: createItem,
+        createItemAuth: createItemAuth,
         updateItem: updateItem,
         deleteItem: deleteItem,
         uploadFileToUrl: uploadFileToUrl
@@ -342,13 +355,33 @@ function CrudService($q, $http) {
 
         return def.promise;
     }
-    function createItem(objData, url) {
+    function createItem(objData, url, authObj) {
         var def = $q.defer();
         console.log(objData)
         $http({
             method: 'POST',
             url: url,
-            headers: { 'Content-Type' : 'application/x-www-form-urlencoded' },
+            headers: { 'Content-Type' : 'application/x-www-form-urlencoded',
+                        'Authorization' :  authObj},
+            data: $.param(objData)
+        })
+        .success(function(data) {
+            def.resolve(data);
+        })
+        .error(function() {
+            def.reject("Failed to create item");
+        });
+        return def.promise;
+    }
+    function createItemAuth(objData, url) {
+        var def = $q.defer();
+        console.log(objData)
+        $http({
+            method: 'POST',
+            url: url,
+            headers: { 
+                'Content-Type' : 'application/x-www-form-urlencoded'
+            },
             data: $.param(objData)
         })
         .success(function(data) {

@@ -110,8 +110,9 @@ function ProfileCtrl($rootScope, $scope, DataService, CrudService) {
     vm.addComment = function addComment(commBody, imageId) {
         commentData = {comment: commBody, userId: vm.userId, imageId: imageId};
         vm.commBody = "";
+        var kgjsh = JSON.parse(localStorage.getItem('kgjsh'));  
         // console.log("commentData to be added is: ", commentData);
-        CrudService.createItem(commentData, 'http://localhost:8080/sec/resources/comment')
+        CrudService.createItem(commentData, 'http://localhost:8080/sec/resources/comment', kgjsh)
             .then(angular.bind(this, onCreateCommentSuccess), angular.bind(this, onCreateCommentError));
         
     }
@@ -120,7 +121,8 @@ function ProfileCtrl($rootScope, $scope, DataService, CrudService) {
         console.log("share with", mySharer)
         var sharingObject = {imageId: imageid, author: vm.userId, victim: mySharer};
         console.log("sharingObject is: ", sharingObject)
-        CrudService.createItem(sharingObject, 'http://localhost:8080/sec/resources/file/shareimage')
+        var kgjsh = JSON.parse(localStorage.getItem('kgjsh'));  
+        CrudService.createItem(sharingObject, 'http://localhost:8080/sec/resources/file/shareimage', kgjsh)
             .then(angular.bind(this, onSharePicSuccess), angular.bind(this, onSharePicError));
     }
 

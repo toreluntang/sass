@@ -6,6 +6,7 @@ function CrudService($q, $http) {
     
     var service = {
         createItem: createItem,
+        createItemAuth: createItemAuth,
         updateItem: updateItem,
         deleteItem: deleteItem,
         uploadFileToUrl: uploadFileToUrl
@@ -55,13 +56,33 @@ function CrudService($q, $http) {
 
         return def.promise;
     }
-    function createItem(objData, url) {
+    function createItem(objData, url, authObj) {
         var def = $q.defer();
         console.log(objData)
         $http({
             method: 'POST',
             url: url,
-            headers: { 'Content-Type' : 'application/x-www-form-urlencoded' },
+            headers: { 'Content-Type' : 'application/x-www-form-urlencoded',
+                        'Authorization' :  authObj},
+            data: $.param(objData)
+        })
+        .success(function(data) {
+            def.resolve(data);
+        })
+        .error(function() {
+            def.reject("Failed to create item");
+        });
+        return def.promise;
+    }
+    function createItemAuth(objData, url) {
+        var def = $q.defer();
+        console.log(objData)
+        $http({
+            method: 'POST',
+            url: url,
+            headers: { 
+                'Content-Type' : 'application/x-www-form-urlencoded'
+            },
             data: $.param(objData)
         })
         .success(function(data) {
