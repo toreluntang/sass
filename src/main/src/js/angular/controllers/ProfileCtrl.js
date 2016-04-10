@@ -19,7 +19,8 @@ function ProfileCtrl($rootScope, $scope, DataService, CrudService) {
         _(imagesData).forEach(function(n) { 
             console.log(n)
             n.showComments = false;
-            DataService.loadStuff('http://localhost:8080/sec/resources/comment?imageId=' + n.imageid)
+            var kgjsh = JSON.parse(localStorage.getItem('kgjsh'));  
+            DataService.loadStuff('http://localhost:8080/sec/resources/protected/comment?imageId=' + n.imageid, kgjsh)
             .then(angular.bind(this, onLoadImageCommentsSuccess), angular.bind(this, onLoadImageCommentsError));       
 
             function onLoadImageCommentsSuccess(data) {
@@ -112,7 +113,7 @@ function ProfileCtrl($rootScope, $scope, DataService, CrudService) {
         vm.commBody = "";
         var kgjsh = JSON.parse(localStorage.getItem('kgjsh'));  
         // console.log("commentData to be added is: ", commentData);
-        CrudService.createItem(commentData, 'http://localhost:8080/sec/resources/comment', kgjsh)
+        CrudService.createItem(commentData, 'http://localhost:8080/sec/resources/protected/comment', kgjsh)
             .then(angular.bind(this, onCreateCommentSuccess), angular.bind(this, onCreateCommentError));
         
     }
@@ -138,11 +139,13 @@ function ProfileCtrl($rootScope, $scope, DataService, CrudService) {
     
 
     function getAllImages(userId) {
-        DataService.loadStuff('http://localhost:8080/sec/resources/file/getallimages?id='+userId)
+        var kgjsh = JSON.parse(localStorage.getItem('kgjsh'));  
+        DataService.loadStuff('http://localhost:8080/sec/resources/file/getallimages?id='+userId, kgjsh)
             .then(angular.bind(this, onLoadImagesSuccess), angular.bind(this, onLoadImagesError));
     }
     function getAllUsers() {
-        DataService.loadStuff('http://localhost:8080/sec/resources/account/getallusers')
+        var kgjsh = JSON.parse(localStorage.getItem('kgjsh'));  
+        DataService.loadStuff('http://localhost:8080/sec/resources/account/getallusers', kgjsh)
             .then(angular.bind(this, onLoadUsersSuccess), angular.bind(this, onLoadUsersError));
     }
 
