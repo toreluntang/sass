@@ -86,8 +86,6 @@ public class AccountResource {
 		json.addProperty("accountid", account.getAccountid());
 		json.addProperty("username", account.getUsername());
 		json.addProperty("email", account.getEmail());
-		json.addProperty("password", account.getPassword());
-		json.addProperty("salt", account.getSalt());
 		
 		JsonObject authHeader = new JsonObject();
 		authHeader.addProperty("hash", header.getHash());

@@ -51,11 +51,22 @@ public class AccountController {
 
 	public Account login(String username, String password) {
 		
+		
 		Account acc = new Account();
 		acc.setUsername(username);
-		acc.setPassword(password);
 		
-		return accountSQL.checkLogin(acc);
+		acc = accountSQL.checkLogin(acc);
+		
+		try {
+			if(PasswordHash.validatePassword(password, acc.getPassword()))
+				return acc;
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		} catch (InvalidKeySpecException e) {
+			e.printStackTrace();
+		}
+			
+		return null;
 	}
 
 	public String getAllusers() {

@@ -71,13 +71,12 @@ public class AccountSQL {
 			try (Connection con = DriverManager.getConnection("jdbc:postgresql://horton.elephantsql.com:5432/hmdgzyax", "hmdgzyax", "8ETS72wV53uGfPIs-RCJy_tolfPs481n")) {
 
 				PreparedStatement pre = null;
-				String stm = "insert into account(username, password, salt, email) VALUES(?, ?, ?, ?)";
+				String stm = "insert into account(username, password, email) VALUES(?, ?, ?)";
 				pre = con.prepareStatement(stm,Statement.RETURN_GENERATED_KEYS);
 
 				pre.setString(1, newAccount.getUsername());
 				pre.setString(2, newAccount.getPassword());
-				pre.setString(3, newAccount.getSalt());
-				pre.setString(4, newAccount.getEmail());
+				pre.setString(3, newAccount.getEmail());
 				pre.executeUpdate();
 				
 				ResultSet rs = pre.getGeneratedKeys();
@@ -101,17 +100,17 @@ public class AccountSQL {
 		
 		try (
 			Connection con = DriverManager.getConnection("jdbc:postgresql://horton.elephantsql.com:5432/hmdgzyax", "hmdgzyax", "8ETS72wV53uGfPIs-RCJy_tolfPs481n");
-			PreparedStatement stmt = con.prepareStatement("SELECT accountid, username, password, email FROM account WHERE username=? AND password=?");
+			PreparedStatement stmt = con.prepareStatement("SELECT accountid, username, password, email FROM account WHERE username=?");
 		) {
 			
 			
 			System.out.println("2");
 			stmt.setString(1, acc.getUsername());
-			stmt.setString(2, acc.getPassword());
 			
 			ResultSet rs = stmt.executeQuery();
 			if(rs.next()) {
 				acc.setAccountid(rs.getLong("accountid"));
+				acc.setPassword(rs.getString("password"));
 				acc.setEmail(rs.getString("email"));
 				System.out.println("3");
 				return acc;

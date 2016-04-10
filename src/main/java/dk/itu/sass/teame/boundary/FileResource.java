@@ -39,15 +39,13 @@ import net.jalg.hawkj.HawkContext.HawkContextBuilder_B;
 public class FileResource {
 
 	// private final String FILE_LOCATION = "";
-	private final String FILE_LOCATION = "\\Irina\\ITU\\Sem_1\\Security\\SASS\\sass-fakestagram\\src\\main\\webapp\\assets";
+	private final String FILE_LOCATION = "/Users/Alexander/Code/Servers/wildfly-10-sass/fakestagram/images/";
 
 	@Inject
 	FileController fc;
 
 	@GET
 	public Response getFile(@QueryParam("id") String id, @HeaderParam("Server-Authorization") String serverAuth) {
-		
-		
 		
 		AuthorizationHeader header = null;
 		try {
