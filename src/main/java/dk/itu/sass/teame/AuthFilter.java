@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import net.jalg.hawkj.Algorithm;
 import net.jalg.hawkj.HawkContext;
 
-@WebFilter(urlPatterns = "/protected/*")
+@WebFilter(urlPatterns = "/resources/protected/*")
 public class AuthFilter implements Filter {
 
 	@Override
