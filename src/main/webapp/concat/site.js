@@ -202,7 +202,7 @@ function ProfileCtrl($rootScope, $scope, $state, DataService, CrudService) {
             console.log(n)
             n.showComments = false;
             var LS = JSON.parse(localStorage.getItem('LS'));  
-            DataService.loadStuff('http://localhost:8080/sec/resources/protected/comment?imageId=' + n.imageid, LS)
+            DataService.loadStuff('http://localhost:8080/sec/resources/protected/comment?imageId=' + n.imageid)
             .then(angular.bind(this, onLoadImageCommentsSuccess), angular.bind(this, onLoadImageCommentsError));       
 
             function onLoadImageCommentsSuccess(data) {
@@ -276,7 +276,7 @@ function ProfileCtrl($rootScope, $scope, $state, DataService, CrudService) {
         var file = vm.myFile;
         console.log('file is ' );
         console.dir(file);
-        var uploadUrl = "resources/file?userid="+vm.userId;
+        var uploadUrl = "resources/protected/file?userid="+vm.userId;
         // Upload file to url start 
         CrudService.uploadFileToUrl(file, uploadUrl)
             .then(angular.bind(this, onUploadSuccess), angular.bind(this, onUploadError));
@@ -332,12 +332,12 @@ function ProfileCtrl($rootScope, $scope, $state, DataService, CrudService) {
 
     function getAllImages(userId) {
         var LS = JSON.parse(localStorage.getItem('LS'));  
-        DataService.loadStuff('http://localhost:8080/sec/resources/protected/file/getallimages?id='+userId, LS)
+        DataService.loadStuff('http://localhost:8080/sec/resources/protected/file/getallimages?id='+userId)
             .then(angular.bind(this, onLoadImagesSuccess), angular.bind(this, onLoadImagesError));
     }
     function getAllUsers() {
         var LS = JSON.parse(localStorage.getItem('LS'));  
-        DataService.loadStuff('http://localhost:8080/sec/resources/protected/account/getallusers', LS)
+        DataService.loadStuff('http://localhost:8080/sec/resources/protected/account/getallusers')
             .then(angular.bind(this, onLoadUsersSuccess), angular.bind(this, onLoadUsersError));
     }
 
@@ -383,20 +383,20 @@ function CrudService($q, $http) {
     return service;
 
     function createAuthorizationHeader(uploadUrl, method) {
-        var myLS = JSON.parse(localStorage.getItem('myLS')); 
+        var myLS = JSON.parse(localStorage.getItem('LS')); 
         var credentials = {
             id: myLS.accountId,
             algorithm: 'sha256',
             key: myLS.keyid
         };
         var options = {
-            credentials: credentials,
-            ext: 'XRequestHeaderToProtect:secret'
+            credentials: credentials
         };
         var autourl = window.location.href
         var arr = autourl.split('/');
         autourl = arr[0] + '//' + arr[2];
-        var header = hawk.client.header(autourl + uploadUrl, method, options);
+        var header = hawk.client.header(uploadUrl, method, options);
+        console.log("uploadUrl: "+uploadUrl)
         if (header.err != null) {
             alert(header.err);
             return null;
@@ -408,12 +408,13 @@ function CrudService($q, $http) {
     // implementation
     function uploadFileToUrl(file, uploadUrl) {
         var def = $q.defer();
-
+        var header = createAuthorizationHeader(uploadUrl,'POST');
         var fd = new FormData();
         fd.append('file', file);
         $http.post(uploadUrl, fd, {
             transformRequest: angular.identity,
-            headers: {'Content-Type': undefined}
+            headers: {'Content-Type': undefined,
+                        'Authorization': header.field}
         })
         .success(function(){
             console.log("SUCCESS : uploadFileToUrl")
@@ -428,7 +429,7 @@ function CrudService($q, $http) {
     }
     function createItem(objData, url, authObj) {
         var def = $q.defer();
-        console.log(objData)
+        console.log(objData);
         var header = createAuthorizationHeader(url,'POST');
         // var ts = "";
         // var nonce = "";
@@ -462,7 +463,7 @@ function CrudService($q, $http) {
     }
     function createItemAuth(objData, url) {
         var def = $q.defer();
-        console.log(objData)
+        console.log(objData+' '+url);
         $http({
             method: 'POST',
             url: url,
@@ -505,8 +506,7 @@ function CrudService($q, $http) {
         $http.post(url, objData, {
             transformRequest: angular.identity,
             headers: {
-                'Content-Type': undefined,
-                'XRequestHeaderToProtect': 'secret',
+                'Content-Type': 'application/x-www-form-urlencoded',
                 'Authorization': header.field
             }
         })
@@ -542,16 +542,42 @@ function DataService($q, $http) {
        
     };
     return service;
+    function createAuthorizationHeader(uploadUrl, method) {
+        console.log("### createAuthorizationHeader #####")
+        var myLS = JSON.parse(localStorage.getItem('LS')); 
+        console.log("### got myLS #####", myLS)
+        var credentials = {
+            id: myLS.accountId,
+            algorithm: 'sha256',
+            key: myLS.keyid
+        };
+        var options = {
+            credentials: credentials
+        };
+        var autourl = window.location.href
+        var arr = autourl.split('/');
+        autourl = arr[0] + '//' + arr[2];
+        var header = hawk.client.header(uploadUrl, method, options);
+        console.log("uploadUrl: "+uploadUrl)
+        if (header.err != null) {
+            alert(header.err);
+            return null;
+        }
+        else
+            return header;
+    }
 
     // implementation
-    function loadStuff(url, authObj) {
+    function loadStuff(url) {
         var def = $q.defer();
+        var header = createAuthorizationHeader(url,'GET');
 
         $http({
             method: 'GET',
             url: url,
             headers: { 
-                'Content-Type' : 'application/x-www-form-urlencoded'
+                'Content-Type' : 'application/x-www-form-urlencoded',
+                'Authorization': header.field
                 // 'ts' :  authObj.Auth.ts,
                 // 'nonce' :  authObj.Auth.nonce,
                 // 'mac' :  authObj.Auth.mac,

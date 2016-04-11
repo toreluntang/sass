@@ -24,7 +24,7 @@ function ProfileCtrl($rootScope, $scope, $state, DataService, CrudService) {
             console.log(n)
             n.showComments = false;
             var LS = JSON.parse(localStorage.getItem('LS'));  
-            DataService.loadStuff('http://localhost:8080/sec/resources/protected/comment?imageId=' + n.imageid, LS)
+            DataService.loadStuff('http://localhost:8080/sec/resources/protected/comment?imageId=' + n.imageid)
             .then(angular.bind(this, onLoadImageCommentsSuccess), angular.bind(this, onLoadImageCommentsError));       
 
             function onLoadImageCommentsSuccess(data) {
@@ -98,7 +98,7 @@ function ProfileCtrl($rootScope, $scope, $state, DataService, CrudService) {
         var file = vm.myFile;
         console.log('file is ' );
         console.dir(file);
-        var uploadUrl = "resources/file?userid="+vm.userId;
+        var uploadUrl = "resources/protected/file?userid="+vm.userId;
         // Upload file to url start 
         CrudService.uploadFileToUrl(file, uploadUrl)
             .then(angular.bind(this, onUploadSuccess), angular.bind(this, onUploadError));
@@ -154,12 +154,12 @@ function ProfileCtrl($rootScope, $scope, $state, DataService, CrudService) {
 
     function getAllImages(userId) {
         var LS = JSON.parse(localStorage.getItem('LS'));  
-        DataService.loadStuff('http://localhost:8080/sec/resources/protected/file/getallimages?id='+userId, LS)
+        DataService.loadStuff('http://localhost:8080/sec/resources/protected/file/getallimages?id='+userId)
             .then(angular.bind(this, onLoadImagesSuccess), angular.bind(this, onLoadImagesError));
     }
     function getAllUsers() {
         var LS = JSON.parse(localStorage.getItem('LS'));  
-        DataService.loadStuff('http://localhost:8080/sec/resources/protected/account/getallusers', LS)
+        DataService.loadStuff('http://localhost:8080/sec/resources/protected/account/getallusers')
             .then(angular.bind(this, onLoadUsersSuccess), angular.bind(this, onLoadUsersError));
     }
 
