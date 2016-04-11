@@ -11,11 +11,12 @@ public class Account {
 	public Account() {
 	}
 	
-	public Account(String username, String password, String salt, String email) {
+	public Account(String username, String password, String salt, String email, String keyid) {
 		this.username = username;
 		this.password = password;
 		this.salt = salt;
 		this.email = email;
+		this.keyId = keyid;
 	}
 	
 	public Account(int accountid, String username, String password, String salt, String email) {

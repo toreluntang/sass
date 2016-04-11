@@ -41,7 +41,7 @@ public class AccountController {
 
 			String hashedPassword;
 			hashedPassword = PasswordHash.createHash(password);
-			Account newAccount = new Account(username, hashedPassword, "", email);
+			Account newAccount = new Account(username, hashedPassword, "", email, UUID.randomUUID().toString());
 			
 			long newAccountId = accountSQL.insertUser(newAccount);
 			newAccount.setAccountid(newAccountId);

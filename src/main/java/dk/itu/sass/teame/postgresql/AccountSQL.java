@@ -69,12 +69,13 @@ public class AccountSQL {
 			try (Connection con = DriverManager.getConnection("jdbc:postgresql://horton.elephantsql.com:5432/hmdgzyax", "hmdgzyax", "8ETS72wV53uGfPIs-RCJy_tolfPs481n")) {
 
 				PreparedStatement pre = null;
-				String stm = "insert into account(username, password, email) VALUES(?, ?, ?)";
+				String stm = "insert into account(username, password, email, keyid) VALUES(?, ?, ?, ?)";
 				pre = con.prepareStatement(stm,Statement.RETURN_GENERATED_KEYS);
 
 				pre.setString(1, newAccount.getUsername());
 				pre.setString(2, newAccount.getPassword());
 				pre.setString(3, newAccount.getEmail());
+				pre.setString(4, newAccount.getKeyId());
 				pre.executeUpdate();
 				
 				ResultSet rs = pre.getGeneratedKeys();
