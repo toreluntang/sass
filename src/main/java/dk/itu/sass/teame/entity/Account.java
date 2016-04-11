@@ -6,6 +6,7 @@ public class Account {
 	private String password;
 	private String salt;
 	private String email;
+	private String keyId;
 	
 	public Account() {
 	}
@@ -64,5 +65,15 @@ public class Account {
 	public void setEmail(String email) {
 		this.email = email;
 	}
+
+	public String getKeyId() {
+		return keyId;
+	}
+
+	public void setKeyId(String keyId) {
+		this.keyId = keyId;
+	}
+	
+	
 	
 }

@@ -11,7 +11,6 @@ import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -29,11 +28,6 @@ import com.google.gson.JsonObject;
 
 import dk.itu.sass.teame.controller.FileController;
 import dk.itu.sass.teame.entity.File;
-import net.jalg.hawkj.Algorithm;
-import net.jalg.hawkj.AuthHeaderParsingException;
-import net.jalg.hawkj.AuthorizationHeader;
-import net.jalg.hawkj.HawkContext;
-import net.jalg.hawkj.HawkContext.HawkContextBuilder_B;
 
 @Path("file")
 public class FileResource {
@@ -47,40 +41,7 @@ public class FileResource {
 	FileController fc;
 
 	@GET
-	public Response getFile(@QueryParam("id") String id, @HeaderParam("Server-Authorization") String serverAuth) {
-		
-		AuthorizationHeader header = null;
-		try {
-			AuthorizationHeader header2 = AuthorizationHeader.authorization("Hawk");
-			
-			String method = "POST";
-			String path = "login";
-			String host = "localhost";
-			int port = 8080;
-			
-			String userid = "1";
-			String key = "admin";
-			Algorithm algorithm = Algorithm.SHA_256;
-			
-			HawkContext hawk = HawkContext.request("POST", "login",
-			                                       "localhost", 8080)
-			                     .credentials(userid, "tis", algorithm)
-			                     .tsAndNonce(1460203791L, "A0612D128F09")
-			                     .hash(null).build();
-			
-			if(hawk.isValidMac(serverAuth)) {
-				System.out.println("VALID");
-			} else {
-				System.out.println("NOT VALID");
-			}
-			
-			header = hawk.createAuthorizationHeader();
-
-			
-			
-		} catch (AuthHeaderParsingException e1) {
-			e1.printStackTrace();
-		}	
+	public Response getFile(@QueryParam("id") String id) {
 		
 		JsonObject json = new JsonObject();
 		
@@ -98,13 +59,6 @@ public class FileResource {
 			Response.status(Status.INTERNAL_SERVER_ERROR).build();
 		
 		JsonObject jsonResponse = fileToJsonObject(file);
-		jsonResponse.addProperty("auth", serverAuth);
-		jsonResponse.addProperty("id", header.getId());
-		jsonResponse.addProperty("dlg", header.getDlg());
-		jsonResponse.addProperty("hash", header.getHash());
-		jsonResponse.addProperty("mac", header.getMac());
-		jsonResponse.addProperty("ts", header.getTs());
-
 		return Response.ok().entity(jsonResponse.toString()).build();
 	}
 
