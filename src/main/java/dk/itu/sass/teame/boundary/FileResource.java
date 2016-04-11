@@ -31,7 +31,7 @@ import dk.itu.sass.teame.controller.FileController;
 import dk.itu.sass.teame.entity.Account;
 import dk.itu.sass.teame.entity.File;
 
-@Path("file")
+@Path("protected/file")
 public class FileResource {
 
 	// private final String FILE_LOCATION = "";

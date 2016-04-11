@@ -23,7 +23,7 @@ public class AuthProcessor {
 			String host = requestContext.getServerName();
 			int port = requestContext.getServerPort();
 			HawkContext hawk = HawkContext.request(requestContext.getMethod(), path, host, port)
-			                     .credentials(""+accountId, acc.getPassword(), Algorithm.SHA_256)
+			                     .credentials(""+acc.getAccountid(), acc.getKeyId(), Algorithm.SHA_256)
 			                     .tsAndNonce(authHeader.getTs(), authHeader.getNonce())
 			                     .hash(null).build();
 			if (hawk.isValidMac(authHeader.getMac())) {

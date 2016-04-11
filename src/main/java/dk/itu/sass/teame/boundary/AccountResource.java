@@ -15,7 +15,7 @@ import com.google.gson.JsonObject;
 import dk.itu.sass.teame.controller.AccountController;
 import dk.itu.sass.teame.entity.Account;
 
-@Path("account")
+@Path("")
 @Produces(MediaType.APPLICATION_JSON)
 public class AccountResource {
 
@@ -24,7 +24,7 @@ public class AccountResource {
 	// private AccountController accController = new AccountController();
 
 	@POST
-	@Path("create")
+	@Path("account/create")
 	public Response createAccount(@FormParam("username") String username, @FormParam("password") String password,
 			@FormParam("email") String email) {
 
@@ -49,7 +49,7 @@ public class AccountResource {
 	}
 
 	@POST
-	@Path("login")
+	@Path("account/login")
 	public Response login(@FormParam("username") String username, @FormParam("password") String password) {
 
 		JsonObject json = new JsonObject();
@@ -68,7 +68,7 @@ public class AccountResource {
 	}
 
 	@GET
-	@Path("getallusers")
+	@Path("protected/account/getallusers")
 	public Response getAllUsers() {
 		// Something with authentications
 

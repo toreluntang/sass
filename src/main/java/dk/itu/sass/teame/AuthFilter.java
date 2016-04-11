@@ -33,15 +33,19 @@ public class AuthFilter implements Filter {
 
 		JsonObject jsonObject = new JsonObject();
 		String errKey = "error";
-		System.out.println("in auth filter");
 		if (request instanceof HttpServletRequest) {
 			HttpServletRequest r = (HttpServletRequest) request;
 			HttpServletResponse res = (HttpServletResponse) response;
 			
 			boolean isAuth = AuthProcessor.Authenticate(r);
-			
-			chain.doFilter(request, response);
-			return;
+			if (isAuth) {
+				chain.doFilter(request, response);
+				return;
+			}
+			else {
+				res.sendError(401);
+			    return;
+			}
 		}
 
 		jsonObject.addProperty(errKey, "Only HttpServletRequest is allowed");

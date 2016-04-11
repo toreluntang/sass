@@ -14,10 +14,17 @@ function CrudService($q, $http) {
     return service;
 
     function createAuthorizationHeader(uploadUrl, method) {
+        var myLS = JSON.parse(localStorage.getItem('myLS')); 
         var credentials = {
+<<<<<<< HEAD
             id: 'admin2',
             algorithm: 'sha256',
             key: 'admin2'
+=======
+            id: myLS.accountId,
+            algorithm: 'sha256',
+            key: myLS.keyid
+>>>>>>> e1a67b80df6d161ff929796c5284a2b63c2db011
         };
         var options = {
             credentials: credentials
@@ -78,7 +85,7 @@ function CrudService($q, $http) {
                 // 'mac' :  mac,
                 // 'accountId' : accountid,
                 // 'XRequestHeaderToProtect': 'secret',
-                // 'Authorization': header.field
+                'Authorization': header.field
             },
             data: $.param(objData)
         })
