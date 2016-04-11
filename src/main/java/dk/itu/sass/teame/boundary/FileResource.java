@@ -155,8 +155,7 @@ public class FileResource {
 	@POST
 	@Path("shareimage")
 	public Response shareImage(@FormParam("imageId") String imageId, @FormParam("author") String authorId,
-			@FormParam("victim") String shareWithId,
-			@Context ContainerRequestContext requestContext) {
+			@FormParam("victim") String shareWithId) {
 
 		JsonObject o = new JsonObject();
 		o.addProperty("author", authorId);
