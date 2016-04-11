@@ -379,13 +379,13 @@ function CrudService($q, $http) {
             key: myLS.keyid
         };
         var options = {
-            credentials: credentials,
-            ext: 'XRequestHeaderToProtect:secret'
+            credentials: credentials
         };
         var autourl = window.location.href
         var arr = autourl.split('/');
         autourl = arr[0] + '//' + arr[2];
-        var header = hawk.client.header(autourl + uploadUrl, method, options);
+        var header = hawk.client.header(uploadUrl, method, options);
+        console.log("uploadUrl: "+uploadUrl)
         if (header.err != null) {
             alert(header.err);
             return null;
@@ -417,7 +417,7 @@ function CrudService($q, $http) {
     }
     function createItem(objData, url, authObj) {
         var def = $q.defer();
-        console.log(objData)
+        console.log(objData);
         var header = createAuthorizationHeader(url,'POST');
         // var ts = "";
         // var nonce = "";
@@ -451,12 +451,14 @@ function CrudService($q, $http) {
     }
     function createItemAuth(objData, url) {
         var def = $q.defer();
-        console.log(objData)
+        console.log(objData+' '+url);
+        var header = createAuthorizationHeader(url,'POST');
         $http({
             method: 'POST',
             url: url,
             headers: { 
-                'Content-Type' : 'application/x-www-form-urlencoded'
+                'Content-Type' : 'application/x-www-form-urlencoded',
+                'Authorization': header.field
             },
             data: $.param(objData)
         })
