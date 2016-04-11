@@ -28,18 +28,10 @@ public class CommentResource {
 	public Response addComment(
 			@FormParam("comment") String comment, 
 			@FormParam("userId")  long userId,
-			@FormParam("imageId") long imageId,
-			@Context ContainerRequestContext requestContext
-			){
+			@FormParam("imageId") long imageId){
 		Account user = AccountController.getAccountById(userId);
-		if (AuthProcessor.Authenticate(requestContext, user.getPassword(), user.getUsername())) {
-			
 			long c = commentController.addComment(comment, userId, imageId);
 			return Response.status(Response.Status.ACCEPTED).entity(c).build();
-		}
-		else {
-			return Response.status(Response.Status.UNAUTHORIZED).build();
-		}
 	}
 
 	@GET

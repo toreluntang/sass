@@ -2,22 +2,22 @@ package dk.itu.sass.teame.controller;
 
 import java.net.URI;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.HttpHeaders;
 
 import net.jalg.hawkj.Algorithm;
-import net.jalg.hawkj.AuthHeaderParsingException;
 import net.jalg.hawkj.AuthorizationHeader;
 import net.jalg.hawkj.HawkContext;
 
 public class AuthProcessor {
 
-	public static boolean Authenticate(ContainerRequestContext requestContext, String password,String userId) {
+	public static boolean Authenticate(HttpServletRequest requestContext, String password,String userId) {
 		try {
 			AuthorizationHeader authHeader = AuthorizationHeader.authorization(
-			         requestContext.getHeaderString(HttpHeaders.AUTHORIZATION));
+			         requestContext.getHeader(HttpHeaders.AUTHORIZATION));
 			
-			URI uri = requestContext.getUriInfo().getRequestUri();
+			URI uri = new URI(requestContext.getRequestURI());
 			HawkContext hawk = HawkContext.request(requestContext.getMethod(), uri.getPath(),
 			                                       uri.getHost(), uri.getPort())
 			                     .credentials(userId, password, Algorithm.SHA_256)
@@ -30,7 +30,7 @@ public class AuthProcessor {
 			} else {
 				return false;
 			}
-		} catch (AuthHeaderParsingException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return false;

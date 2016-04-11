@@ -51,8 +51,7 @@ public class FileResource {
 	FileController fc;
 
 	@GET
-	public Response getFile(@QueryParam("id") String id, @QueryParam("id") long accountId,
-			@Context ContainerRequestContext requestContext) {
+	public Response getFile(@QueryParam("id") String id, @QueryParam("id") long accountId) {
 		JsonObject json = new JsonObject();
 		Long fid = null;
 		try {
@@ -62,7 +61,6 @@ public class FileResource {
 			return Response.status(Status.BAD_REQUEST).entity(json.toString()).build();
 		}
 		Account user = AccountController.getAccountById(accountId);
-		if (AuthProcessor.Authenticate(requestContext, user.getPassword(), user.getUsername())) {
 			File file = fc.getFile(fid);
 
 			if (file == null)
@@ -70,16 +68,12 @@ public class FileResource {
 
 			JsonObject jsonResponse = fileToJsonObject(file);
 			return Response.ok().entity(jsonResponse.toString()).build();
-		} else {
-			return Response.status(Status.UNAUTHORIZED).build();
-		}
 	}
 
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response uploadFile(MultipartFormDataInput input, @QueryParam("userid") String userId,
-			@Context ContainerRequestContext requestContext) {
+	public Response uploadFile(MultipartFormDataInput input, @QueryParam("userid") String userId) {
 
 		JsonObject json = new JsonObject();
 
@@ -91,8 +85,6 @@ public class FileResource {
 			return Response.status(Status.BAD_REQUEST).entity(json.toString()).build();
 		}
 		Account user = AccountController.getAccountById(uid);
-		if (AuthProcessor.Authenticate(requestContext, user.getPassword(), user.getUsername())) {
-
 			Map<String, List<InputPart>> maps = input.getFormDataMap();
 			List<InputPart> f = maps.get("file");
 
@@ -120,9 +112,6 @@ public class FileResource {
 			File file = fc.uploadFile(uid, sti);
 
 			return Response.created(file.getPath().toUri()).entity(fileToJsonObject(file).toString()).build();
-		} else {
-			return Response.status(Response.Status.UNAUTHORIZED).build();
-		}
 	}
 
 	private String getFileName(MultivaluedMap<String, String> header) {
@@ -180,17 +169,12 @@ public class FileResource {
 		}
 		long accountId = Long.parseLong(authorId);
 		Account acc = AccountController.getAccountById(accountId);
-		if (AuthProcessor.Authenticate(requestContext, acc.getPassword(), acc.getUsername())) {
 		boolean b = fc.shareImage(Long.parseLong(imageId), accountId, Long.parseLong(shareWithId));
 
 		if (b)
 			return Response.status(Response.Status.ACCEPTED).entity(o.toString()).build();
 		else
 			return Response.status(Response.Status.BAD_REQUEST).build();
-		}
-		else {
-			return Response.status(Response.Status.UNAUTHORIZED).build();
-		}
 	}
 
 }

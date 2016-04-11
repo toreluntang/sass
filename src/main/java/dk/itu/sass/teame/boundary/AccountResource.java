@@ -47,8 +47,7 @@ public class AccountResource {
 
 	@POST
 	@Path("login")
-	public Response login(@FormParam("username") String username, @FormParam("password") String password,
-			@Context ContainerRequestContext requestContext) {
+	public Response login(@FormParam("username") String username, @FormParam("password") String password) {
 
 		JsonObject json = new JsonObject();
 
@@ -57,12 +56,7 @@ public class AccountResource {
 		if (account == null)
 			return Response.status(Status.UNAUTHORIZED).build();
 
-		boolean isAuthenticated = AuthProcessor.Authenticate(requestContext, account.getPassword(), account.getUsername());
-		if (isAuthenticated) {
 			return Response.ok().entity(json.toString()).build();
-		} else {
-			return Response.status(Status.UNAUTHORIZED).build();
-		}
 	}
 
 	@GET
