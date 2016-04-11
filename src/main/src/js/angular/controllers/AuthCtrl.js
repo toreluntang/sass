@@ -47,13 +47,17 @@ function AuthCtrl($state, CrudService) {
 
         
 
-        $state.go('profile', "test ###");
+        $state.go('profile', "test from onLoginSuccess ###");
     }
     function onLoginError(error) {
         console.log("onLoginError", error)
     }
     function onSignupSuccess(data) {
         console.log("onSignupSuccess", data)
+        var myLS = {keyid: data.keyid, accountId: data.accountId};
+        localStorage.setItem("LS", JSON.stringify(myLS));
+        $state.go('profile', "test from onSignupSuccess ###");
+
     }
     function onSignupError(error) {
         console.log("onSignupError", error)

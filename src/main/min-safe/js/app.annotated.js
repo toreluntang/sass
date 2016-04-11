@@ -139,13 +139,17 @@ function AuthCtrl($state, CrudService) {
 
         
 
-        $state.go('profile', "test ###");
+        $state.go('profile', "test from onLoginSuccess ###");
     }
     function onLoginError(error) {
         console.log("onLoginError", error)
     }
     function onSignupSuccess(data) {
         console.log("onSignupSuccess", data)
+        var myLS = {keyid: data.keyid, accountId: data.accountId};
+        localStorage.setItem("LS", JSON.stringify(myLS));
+        $state.go('profile', "test from onSignupSuccess ###");
+
     }
     function onSignupError(error) {
         console.log("onSignupError", error)
@@ -297,13 +301,13 @@ function ProfileCtrl($rootScope, $scope, $state, DataService, CrudService) {
         var sharingObject = {imageId: imageid, author: vm.userId, victim: mySharer};
         console.log("sharingObject is: ", sharingObject)
         var kgjsh = JSON.parse(localStorage.getItem('kgjsh'));  
-        CrudService.createItem(sharingObject, 'http://localhost:8080/sec/resources/file/shareimage', kgjsh)
+        CrudService.createItem(sharingObject, 'http://localhost:8080/sec/resources/protected/file/shareimage', kgjsh)
             .then(angular.bind(this, onSharePicSuccess), angular.bind(this, onSharePicError));
     }
 
     vm.logout = function logout() {
+        localStorage.removeItem('LS');
         console.log("logout")
-        localStorage.removeItem('kgjsh');
         // $rootScope.authenticated = false;
         $state.go('welcome'); // test
     }
@@ -317,12 +321,12 @@ function ProfileCtrl($rootScope, $scope, $state, DataService, CrudService) {
 
     function getAllImages(userId) {
         var kgjsh = JSON.parse(localStorage.getItem('kgjsh'));  
-        DataService.loadStuff('http://localhost:8080/sec/resources/file/getallimages?id='+userId, kgjsh)
+        DataService.loadStuff('http://localhost:8080/sec/resources/protected/file/getallimages?id='+userId, kgjsh)
             .then(angular.bind(this, onLoadImagesSuccess), angular.bind(this, onLoadImagesError));
     }
     function getAllUsers() {
         var kgjsh = JSON.parse(localStorage.getItem('kgjsh'));  
-        DataService.loadStuff('http://localhost:8080/sec/resources/account/getallusers', kgjsh)
+        DataService.loadStuff('http://localhost:8080/sec/resources/protected/account/getallusers', kgjsh)
             .then(angular.bind(this, onLoadUsersSuccess), angular.bind(this, onLoadUsersError));
     }
 
@@ -368,10 +372,11 @@ function CrudService($q, $http) {
     return service;
 
     function createAuthorizationHeader(uploadUrl, method) {
+        var myLS = JSON.parse(localStorage.getItem('myLS')); 
         var credentials = {
-            id: 'd2b97532-e8c5-e411-8270-f0def103cfd0',
+            id: myLS.accountId,
             algorithm: 'sha256',
-            key: '7b76ae41-def3-e411-8030-0c8bfd2336cd'
+            key: myLS.keyid
         };
         var options = {
             credentials: credentials,
@@ -432,7 +437,7 @@ function CrudService($q, $http) {
                 // 'mac' :  mac,
                 // 'accountId' : accountid,
                 // 'XRequestHeaderToProtect': 'secret',
-                // 'Authorization': header.field
+                'Authorization': header.field
             },
             data: $.param(objData)
         })
