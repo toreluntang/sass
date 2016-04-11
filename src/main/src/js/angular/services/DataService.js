@@ -18,11 +18,11 @@ function DataService($q, $http) {
             method: 'GET',
             url: url,
             headers: { 
-                'Content-Type' : 'application/x-www-form-urlencoded',
-                'ts' :  authObj.Auth.ts,
-                'nonce' :  authObj.Auth.nonce,
-                'mac' :  authObj.Auth.mac,
-                'accountId' : authObj.accountid
+                'Content-Type' : 'application/x-www-form-urlencoded'
+                // 'ts' :  authObj.Auth.ts,
+                // 'nonce' :  authObj.Auth.nonce,
+                // 'mac' :  authObj.Auth.mac,
+                // 'accountId' : authObj.accountid
             }
         })
         .success(function(data) {

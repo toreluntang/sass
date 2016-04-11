@@ -53,6 +53,7 @@ public class AccountResource {
 
 		Account account = accountController.login(username, password);
 
+		json.addProperty("id", account.getAccountid());
 		if (account == null)
 			return Response.status(Status.UNAUTHORIZED).build();
 
