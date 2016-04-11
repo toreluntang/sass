@@ -1,7 +1,6 @@
 package dk.itu.sass.teame;
 
 import java.io.IOException;
-import java.util.Enumeration;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -13,7 +12,15 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebFilter(urlPatterns = "/*")
+import com.google.gson.JsonObject;
+
+import dk.itu.sass.teame.controller.AccountController;
+import dk.itu.sass.teame.controller.AuthProcessor;
+import dk.itu.sass.teame.entity.Account;
+import net.jalg.hawkj.Algorithm;
+import net.jalg.hawkj.HawkContext;
+
+@WebFilter(urlPatterns = "/resources/protected/*")
 public class AuthFilter implements Filter {
 
 	@Override
@@ -23,33 +30,62 @@ public class AuthFilter implements Filter {
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
-		
-		System.out.println("FILTER");
-		
-		System.out.println(request.getContentType());
-		System.out.println(request.getServerPort());
-		System.out.println(request.getServerName());
-		System.out.println(request.getServletContext());
+
+		JsonObject jsonObject = new JsonObject();
+		String errKey = "error";
 		
 		if (request instanceof HttpServletRequest) {
 			HttpServletRequest r = (HttpServletRequest) request;
 			HttpServletResponse res = (HttpServletResponse) response;
-			
-			System.out.println(r.getHeader("mac"));
-			
-			Enumeration<String> heads = r.getHeaderNames();
-			while(heads.hasMoreElements()) {
-				String elem = heads.nextElement();
-				System.out.println(elem + " : " + r.getHeader(elem));
+			long accountId = Long.parseLong(r.getHeader("accountId"));
+			Account acc = AccountController.getAccountById(accountId);
+			boolean isAuth = AuthProcessor.Authenticate(r, acc.getPassword(), acc.getUsername());
+			if (!isAuth) {
+				jsonObject.addProperty(errKey, "Nice try Script kiddie!");
+				res.getWriter().write(jsonObject.toString());
+			    return;
 			}
+//			String hmac = r.getHeader("mac");
+//			Long ts = null;
+//			try {
+//				ts = Long.parseLong(r.getHeader("ts"));
+//			}catch(Exception e) { 
+//				jsonObject.addProperty(errKey, "Wrong ts format");
+//				res.getWriter().write(jsonObject.toString());
+//				return;
+//			}
+//			String nonce = r.getHeader("nonce");
+//			String method = "POST";
+//			String path = "login";
+//			String host = "localhost";
+//			int port = 8080;
+//			String id = accountId; //Userid???
+//			String key = "car"; //Password?? SOMETHING ELSE
+//			Algorithm algorithm = Algorithm.SHA_256;
+//			
+//			HawkContext hawk = HawkContext.request(method, path,
+//			                                       host, port)
+//			                     .credentials(id, key, algorithm)
+//			                     .tsAndNonce(ts, nonce)
+//			                     .hash(null).build();
+//
+//			/*
+//			 * Now we use the created Hawk to validate the HMAC sent by the client
+//			 * in the Authorization header.
+//			 */
+//			if (!hawk.isValidMac(hmac)) {
+//				jsonObject.addProperty(errKey, "Nice try Script kiddie!");
+//				res.getWriter().write(jsonObject.toString());
+//			    return;
+//			}
 			
-			//res.getWriter().write("Wrong authentication");
-			//return;
+			chain.doFilter(request, response);
+			return;
 		}
 
-		System.out.println("FILTER END");
-		
-		chain.doFilter(request, response);
+		jsonObject.addProperty(errKey, "Only HttpServletRequest is allowed");
+		response.getWriter().write(jsonObject.toString());
+		return;
 	}
 
 	@Override

@@ -6,8 +6,10 @@ function CrudService($q, $http) {
     
     var service = {
         createItem: createItem,
+        createItemAuth: createItemAuth,
         updateItem: updateItem,
-        deleteItem: deleteItem
+        deleteItem: deleteItem,
+        uploadFileToUrl: uploadFileToUrl
     };
     return service;
 
@@ -34,13 +36,61 @@ function CrudService($q, $http) {
     }
 
     // implementation
-    function createItem(objData, url) {
+    function uploadFileToUrl(file, uploadUrl) {
+        var def = $q.defer();
+
+        var fd = new FormData();
+        fd.append('file', file);
+        $http.post(uploadUrl, fd, {
+            transformRequest: angular.identity,
+            headers: {'Content-Type': undefined}
+        })
+        .success(function(){
+            console.log("SUCCESS : uploadFileToUrl")
+            def.resolve();
+        })
+        .error(function(){
+            console.log("ERROR : uploadFileToUrl")
+            def.reject("Failed to uploadFileToUrl");
+        });
+
+        return def.promise;
+    }
+    function createItem(objData, url, authObj) {
+        var def = $q.defer();
+        console.log(objData)
+        var header = createAuthorizationHeader(url,'POST');
+        $http({
+            method: 'POST',
+            url: url,
+            headers: { 
+                'Content-Type' : 'application/x-www-form-urlencoded',
+                'ts' :  authObj.Auth.ts,
+                'nonce' :  authObj.Auth.nonce,
+                'mac' :  authObj.Auth.mac,
+                'accountId' : authObj.accountid,
+                'XRequestHeaderToProtect': 'secret',
+                'Authorization': header.field
+            },
+            data: $.param(objData)
+        })
+        .success(function(data) {
+            def.resolve(data);
+        })
+        .error(function() {
+            def.reject("Failed to create item");
+        });
+        return def.promise;
+    }
+    function createItemAuth(objData, url) {
         var def = $q.defer();
         console.log(objData)
         $http({
             method: 'POST',
             url: url,
-            headers: { 'Content-Type' : 'application/x-www-form-urlencoded' },
+            headers: { 
+                'Content-Type' : 'application/x-www-form-urlencoded'
+            },
             data: $.param(objData)
         })
         .success(function(data) {
