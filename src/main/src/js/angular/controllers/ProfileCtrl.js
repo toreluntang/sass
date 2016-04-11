@@ -10,6 +10,7 @@ function ProfileCtrl($rootScope, $scope, DataService, CrudService) {
     vm.imageId = '1';
     vm.mySharer = "Test mySharer";
     vm.myFile = "";
+    vm.onLoadImageCommentsSuccessERROR = false;
     // vm.showComments = false;
 
 
@@ -25,7 +26,13 @@ function ProfileCtrl($rootScope, $scope, DataService, CrudService) {
 
             function onLoadImageCommentsSuccess(data) {
                 console.log("onLoadImageCommentsSuccess", data)
-                n.imageComments = data
+                if(data.error){
+                    vm.onLoadImageCommentsSuccessERROR = true;
+                 } else {
+                    n.imageComments = data;
+                    vm.onLoadImageCommentsSuccessERROR = false;
+                    
+                 }
             }
             function onLoadImageCommentsError(error) {
                 console.log("onLoadImageCommentsError: no comments found for this image", error)
