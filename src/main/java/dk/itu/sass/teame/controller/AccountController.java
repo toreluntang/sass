@@ -24,7 +24,13 @@ public class AccountController {
 		Account a = accountSQL.getAccountByString("username",username);
 		return a;
 	}
-
+	
+	public static Account getAccountById(long accountId){
+		AccountSQL accountSQL = new AccountSQL();
+		Account a = accountSQL.getAccountByString("accountid",""+accountId);
+		return a;
+	}
+	
 	public boolean validateUsername(String username) {
 		return getAccount(username) == null;
 	}

@@ -59,6 +59,7 @@ function CrudService($q, $http) {
     function createItem(objData, url, authObj) {
         var def = $q.defer();
         console.log(objData)
+        var header = createAuthorizationHeader(url,'POST');
         $http({
             method: 'POST',
             url: url,
@@ -67,7 +68,9 @@ function CrudService($q, $http) {
                 'ts' :  authObj.Auth.ts,
                 'nonce' :  authObj.Auth.nonce,
                 'mac' :  authObj.Auth.mac,
-                'accountId' : authObj.accountid
+                'accountId' : authObj.accountid,
+                'XRequestHeaderToProtect': 'secret',
+                'Authorization': header.field
             },
             data: $.param(objData)
         })

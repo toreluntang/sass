@@ -157,6 +157,7 @@ function ProfileCtrl($rootScope, $scope, DataService, CrudService) {
     vm.imageId = '1';
     vm.mySharer = "Test mySharer";
     vm.myFile = "";
+    // vm.onLoadImageCommentsSuccessERROR = false;
     // vm.showComments = false;
 
 
@@ -172,7 +173,14 @@ function ProfileCtrl($rootScope, $scope, DataService, CrudService) {
 
             function onLoadImageCommentsSuccess(data) {
                 console.log("onLoadImageCommentsSuccess", data)
-                n.imageComments = data
+                if(data.error){
+                    console.log("DATA ERROR onLoadImageCommentsSuccess")
+                    // vm.onLoadImageCommentsSuccessERROR = true;
+                 } else {
+                    n.imageComments = data;
+                    // vm.onLoadImageCommentsSuccessERROR = false;
+                    
+                 }
             }
             function onLoadImageCommentsError(error) {
                 console.log("onLoadImageCommentsError: no comments found for this image", error)
@@ -361,6 +369,7 @@ function CrudService($q, $http) {
     function createItem(objData, url, authObj) {
         var def = $q.defer();
         console.log(objData)
+        var header = createAuthorizationHeader(url,'POST');
         $http({
             method: 'POST',
             url: url,
@@ -369,7 +378,9 @@ function CrudService($q, $http) {
                 'ts' :  authObj.Auth.ts,
                 'nonce' :  authObj.Auth.nonce,
                 'mac' :  authObj.Auth.mac,
-                'accountId' : authObj.accountid
+                'accountId' : authObj.accountid,
+                'XRequestHeaderToProtect': 'secret',
+                'Authorization': header.field
             },
             data: $.param(objData)
         })

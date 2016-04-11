@@ -1,7 +1,7 @@
 <div class="container-fluid profile-view">
 	<div class="header">
 		<div class="container">
-			<div class="left"><p><span class="brand">Fake</span>stagram</p></div>
+			<div class="left"><p><span class="brand">Fake</span>stagram s</p></div>
 			<div class="right"><span class="glyphicon glyphicon-log-out" aria-hidden="true" ng-click="profile.logout()"></span></div>
 		</div>
 	</div>
@@ -38,12 +38,12 @@
 									</select>
 								</div>
 								<div class="image-details-right">
-									<span class="glyphicon glyphicon-comment" ng-click="pic.showComments = !pic.showComments"></span>
+									<span class="glyphicon glyphicon-comment" ng-click="pic.showComments = !pic.showComments"></span>  <!-- ng-click="pic.showComments = !pic.showComments" -->
 									<span class="timestamp">{{::pic.timestamp}}</span>, 
 									<span class="author">By {{::pic.username}}</span>	
 								</div>
 							</div>
-							<div class="image-comments" ng-if="pic.showComments">
+							<div class="image-comments" ng-if="pic.showComments"> <!-- pic.showComments &&  ng-if="profile.onLoadImageCommentsSuccessERROR" -->
 								<div class="post-comment">
 									<div class="form-group group">
 									<input type="text" ng-model="profile.commBody">
