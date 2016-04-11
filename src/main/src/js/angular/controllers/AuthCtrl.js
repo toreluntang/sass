@@ -43,7 +43,7 @@ function AuthCtrl($state, CrudService) {
 
         // var newkgjsh = {"accountid":data.accountid,"Auth":data.Auth};
 
-        localStorage.setItem('kgjsh', JSON.stringify(data));
+        localStorage.setItem('LS', JSON.stringify(data));
 
         
 

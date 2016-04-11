@@ -146,7 +146,7 @@ function AuthCtrl($state, CrudService) {
 
         // var newkgjsh = {"accountid":data.accountid,"Auth":data.Auth};
 
-        localStorage.setItem('kgjsh', JSON.stringify(data));
+        localStorage.setItem('LS', JSON.stringify(data));
 
         
 
@@ -201,8 +201,8 @@ function ProfileCtrl($rootScope, $scope, $state, DataService, CrudService) {
         _(imagesData).forEach(function(n) { 
             console.log(n)
             n.showComments = false;
-            var kgjsh = JSON.parse(localStorage.getItem('kgjsh'));  
-            DataService.loadStuff('http://localhost:8080/sec/resources/protected/comment?imageId=' + n.imageid, kgjsh)
+            var LS = JSON.parse(localStorage.getItem('LS'));  
+            DataService.loadStuff('http://localhost:8080/sec/resources/protected/comment?imageId=' + n.imageid, LS)
             .then(angular.bind(this, onLoadImageCommentsSuccess), angular.bind(this, onLoadImageCommentsError));       
 
             function onLoadImageCommentsSuccess(data) {
@@ -300,9 +300,9 @@ function ProfileCtrl($rootScope, $scope, $state, DataService, CrudService) {
     vm.addComment = function addComment(commBody, imageId) {
         commentData = {comment: commBody, userId: vm.userId, imageId: imageId};
         vm.commBody = "";
-        var kgjsh = JSON.parse(localStorage.getItem('kgjsh'));  
+        var LS = JSON.parse(localStorage.getItem('LS'));  
         // console.log("commentData to be added is: ", commentData);
-        CrudService.createItem(commentData, 'http://localhost:8080/sec/resources/protected/comment', kgjsh)
+        CrudService.createItem(commentData, 'http://localhost:8080/sec/resources/protected/comment', LS)
             .then(angular.bind(this, onCreateCommentSuccess), angular.bind(this, onCreateCommentError));
         
     }
@@ -311,8 +311,8 @@ function ProfileCtrl($rootScope, $scope, $state, DataService, CrudService) {
         console.log("share with", mySharer)
         var sharingObject = {imageId: imageid, author: vm.userId, victim: mySharer};
         console.log("sharingObject is: ", sharingObject)
-        var kgjsh = JSON.parse(localStorage.getItem('kgjsh'));  
-        CrudService.createItem(sharingObject, 'http://localhost:8080/sec/resources/protected/file/shareimage', kgjsh)
+        var LS = JSON.parse(localStorage.getItem('LS'));  
+        CrudService.createItem(sharingObject, 'http://localhost:8080/sec/resources/protected/file/shareimage', LS)
             .then(angular.bind(this, onSharePicSuccess), angular.bind(this, onSharePicError));
     }
 
@@ -331,13 +331,13 @@ function ProfileCtrl($rootScope, $scope, $state, DataService, CrudService) {
     
 
     function getAllImages(userId) {
-        var kgjsh = JSON.parse(localStorage.getItem('kgjsh'));  
-        DataService.loadStuff('http://localhost:8080/sec/resources/protected/file/getallimages?id='+userId, kgjsh)
+        var LS = JSON.parse(localStorage.getItem('LS'));  
+        DataService.loadStuff('http://localhost:8080/sec/resources/protected/file/getallimages?id='+userId, LS)
             .then(angular.bind(this, onLoadImagesSuccess), angular.bind(this, onLoadImagesError));
     }
     function getAllUsers() {
-        var kgjsh = JSON.parse(localStorage.getItem('kgjsh'));  
-        DataService.loadStuff('http://localhost:8080/sec/resources/protected/account/getallusers', kgjsh)
+        var LS = JSON.parse(localStorage.getItem('LS'));  
+        DataService.loadStuff('http://localhost:8080/sec/resources/protected/account/getallusers', LS)
             .then(angular.bind(this, onLoadUsersSuccess), angular.bind(this, onLoadUsersError));
     }
 
