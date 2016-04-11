@@ -37,9 +37,15 @@ public class AccountResource {
 		if (!usernameIsTaken)
 			return Response.status(Response.Status.PAYMENT_REQUIRED).build();
 
-		long result = accountController.insertAccount(username, password, email).getAccountid();
-
-		return Response.status(Response.Status.ACCEPTED).entity(result).build();
+		Account acc = accountController.insertAccount(username, password, email);
+		
+		JsonObject res = new JsonObject();
+		res.addProperty("accountId", acc.getAccountid());
+		res.addProperty("keyid", acc.getKeyId());
+		res.addProperty("username", acc.getUsername());
+		res.addProperty("email", acc.getEmail());
+		
+		return Response.status(Response.Status.ACCEPTED).entity(res.toString()).build();
 	}
 
 	@POST
