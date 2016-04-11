@@ -10,7 +10,7 @@ function ProfileCtrl($rootScope, $scope, DataService, CrudService) {
     vm.imageId = '1';
     vm.mySharer = "Test mySharer";
     vm.myFile = "";
-    vm.onLoadImageCommentsSuccessERROR = false;
+    // vm.onLoadImageCommentsSuccessERROR = false;
     // vm.showComments = false;
 
 
@@ -27,10 +27,11 @@ function ProfileCtrl($rootScope, $scope, DataService, CrudService) {
             function onLoadImageCommentsSuccess(data) {
                 console.log("onLoadImageCommentsSuccess", data)
                 if(data.error){
-                    vm.onLoadImageCommentsSuccessERROR = true;
+                    console.log("DATA ERROR onLoadImageCommentsSuccess")
+                    // vm.onLoadImageCommentsSuccessERROR = true;
                  } else {
                     n.imageComments = data;
-                    vm.onLoadImageCommentsSuccessERROR = false;
+                    // vm.onLoadImageCommentsSuccessERROR = false;
                     
                  }
             }
