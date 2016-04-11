@@ -1,6 +1,7 @@
 package dk.itu.sass.teame.boundary;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -47,16 +48,18 @@ public class AccountResource {
 
 	@POST
 	@Path("login")
-	public Response login(@FormParam("username") String username, @FormParam("password") String password) {
+	public Response login(@FormParam("username") String username, @FormParam("password") String password,
+			@Context HttpServletRequest r) {
 
 		JsonObject json = new JsonObject();
-
+		
 		Account account = accountController.login(username, password);
 
 		if (account == null)
 			return Response.status(Status.UNAUTHORIZED).build();
-
-			return Response.ok().entity(json.toString()).build();
+		
+		json.addProperty("id",account.getAccountid());
+		return Response.ok().entity(json.toString()).build();
 	}
 
 	@GET

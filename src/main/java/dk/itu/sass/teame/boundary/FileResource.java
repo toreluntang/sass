@@ -30,8 +30,8 @@ import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import com.google.gson.JsonObject;
 
 import dk.itu.sass.teame.controller.AccountController;
-import dk.itu.sass.teame.controller.FileController;
 import dk.itu.sass.teame.controller.AuthProcessor;
+import dk.itu.sass.teame.controller.FileController;
 import dk.itu.sass.teame.entity.Account;
 import dk.itu.sass.teame.entity.File;
 import net.jalg.hawkj.Algorithm;
