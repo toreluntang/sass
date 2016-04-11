@@ -11,8 +11,8 @@ if (typeof console === 'undefined') {
 (function() {
 
 config.$inject = ['$stateProvider', '$urlRouterProvider'];
-AuthCtrl.$inject = ['CrudService'];
-ProfileCtrl.$inject = ['$rootScope', '$scope', 'DataService', 'CrudService'];
+AuthCtrl.$inject = ['$state', 'CrudService'];
+ProfileCtrl.$inject = ['$rootScope', '$scope', '$state', 'DataService', 'CrudService'];
 CrudService.$inject = ['$q', '$http'];
 DataService.$inject = ['$q', '$http'];angular.element(document).ready(function (event) {
     console.log("angular is ready test");
@@ -104,13 +104,16 @@ function run () {
 /**
  * @ngInject
  */
-function AuthCtrl(CrudService) {
+function AuthCtrl($state, CrudService) {
     vm = this;
     vm.test = 'altceva';
     vm.username = "";
     vm.password = "";
+    vm.usernameSignup = "";
+    vm.passwordSignup = "";
+    // vm.showSignup = false;
 
-    vm.login = function login(username, password) {
+    vm.login = function login (username, password) {
         console.log("login clicked!!!", username, password)
         if(username != "" && password != "") {
             var authObj = {username: username, password: password};
@@ -124,15 +127,39 @@ function AuthCtrl(CrudService) {
 
     }
 
+    vm.signup = function signup (username, password) {
+        // vm.showSignup = true;
+        console.log("signup")
+        if(username != "" && password != "") {
+            var authObj = {username: username, password: password, email: username};
+            var signupRequestPath = 'http://localhost:8080/sec/resources/account/create';
+            CrudService.createItemAuth(authObj, signupRequestPath)
+                .then(angular.bind(this, onSignupSuccess), angular.bind(this, onSignupError));
+            
+        } else {
+            console.log("signup failed")
+        }
+    }
+
     function onLoginSuccess(data) {
         console.log("onLoginSuccess", data)
 
-        var newkgjsh = {"accountid":data.accountid,"Auth":data.Auth};
+        // var newkgjsh = {"accountid":data.accountid,"Auth":data.Auth};
 
-        localStorage.setItem('kgjsh', JSON.stringify(newkgjsh));
+        localStorage.setItem('kgjsh', JSON.stringify(data));
+
+        
+
+        $state.go('profile', "test ###");
     }
     function onLoginError(error) {
         console.log("onLoginError", error)
+    }
+    function onSignupSuccess(data) {
+        console.log("onSignupSuccess", data)
+    }
+    function onSignupError(error) {
+        console.log("onSignupError", error)
     }
 
     // vm.login = function login() {
@@ -148,7 +175,7 @@ function AuthCtrl(CrudService) {
 /**
  * @ngInject
  */
-function ProfileCtrl($rootScope, $scope, DataService, CrudService) {
+function ProfileCtrl($rootScope, $scope, $state, DataService, CrudService) {
     vm = this;
 
     vm.profiletest = "Profile Test";
@@ -157,8 +184,11 @@ function ProfileCtrl($rootScope, $scope, DataService, CrudService) {
     vm.imageId = '1';
     vm.mySharer = "Test mySharer";
     vm.myFile = "";
+    // vm.loggedIn = "";
+    // $rootScope.test = "####";
     // vm.onLoadImageCommentsSuccessERROR = false;
     // vm.showComments = false;
+    // 
 
 
     
@@ -284,6 +314,9 @@ function ProfileCtrl($rootScope, $scope, DataService, CrudService) {
 
     vm.logout = function logout() {
         console.log("logout")
+        localStorage.removeItem('kgjsh');
+        // $rootScope.authenticated = false;
+        $state.go('welcome'); // test
     }
 
     // vm.toggleComments = function toggleComments() {
@@ -306,6 +339,28 @@ function ProfileCtrl($rootScope, $scope, DataService, CrudService) {
 
    getAllImages(vm.userId);
    getAllUsers();
+
+
+   function stabilizeLoggedInUser (fromStateName) {
+       console.log("stabilizeLoggedInUser")
+      
+
+       // if(fromStateName == "welcome") {
+       //  console.log("fromStateName == welcome")
+       //  $rootScope.authenticated = true;
+       // } else {
+       //  console.log("fromStateName == !!welcome")
+       //  $state.go('welcome');
+       // }
+   }
+
+   function onStateChangeSuccess(event, toState, toParams, fromState, fromParams) {
+       console.log("ON STATE CHANGE SUCCESS!!!!!!!!!!!!!!!!!!", event, toState, toParams, fromState, fromParams, "!!!!!!!!!!!!!!!!")
+       stabilizeLoggedInUser(fromState.name);
+   }
+
+
+   $rootScope.$on('$stateChangeSuccess', onStateChangeSuccess);
 
 }
 /**
@@ -370,17 +425,25 @@ function CrudService($q, $http) {
         var def = $q.defer();
         console.log(objData);
         var header = createAuthorizationHeader(url,'POST');
+        // var ts = "";
+        // var nonce = "";
+        // var mac = "";
+        // var accountid = "";
+        // if(authObj.Auth.ts != "") ts = authObj.Auth.ts;
+        // if(authObj.Auth.nonce != "") nonce = authObj.Auth.nonce;
+        // if(authObj.Auth.mac != "") mac = authObj.Auth.mac;
+        // if(authObj.accountid != "") mac = authObj.accountid;
         $http({
             method: 'POST',
             url: url,
             headers: { 
                 'Content-Type' : 'application/x-www-form-urlencoded',
-                'ts' :  authObj.Auth.ts,
-                'nonce' :  authObj.Auth.nonce,
-                'mac' :  authObj.Auth.mac,
-                'accountId' : authObj.accountid,
-                'XRequestHeaderToProtect': 'secret',
-                'Authorization': header.field
+                // 'ts' :  ts,
+                // 'nonce' : nonce,
+                // 'mac' :  mac,
+                // 'accountId' : accountid,
+                // 'XRequestHeaderToProtect': 'secret',
+                // 'Authorization': header.field
             },
             data: $.param(objData)
         })
@@ -485,11 +548,11 @@ function DataService($q, $http) {
             method: 'GET',
             url: url,
             headers: { 
-                'Content-Type' : 'application/x-www-form-urlencoded',
-                'ts' :  authObj.Auth.ts,
-                'nonce' :  authObj.Auth.nonce,
-                'mac' :  authObj.Auth.mac,
-                'accountId' : authObj.accountid
+                'Content-Type' : 'application/x-www-form-urlencoded'
+                // 'ts' :  authObj.Auth.ts,
+                // 'nonce' :  authObj.Auth.nonce,
+                // 'mac' :  authObj.Auth.mac,
+                // 'accountId' : authObj.accountid
             }
         })
         .success(function(data) {

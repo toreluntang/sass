@@ -1,7 +1,7 @@
 /**
  * @ngInject
  */
-function ProfileCtrl($rootScope, $scope, DataService, CrudService) {
+function ProfileCtrl($rootScope, $scope, $state, DataService, CrudService) {
     vm = this;
 
     vm.profiletest = "Profile Test";
@@ -10,8 +10,11 @@ function ProfileCtrl($rootScope, $scope, DataService, CrudService) {
     vm.imageId = '1';
     vm.mySharer = "Test mySharer";
     vm.myFile = "";
+    // vm.loggedIn = "";
+    // $rootScope.test = "####";
     // vm.onLoadImageCommentsSuccessERROR = false;
     // vm.showComments = false;
+    // 
 
 
     
@@ -137,6 +140,9 @@ function ProfileCtrl($rootScope, $scope, DataService, CrudService) {
 
     vm.logout = function logout() {
         console.log("logout")
+        localStorage.removeItem('kgjsh');
+        // $rootScope.authenticated = false;
+        $state.go('welcome'); // test
     }
 
     // vm.toggleComments = function toggleComments() {
@@ -159,5 +165,27 @@ function ProfileCtrl($rootScope, $scope, DataService, CrudService) {
 
    getAllImages(vm.userId);
    getAllUsers();
+
+
+   function stabilizeLoggedInUser (fromStateName) {
+       console.log("stabilizeLoggedInUser")
+      
+
+       // if(fromStateName == "welcome") {
+       //  console.log("fromStateName == welcome")
+       //  $rootScope.authenticated = true;
+       // } else {
+       //  console.log("fromStateName == !!welcome")
+       //  $state.go('welcome');
+       // }
+   }
+
+   function onStateChangeSuccess(event, toState, toParams, fromState, fromParams) {
+       console.log("ON STATE CHANGE SUCCESS!!!!!!!!!!!!!!!!!!", event, toState, toParams, fromState, fromParams, "!!!!!!!!!!!!!!!!")
+       stabilizeLoggedInUser(fromState.name);
+   }
+
+
+   $rootScope.$on('$stateChangeSuccess', onStateChangeSuccess);
 
 }

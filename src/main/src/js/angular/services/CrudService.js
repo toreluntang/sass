@@ -60,17 +60,25 @@ function CrudService($q, $http) {
         var def = $q.defer();
         console.log(objData);
         var header = createAuthorizationHeader(url,'POST');
+        // var ts = "";
+        // var nonce = "";
+        // var mac = "";
+        // var accountid = "";
+        // if(authObj.Auth.ts != "") ts = authObj.Auth.ts;
+        // if(authObj.Auth.nonce != "") nonce = authObj.Auth.nonce;
+        // if(authObj.Auth.mac != "") mac = authObj.Auth.mac;
+        // if(authObj.accountid != "") mac = authObj.accountid;
         $http({
             method: 'POST',
             url: url,
             headers: { 
                 'Content-Type' : 'application/x-www-form-urlencoded',
-                'ts' :  authObj.Auth.ts,
-                'nonce' :  authObj.Auth.nonce,
-                'mac' :  authObj.Auth.mac,
-                'accountId' : authObj.accountid,
-                'XRequestHeaderToProtect': 'secret',
-                'Authorization': header.field
+                // 'ts' :  ts,
+                // 'nonce' : nonce,
+                // 'mac' :  mac,
+                // 'accountId' : accountid,
+                // 'XRequestHeaderToProtect': 'secret',
+                // 'Authorization': header.field
             },
             data: $.param(objData)
         })

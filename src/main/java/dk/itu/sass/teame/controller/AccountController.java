@@ -2,6 +2,7 @@ package dk.itu.sass.teame.controller;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.UUID;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -40,7 +41,7 @@ public class AccountController {
 
 			String hashedPassword;
 			hashedPassword = PasswordHash.createHash(password);
-			Account newAccount = new Account(username, hashedPassword, "", email);
+			Account newAccount = new Account(username, hashedPassword, "", email, UUID.randomUUID().toString());
 			
 			long newAccountId = accountSQL.insertUser(newAccount);
 			newAccount.setAccountid(newAccountId);
@@ -64,8 +65,11 @@ public class AccountController {
 		acc = accountSQL.checkLogin(acc);
 		
 		try {
-			if(PasswordHash.validatePassword(password, acc.getPassword()))
-				return acc;
+			if(PasswordHash.validatePassword(password, acc.getPassword())) {
+				acc.setKeyId(UUID.randomUUID().toString());
+				if(accountSQL.updateKey(acc))
+					return acc;
+			}
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		} catch (InvalidKeySpecException e) {

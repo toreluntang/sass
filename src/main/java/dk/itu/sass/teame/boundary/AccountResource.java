@@ -1,14 +1,11 @@
 package dk.itu.sass.teame.boundary;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -16,7 +13,6 @@ import javax.ws.rs.core.Response.Status;
 import com.google.gson.JsonObject;
 
 import dk.itu.sass.teame.controller.AccountController;
-import dk.itu.sass.teame.controller.AuthProcessor;
 import dk.itu.sass.teame.entity.Account;
 
 @Path("account")
@@ -41,24 +37,33 @@ public class AccountResource {
 		if (!usernameIsTaken)
 			return Response.status(Response.Status.PAYMENT_REQUIRED).build();
 
-		long result = accountController.insertAccount(username, password, email).getAccountid();
-
-		return Response.status(Response.Status.ACCEPTED).entity(result).build();
+		Account acc = accountController.insertAccount(username, password, email);
+		
+		JsonObject res = new JsonObject();
+		res.addProperty("accountId", acc.getAccountid());
+		res.addProperty("keyid", acc.getKeyId());
+		res.addProperty("username", acc.getUsername());
+		res.addProperty("email", acc.getEmail());
+		
+		return Response.status(Response.Status.ACCEPTED).entity(res.toString()).build();
 	}
 
 	@POST
 	@Path("login")
-	public Response login(@FormParam("username") String username, @FormParam("password") String password,
-			@Context HttpServletRequest r) {
+	public Response login(@FormParam("username") String username, @FormParam("password") String password) {
 
 		JsonObject json = new JsonObject();
-		
+
 		Account account = accountController.login(username, password);
 
+		json.addProperty("id", account.getAccountid());
 		if (account == null)
 			return Response.status(Status.UNAUTHORIZED).build();
+
 		
-		json.addProperty("id",account.getAccountid());
+		json.addProperty("keyid", account.getKeyId());
+		json.addProperty("accountId", account.getAccountid());
+		
 		return Response.ok().entity(json.toString()).build();
 	}
 
