@@ -31,7 +31,7 @@
 							<img ng-src="http://localhost:8080/img/{{pic.path}}" alt="">
 							<!-- <p>Image id is: {{::pic.imageid}}</p> -->
 							<div class="image-details">
-								<div class="image-details-left">
+								<div class="image-details-left" ng-if="pic.author == profile.userId">
 									<button class="btn btn--default" ng-click="profile.shareWith(pic.mySharer, pic.imageid)">Share with</button>
 									<select class="cs-select cs-skin-border" ng-model="pic.mySharer">
 									    <option ng-repeat="user in profile.users" value="{{::user.accountid}}">{{user.username}}</option>								        
