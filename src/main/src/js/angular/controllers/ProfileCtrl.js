@@ -7,6 +7,11 @@ function ProfileCtrl($rootScope, $scope, $state, DataService, CrudService) {
     vm.profiletest = "Profile Test";
     vm.myPic = "";
     vm.userId = JSON.parse(localStorage.getItem('LS')).accountId;
+    if(vm.userId == null) {
+        console.log("LS is null -- from ProfileCtrl -- central place in ProfileCtrl");
+        $state.go("welcome");
+        return;
+    }
     console.log(vm.userId + "%%%%%%%%%%%USER ID is%%%%%%%%%%%%%%%%%%")
     vm.imageId = '1';
     vm.mySharer = "Test mySharer";
