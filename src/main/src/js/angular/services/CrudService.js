@@ -2,7 +2,7 @@
  * @ngInject
  */
 
-function CrudService($q, $http) {
+function CrudService($q, $http, $state) {
     
     var service = {
         createItem: createItem,
@@ -13,8 +13,13 @@ function CrudService($q, $http) {
     };
     return service;
 
-    function createAuthorizationHeader(uploadUrl, method) {
+    function createAuthorizationHeader(uploadUrl, method) {        
         var myLS = JSON.parse(localStorage.getItem('LS')); 
+        if(myLS == null) {
+            console.log("myLS is null -- from createAuthorizationHeader -- from CrudService");
+            $state.go("welcome");
+            return;
+        }
         var credentials = {
             id: myLS.accountId,
             algorithm: 'sha256',

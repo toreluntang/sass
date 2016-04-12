@@ -2,7 +2,7 @@
  * @ngInject
  */
 
-function DataService($q, $http) {
+function DataService($q, $http, $state) {
     
     var service = {
         loadStuff: loadStuff,
@@ -12,6 +12,11 @@ function DataService($q, $http) {
     function createAuthorizationHeader(uploadUrl, method) {
         console.log("### createAuthorizationHeader #####")
         var myLS = JSON.parse(localStorage.getItem('LS')); 
+        if(myLS == null) {
+            console.log("myLS is null -- from createAuthorizationHeader -- from DataService");
+            $state.go("welcome");
+            return;
+        }
         console.log("### got myLS #####", myLS)
         var credentials = {
             id: myLS.accountId,
@@ -27,7 +32,7 @@ function DataService($q, $http) {
         var header = hawk.client.header(uploadUrl, method, options);
         console.log("uploadUrl: "+uploadUrl)
         if (header.err != null) {
-            alert(header.err);
+            // alert(header.err);
             return null;
         }
         else
@@ -38,6 +43,10 @@ function DataService($q, $http) {
     function loadStuff(url) {
         var def = $q.defer();
         var header = createAuthorizationHeader(url,'GET');
+        if(header == null) {
+            console.log("header == null -- from DataService -- from loadStuff")
+            return;
+        }
 
         $http({
             method: 'GET',
