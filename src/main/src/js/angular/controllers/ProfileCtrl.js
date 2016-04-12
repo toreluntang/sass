@@ -1,7 +1,7 @@
 /**
  * @ngInject
  */
-function ProfileCtrl($rootScope, $scope, DataService, CrudService) {
+function ProfileCtrl($rootScope, $scope, $state, DataService, CrudService) {
     vm = this;
 
     vm.profiletest = "Profile Test";
@@ -10,8 +10,11 @@ function ProfileCtrl($rootScope, $scope, DataService, CrudService) {
     vm.imageId = '1';
     vm.mySharer = "Test mySharer";
     vm.myFile = "";
+    // vm.loggedIn = "";
+    // $rootScope.test = "####";
     // vm.onLoadImageCommentsSuccessERROR = false;
     // vm.showComments = false;
+    // 
 
 
     
@@ -20,8 +23,8 @@ function ProfileCtrl($rootScope, $scope, DataService, CrudService) {
         _(imagesData).forEach(function(n) { 
             console.log(n)
             n.showComments = false;
-            var kgjsh = JSON.parse(localStorage.getItem('kgjsh'));  
-            DataService.loadStuff('http://localhost:8080/sec/resources/protected/comment?imageId=' + n.imageid, kgjsh)
+            var LS = JSON.parse(localStorage.getItem('LS'));  
+            DataService.loadStuff('http://localhost:8080/sec/resources/protected/comment?imageId=' + n.imageid)
             .then(angular.bind(this, onLoadImageCommentsSuccess), angular.bind(this, onLoadImageCommentsError));       
 
             function onLoadImageCommentsSuccess(data) {
@@ -95,7 +98,7 @@ function ProfileCtrl($rootScope, $scope, DataService, CrudService) {
         var file = vm.myFile;
         console.log('file is ' );
         console.dir(file);
-        var uploadUrl = "resources/file?userid="+vm.userId;
+        var uploadUrl = "resources/protected/file?userid="+vm.userId;
         // Upload file to url start 
         CrudService.uploadFileToUrl(file, uploadUrl)
             .then(angular.bind(this, onUploadSuccess), angular.bind(this, onUploadError));
@@ -119,9 +122,9 @@ function ProfileCtrl($rootScope, $scope, DataService, CrudService) {
     vm.addComment = function addComment(commBody, imageId) {
         commentData = {comment: commBody, userId: vm.userId, imageId: imageId};
         vm.commBody = "";
-        var kgjsh = JSON.parse(localStorage.getItem('kgjsh'));  
+        var LS = JSON.parse(localStorage.getItem('LS'));  
         // console.log("commentData to be added is: ", commentData);
-        CrudService.createItem(commentData, 'http://localhost:8080/sec/resources/protected/comment', kgjsh)
+        CrudService.createItem(commentData, 'http://localhost:8080/sec/resources/protected/comment', LS)
             .then(angular.bind(this, onCreateCommentSuccess), angular.bind(this, onCreateCommentError));
         
     }
@@ -130,13 +133,16 @@ function ProfileCtrl($rootScope, $scope, DataService, CrudService) {
         console.log("share with", mySharer)
         var sharingObject = {imageId: imageid, author: vm.userId, victim: mySharer};
         console.log("sharingObject is: ", sharingObject)
-        var kgjsh = JSON.parse(localStorage.getItem('kgjsh'));  
-        CrudService.createItem(sharingObject, 'http://localhost:8080/sec/resources/file/shareimage', kgjsh)
+        var LS = JSON.parse(localStorage.getItem('LS'));  
+        CrudService.createItem(sharingObject, 'http://localhost:8080/sec/resources/protected/file/shareimage', LS)
             .then(angular.bind(this, onSharePicSuccess), angular.bind(this, onSharePicError));
     }
 
     vm.logout = function logout() {
+        localStorage.removeItem('LS');
         console.log("logout")
+        // $rootScope.authenticated = false;
+        $state.go('welcome'); // test
     }
 
     // vm.toggleComments = function toggleComments() {
@@ -147,17 +153,39 @@ function ProfileCtrl($rootScope, $scope, DataService, CrudService) {
     
 
     function getAllImages(userId) {
-        var kgjsh = JSON.parse(localStorage.getItem('kgjsh'));  
-        DataService.loadStuff('http://localhost:8080/sec/resources/file/getallimages?id='+userId, kgjsh)
+        var LS = JSON.parse(localStorage.getItem('LS'));  
+        DataService.loadStuff('http://localhost:8080/sec/resources/protected/file/getallimages?id='+userId)
             .then(angular.bind(this, onLoadImagesSuccess), angular.bind(this, onLoadImagesError));
     }
     function getAllUsers() {
-        var kgjsh = JSON.parse(localStorage.getItem('kgjsh'));  
-        DataService.loadStuff('http://localhost:8080/sec/resources/account/getallusers', kgjsh)
+        var LS = JSON.parse(localStorage.getItem('LS'));  
+        DataService.loadStuff('http://localhost:8080/sec/resources/protected/account/getallusers')
             .then(angular.bind(this, onLoadUsersSuccess), angular.bind(this, onLoadUsersError));
     }
 
    getAllImages(vm.userId);
    getAllUsers();
+
+
+   function stabilizeLoggedInUser (fromStateName) {
+       console.log("stabilizeLoggedInUser")
+      
+
+       // if(fromStateName == "welcome") {
+       //  console.log("fromStateName == welcome")
+       //  $rootScope.authenticated = true;
+       // } else {
+       //  console.log("fromStateName == !!welcome")
+       //  $state.go('welcome');
+       // }
+   }
+
+   function onStateChangeSuccess(event, toState, toParams, fromState, fromParams) {
+       console.log("ON STATE CHANGE SUCCESS!!!!!!!!!!!!!!!!!!", event, toState, toParams, fromState, fromParams, "!!!!!!!!!!!!!!!!")
+       stabilizeLoggedInUser(fromState.name);
+   }
+
+
+   $rootScope.$on('$stateChangeSuccess', onStateChangeSuccess);
 
 }

@@ -11,13 +11,10 @@ import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -31,16 +28,10 @@ import com.google.gson.JsonObject;
 
 import dk.itu.sass.teame.controller.AccountController;
 import dk.itu.sass.teame.controller.FileController;
-import dk.itu.sass.teame.controller.AuthProcessor;
 import dk.itu.sass.teame.entity.Account;
 import dk.itu.sass.teame.entity.File;
-import net.jalg.hawkj.Algorithm;
-import net.jalg.hawkj.AuthHeaderParsingException;
-import net.jalg.hawkj.AuthorizationHeader;
-import net.jalg.hawkj.HawkContext;
-import net.jalg.hawkj.HawkContext.HawkContextBuilder_B;
 
-@Path("file")
+@Path("protected/file")
 public class FileResource {
 
 	// private final String FILE_LOCATION = "";
@@ -54,7 +45,8 @@ public class FileResource {
 	FileController fc;
 
 	@GET
-	public Response getFile(@QueryParam("id") String id, @QueryParam("id") long accountId) {
+	public Response getFile(@QueryParam("id") String id) {
+		
 		JsonObject json = new JsonObject();
 		Long fid = null;
 		try {
@@ -63,14 +55,13 @@ public class FileResource {
 			json.addProperty("Error", "Wrong file id: " + id);
 			return Response.status(Status.BAD_REQUEST).entity(json.toString()).build();
 		}
-		Account user = AccountController.getAccountById(accountId);
-			File file = fc.getFile(fid);
-
-			if (file == null)
-				Response.status(Status.INTERNAL_SERVER_ERROR).build();
-
-			JsonObject jsonResponse = fileToJsonObject(file);
-			return Response.ok().entity(jsonResponse.toString()).build();
+		File file = fc.getFile(fid);
+		
+		if(file==null)
+			Response.status(Status.INTERNAL_SERVER_ERROR).build();
+		
+		JsonObject jsonResponse = fileToJsonObject(file);
+		return Response.ok().entity(jsonResponse.toString()).build();
 	}
 
 	@POST

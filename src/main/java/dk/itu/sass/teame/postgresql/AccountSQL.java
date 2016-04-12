@@ -1,21 +1,19 @@
 package dk.itu.sass.teame.postgresql;
 
-import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 
 import dk.itu.sass.teame.entity.Account;
-import dk.itu.sass.teame.entity.File;
 
 @Stateless
 public class AccountSQL {
@@ -71,12 +69,13 @@ public class AccountSQL {
 			try (Connection con = DriverManager.getConnection("jdbc:postgresql://horton.elephantsql.com:5432/hmdgzyax", "hmdgzyax", "8ETS72wV53uGfPIs-RCJy_tolfPs481n")) {
 
 				PreparedStatement pre = null;
-				String stm = "insert into account(username, password, email) VALUES(?, ?, ?)";
+				String stm = "insert into account(username, password, email, keyid) VALUES(?, ?, ?, ?)";
 				pre = con.prepareStatement(stm,Statement.RETURN_GENERATED_KEYS);
 
 				pre.setString(1, newAccount.getUsername());
 				pre.setString(2, newAccount.getPassword());
 				pre.setString(3, newAccount.getEmail());
+				pre.setString(4, newAccount.getKeyId());
 				pre.executeUpdate();
 				
 				ResultSet rs = pre.getGeneratedKeys();
@@ -148,6 +147,25 @@ public class AccountSQL {
 			} catch(SQLException e) {
 				return null;
 			}
+	}
+
+	public boolean updateKey(Account acc) {
+		
+		try (
+				Connection con = DriverManager.getConnection("jdbc:postgresql://horton.elephantsql.com:5432/hmdgzyax", "hmdgzyax", "8ETS72wV53uGfPIs-RCJy_tolfPs481n");
+				PreparedStatement stmt = con.prepareStatement("UPDATE account SET keyid=? WHERE username=?");
+			) {
+
+				stmt.setString(1, acc.getKeyId());
+				stmt.setString(2, acc.getUsername());
+				
+				if(stmt.executeUpdate() == 1)
+					return true;
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return false;
 	}
 	
 	

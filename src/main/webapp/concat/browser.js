@@ -85,7 +85,6 @@ hawk.client = {
         }
 
         // Calculate signature
-
         const artifacts = {
             ts: timestamp,
             nonce: options.nonce || hawk.utils.randomString(6),

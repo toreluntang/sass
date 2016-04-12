@@ -1,5 +1,5 @@
 body {
-	background-color: #efefef;
+	background-color: red;
 	background: url(../assets/bg.jpg) no-repeat center center;
 	background-size: cover;
 	background-attachment: fixed;
@@ -81,7 +81,7 @@ body {
 	width: 100%;
 }
 .login-view-title {
-	text-align: center;
+	text-align: left;
 	font-size: 70px;
 	padding: 50px 0;
 }
@@ -353,4 +353,41 @@ i {
 	padding: 6px 15px;
 	height: 43px;
 	margin-left: 8px;
+}
+/*Signup Start*/
+.form-signup {
+	/*opacity: 0.2;*/
+	display: flex;
+	text-align: right;
+	float: right;
+	-webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+
+}
+/*.form-signup.visible {
+	opacity: 1;
+
+}*/
+.form-signup input {
+	width: 200px;
+	padding: 5px;
+    margin-right: 5px;
+    color: #333;
+    font-weight: 900;
+    font-size: 18px;
+}
+.form-signup .btn {
+	opacity: 1;
+	width: 100px;
+	padding: 5px;
+}
+
+/*Signup End*/
+
+.form-signin .form-group input {
+	color: #333;
+	font-weight: 900;
+	font-size: 18px;
 }
