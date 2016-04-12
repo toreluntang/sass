@@ -17,7 +17,7 @@ import dk.itu.sass.teame.controller.CommentController;
 import dk.itu.sass.teame.controller.AuthProcessor;
 import dk.itu.sass.teame.entity.Account;
 
-@Path("comment")
+@Path("protected/comment")
 @Produces(MediaType.APPLICATION_JSON)
 public class CommentResource {
 	
