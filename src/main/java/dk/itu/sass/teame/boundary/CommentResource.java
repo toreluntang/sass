@@ -17,7 +17,7 @@ import dk.itu.sass.teame.controller.CommentController;
 import dk.itu.sass.teame.controller.AuthProcessor;
 import dk.itu.sass.teame.entity.Account;
 
-@Path("protected/comment")
+@Path("comment")
 @Produces(MediaType.APPLICATION_JSON)
 public class CommentResource {
 	
@@ -36,7 +36,7 @@ public class CommentResource {
 
 	@GET
 	public Response getImageComments(
-			@QueryParam("imageId") long imageId) {
+			@QueryParam("imageId") String imageId) {
 		
 		String json = commentController.getComments(imageId);
 		

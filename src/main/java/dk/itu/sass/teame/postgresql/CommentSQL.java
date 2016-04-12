@@ -13,6 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
 import dk.itu.sass.teame.entity.Account;
 import dk.itu.sass.teame.entity.Comment;
 
@@ -27,8 +30,10 @@ public class CommentSQL {
 	}
 	
 	
-	public List<Comment> getComments(long imageId) {
+	public JsonArray getComments(String imageId) {
 		List<Comment> comments = new ArrayList<>(); 
+		Object r = null;
+		JsonArray commentList = new JsonArray();
 		
 		String query = "SELECT commentid, body, userid, imageid, timestamp, username" +"\n"+
 					   "FROM comment c, account a" +"\n"+
@@ -41,8 +46,36 @@ public class CommentSQL {
 				PreparedStatement pre = null;
 				String stm = query;
 				pre = con.prepareStatement(stm);
-				pre.setLong(1, imageId);
+				pre.setString(1, imageId);
+				ResultSet rss = null;
+				
+				Statement s = con.createStatement();
+				boolean resFound = s.execute(stm.replaceAll("\\?", imageId+""));
+				
+				 while(resFound){
+					 rss = s.getResultSet();
+					 commentList = new JsonArray();
+					 
+					 while(rss.next()){
+						 JsonObject j = new JsonObject();
+						 for(int i = 1; i <= rss.getMetaData().getColumnCount(); i++){
+							 if(null != rss.getObject(i)){
+								 j.addProperty(rss.getMetaData().getColumnLabel(i), rss.getObject(i).toString());
+							 }					 
+					 }
+						 
+					 commentList.add(j);
+					 System.out.println(commentList);
 
+					 }
+					 resFound = s.getMoreResults();
+					 r = resFound;
+				 }
+				 
+//				 while(rss.next()){
+//				 }
+				 
+				System.out.println(rss.next());
 				try (ResultSet rs = pre.executeQuery();) {
 					
 					while( rs.next() ){
@@ -56,15 +89,17 @@ public class CommentSQL {
 						Comment c = new Comment(body,Instant.ofEpochMilli(timestamp), userid, commentid,  imageid2);
 						c.setUsername(username);
 						comments.add(c);
+						commentList.forEach(System.out::print);
 					}
 				}
 			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
+			//return r;
 		}
 
-		return comments;
+		return commentList;
 	}
 
 	public long insertComment(Comment newComment) {

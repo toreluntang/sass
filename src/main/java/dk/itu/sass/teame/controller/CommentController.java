@@ -1,6 +1,7 @@
 package dk.itu.sass.teame.controller;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -29,11 +30,12 @@ public class CommentController {
 		return commentId;
 	}
 		
-	public String getComments(long imageId){
+	public String getComments(String imageId){
 		
 		CommentSQL commentSQL = new CommentSQL();
+		List<Comment> comments = new ArrayList<>();
 		
-		List<Comment> comments = commentSQL.getComments(imageId);
+		JsonArray comment = commentSQL.getComments(imageId);
 		JsonArray jsonArray = new JsonArray();
 		
 		for(Comment c : comments){
@@ -50,6 +52,6 @@ public class CommentController {
 			jsonArray.add(o);
 		}
 		
-		return jsonArray.toString();
+		return comment.toString();
 	}
 }
