@@ -16,7 +16,6 @@ function CrudService($q, $http, $state) {
     function createAuthorizationHeader(uploadUrl, method) {        
         var myLS = JSON.parse(localStorage.getItem('LS')); 
         if(myLS == null) {
-            console.log("myLS is null -- from createAuthorizationHeader -- from CrudService");
             $state.go("welcome");
             return;
         }
@@ -67,24 +66,12 @@ function CrudService($q, $http, $state) {
         var def = $q.defer();
         console.log(objData);
         var header = createAuthorizationHeader(url,'POST');
-        // var ts = "";
-        // var nonce = "";
-        // var mac = "";
-        // var accountid = "";
-        // if(authObj.Auth.ts != "") ts = authObj.Auth.ts;
-        // if(authObj.Auth.nonce != "") nonce = authObj.Auth.nonce;
-        // if(authObj.Auth.mac != "") mac = authObj.Auth.mac;
-        // if(authObj.accountid != "") mac = authObj.accountid;
+       
         $http({
             method: 'POST',
             url: url,
             headers: { 
                 'Content-Type' : 'application/x-www-form-urlencoded',
-                // 'ts' :  ts,
-                // 'nonce' : nonce,
-                // 'mac' :  mac,
-                // 'accountId' : accountid,
-                // 'XRequestHeaderToProtect': 'secret',
                 'Authorization': header.field
             },
             data: $.param(objData)
@@ -116,26 +103,6 @@ function CrudService($q, $http, $state) {
         });
         return def.promise;
     }
-    //  function createItem(objData, url) { // PAUL
-    //     var def = $q.defer();
-    //     console.log(objData)
-    //     var header = createAuthorizationHeader(url,'POST');
-    //     $http.post(url, objData, {
-    //         transformRequest: angular.identity,
-    //         headers: {
-    //             'Content-Type': undefined,
-    //             'XRequestHeaderToProtect': 'secret',
-    //             'Authorization': header.field
-    //         }
-    //     })
-    //     .success(function(data) {
-    //         def.resolve(data);
-    //     })
-    //     .error(function() {
-    //         def.reject("Failed to create item");
-    //     });
-    //     return def.promise;
-    // }
     function updateItem(objData, url) {
         var def = $q.defer();
         var header = createAuthorizationHeader(url,'POST');

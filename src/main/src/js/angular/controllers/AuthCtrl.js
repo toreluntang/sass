@@ -1,7 +1,7 @@
 /**
  * @ngInject
  */
-function AuthCtrl($state, CrudService) {
+function AuthCtrl($state, $location, CrudService) {
     vm = this;
     vm.test = 'altceva';
     vm.username = "";
@@ -9,12 +9,17 @@ function AuthCtrl($state, CrudService) {
     vm.usernameSignup = "";
     vm.passwordSignup = "";
     // vm.showSignup = false;
+    var requestUrl = $location.$$protocol + "://" + $location.$$host + ":" + $location.$$port + "/sec/";
+
+
+    console.log(">>>> Request url is: >>>>>" , $location.$$protocol + "://" + $location.$$host + ":" + $location.$$port + "/sec" )
+    console.log(">>>> Location obj >>>>>" , $location )
 
     vm.login = function login (username, password) {
         console.log("login clicked!!!", username, password)
         if(username != "" && password != "") {
             var authObj = {username: username, password: password};
-            var loginRequestPath = 'http://localhost:8080/sec/resources/account/login';
+            var loginRequestPath = requestUrl+'resources/account/login';
             CrudService.createItemAuth(authObj, loginRequestPath)
                 .then(angular.bind(this, onLoginSuccess), angular.bind(this, onLoginError));
             
@@ -29,7 +34,7 @@ function AuthCtrl($state, CrudService) {
         console.log("signup")
         if(username != "" && password != "") {
             var authObj = {username: username, password: password, email: username};
-            var signupRequestPath = 'http://localhost:8080/sec/resources/account/create';
+            var signupRequestPath = requestUrl+'resources/account/create';
             CrudService.createItemAuth(authObj, signupRequestPath)
                 .then(angular.bind(this, onSignupSuccess), angular.bind(this, onSignupError));
             
