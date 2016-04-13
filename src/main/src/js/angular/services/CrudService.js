@@ -31,7 +31,6 @@ function CrudService($q, $http, $state) {
         var arr = autourl.split('/');
         autourl = arr[0] + '//' + arr[2];
         var header = hawk.client.header(uploadUrl, method, options);
-        console.log("uploadUrl: "+uploadUrl)
         if (header.err != null) {
             alert(header.err);
             return null;
@@ -52,11 +51,9 @@ function CrudService($q, $http, $state) {
                         'Authorization': header.field}
         })
         .success(function(){
-            console.log("SUCCESS : uploadFileToUrl")
             def.resolve();
         })
         .error(function(){
-            console.log("ERROR : uploadFileToUrl")
             def.reject("Failed to uploadFileToUrl");
         });
 
@@ -64,7 +61,6 @@ function CrudService($q, $http, $state) {
     }
     function createItem(objData, url, authObj) {
         var def = $q.defer();
-        console.log(objData);
         var header = createAuthorizationHeader(url,'POST');
        
         $http({
@@ -86,7 +82,6 @@ function CrudService($q, $http, $state) {
     }
     function createItemAuth(objData, url) {
         var def = $q.defer();
-        console.log(objData+' '+url);
         $http({
             method: 'POST',
             url: url,

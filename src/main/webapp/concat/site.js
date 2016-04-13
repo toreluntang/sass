@@ -36,7 +36,6 @@ DataService.$inject = ['$q', '$http', '$state'];angular.element(document).ready(
                     var modelSetter = model.assign;
                     
                     element.bind('change', function(){
-                        console.log("UPLOAAAAAAD")
                         scope.$apply(function(){
                             modelSetter(scope, element[0].files[0]);
                         });
@@ -96,15 +95,9 @@ function AuthCtrl($state, $location, CrudService) {
     vm.password = "";
     vm.usernameSignup = "";
     vm.passwordSignup = "";
-    // vm.showSignup = false;
     var requestUrl = $location.$$protocol + "://" + $location.$$host + ":" + $location.$$port + "/sec/";
 
-
-    console.log(">>>> Request url is: >>>>>" , $location.$$protocol + "://" + $location.$$host + ":" + $location.$$port + "/sec" )
-    console.log(">>>> Location obj >>>>>" , $location )
-
     vm.login = function login (username, password) {
-        console.log("login clicked!!!", username, password)
         if(username != "" && password != "") {
             var authObj = {username: username, password: password};
             var loginRequestPath = requestUrl+'resources/account/login';
@@ -112,14 +105,11 @@ function AuthCtrl($state, $location, CrudService) {
                 .then(angular.bind(this, onLoginSuccess), angular.bind(this, onLoginError));
             
         } else {
-            console.log("username and pass are required")
         }
 
     }
 
     vm.signup = function signup (username, password) {
-        // vm.showSignup = true;
-        console.log("signup")
         if(username != "" && password != "") {
             var authObj = {username: username, password: password, email: username};
             var signupRequestPath = requestUrl+'resources/account/create';
@@ -127,44 +117,23 @@ function AuthCtrl($state, $location, CrudService) {
                 .then(angular.bind(this, onSignupSuccess), angular.bind(this, onSignupError));
             
         } else {
-            console.log("signup failed")
         }
     }
 
     function onLoginSuccess(data) {
-        console.log("onLoginSuccess", data)
-
-        // var newkgjsh = {"accountid":data.accountid,"Auth":data.Auth};
-
         localStorage.setItem('LS', JSON.stringify(data));
-
-        
-
-        $state.go('profile', "test from onLoginSuccess ###");
+        $state.go('profile');
     }
     function onLoginError(error) {
-        console.log("onLoginError", error)
     }
     function onSignupSuccess(data) {
-        console.log("onSignupSuccess", data)
         var myLS = {keyid: data.keyid, accountId: data.accountId};
         localStorage.setItem("LS", JSON.stringify(myLS));
         $state.go('profile', "test from onSignupSuccess ###");
 
     }
     function onSignupError(error) {
-        console.log("onSignupError", error)
     }
-
-    // vm.login = function login() {
-    //     var username = 'test';
-    //     var password = 'pass';
-    //     var loginData = {
-    //     	username: username,
-    //     	password: password
-    //     	};
-    //     var promise = CrudService.createItem(loginData,apiPaths['login']);
-    // }
 }
 /**
  * @ngInject
@@ -242,7 +211,6 @@ function ProfileCtrl($rootScope, $scope, $state, $location, DataService, CrudSer
 
     vm.uploadPic = function uploadPic() {
         var file = vm.myFile;
-        console.dir(file);
         var uploadUrl = "resources/protected/file?userid="+vm.userId;
         CrudService.uploadFileToUrl(file, uploadUrl)
             .then(angular.bind(this, onUploadSuccess), angular.bind(this, onUploadError));        
@@ -334,7 +302,6 @@ function CrudService($q, $http, $state) {
         var arr = autourl.split('/');
         autourl = arr[0] + '//' + arr[2];
         var header = hawk.client.header(uploadUrl, method, options);
-        console.log("uploadUrl: "+uploadUrl)
         if (header.err != null) {
             alert(header.err);
             return null;
@@ -355,11 +322,9 @@ function CrudService($q, $http, $state) {
                         'Authorization': header.field}
         })
         .success(function(){
-            console.log("SUCCESS : uploadFileToUrl")
             def.resolve();
         })
         .error(function(){
-            console.log("ERROR : uploadFileToUrl")
             def.reject("Failed to uploadFileToUrl");
         });
 
@@ -367,7 +332,6 @@ function CrudService($q, $http, $state) {
     }
     function createItem(objData, url, authObj) {
         var def = $q.defer();
-        console.log(objData);
         var header = createAuthorizationHeader(url,'POST');
        
         $http({
@@ -389,7 +353,6 @@ function CrudService($q, $http, $state) {
     }
     function createItemAuth(objData, url) {
         var def = $q.defer();
-        console.log(objData+' '+url);
         $http({
             method: 'POST',
             url: url,
@@ -449,14 +412,11 @@ function DataService($q, $http, $state) {
     };
     return service;
     function createAuthorizationHeader(uploadUrl, method) {
-        console.log("### createAuthorizationHeader #####")
         var myLS = JSON.parse(localStorage.getItem('LS')); 
         if(myLS == null) {
-            console.log("myLS is null -- from createAuthorizationHeader -- from DataService");
             $state.go("welcome");
             return;
         }
-        console.log("### got myLS #####", myLS)
         var credentials = {
             id: myLS.accountId,
             algorithm: 'sha256',
@@ -469,9 +429,7 @@ function DataService($q, $http, $state) {
         var arr = autourl.split('/');
         autourl = arr[0] + '//' + arr[2];
         var header = hawk.client.header(uploadUrl, method, options);
-        console.log("uploadUrl: "+uploadUrl)
         if (header.err != null) {
-            // alert(header.err);
             return null;
         }
         else
@@ -483,7 +441,6 @@ function DataService($q, $http, $state) {
         var def = $q.defer();
         var header = createAuthorizationHeader(url,'GET');
         if(header == null) {
-            console.log("header == null -- from DataService -- from loadStuff")
             return;
         }
 
@@ -493,10 +450,6 @@ function DataService($q, $http, $state) {
             headers: { 
                 'Content-Type' : 'application/x-www-form-urlencoded',
                 'Authorization': header.field
-                // 'ts' :  authObj.Auth.ts,
-                // 'nonce' :  authObj.Auth.nonce,
-                // 'mac' :  authObj.Auth.mac,
-                // 'accountId' : authObj.accountid
             }
         })
         .success(function(data) {
@@ -505,13 +458,6 @@ function DataService($q, $http, $state) {
         .error(function() {
             def.reject("Failed to get stuff from url " + url);
         });
-        // $http.get(url)
-        // .success(function(data) {
-        //     def.resolve(data);
-        // })
-        // .error(function() {
-        //     def.reject("Failed to load " + url);
-        // });
         return def.promise;
     }
 }

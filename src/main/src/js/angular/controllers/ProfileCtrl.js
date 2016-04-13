@@ -74,7 +74,6 @@ function ProfileCtrl($rootScope, $scope, $state, $location, DataService, CrudSer
 
     vm.uploadPic = function uploadPic() {
         var file = vm.myFile;
-        console.dir(file);
         var uploadUrl = "resources/protected/file?userid="+vm.userId;
         CrudService.uploadFileToUrl(file, uploadUrl)
             .then(angular.bind(this, onUploadSuccess), angular.bind(this, onUploadError));        

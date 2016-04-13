@@ -20,7 +20,6 @@ angular.element(document).ready(function (event) {
                     var modelSetter = model.assign;
                     
                     element.bind('change', function(){
-                        console.log("UPLOAAAAAAD")
                         scope.$apply(function(){
                             modelSetter(scope, element[0].files[0]);
                         });
