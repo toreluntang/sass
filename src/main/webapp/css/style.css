@@ -214,6 +214,7 @@ i {
 .image-details-right {
 	text-align: right;
 	font-weight: 900;
+	width: 100%;
 }
 
 /*Images end*/

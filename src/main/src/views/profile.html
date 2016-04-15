@@ -1,7 +1,7 @@
 <div class="container-fluid profile-view">
 	<div class="header">
 		<div class="container">
-			<div class="left"><p><span class="brand">Fake</span>stagra   m</p></div>
+			<div class="left"><p><span class="brand">Fake</span>stagram</p></div>
 			<div class="right"><span class="glyphicon glyphicon-log-out" aria-hidden="true" ng-click="profile.logout()"></span></div>
 		</div>
 	</div>
@@ -10,40 +10,32 @@
 			<div class="col-md-8">
 				<div class="wrapper">
 					<div class="upload-container">
-						<!-- <form action="resources/file?userid=1" method="post" enctype="multipart/form-data">
-						<input type="file" name="file" />
-						<input type="submit" name="submit" value="Upload picture" />
-						</form> -->
-						<!-- <form  enctype="multipart/form-data">
-							<input type="file" file-model="profile.myPic" name="file" />
-							<button type="submit" ng-click="profile.uploadPic(profile.myPic)">Upload pic test</button>
-						</form> -->
+				
 						<form enctype="multipart/form-data" id="upload-form">
 						<input type="file" class="inputfile inputfile-2" name="file"  file-model="profile.myFile" />
 						<label for="file"><span>Choose file</span></label>
 						<button class="btn btn--default" ng-click="profile.uploadPic()" id="upload">Upload fakestagram</button>
-						<!-- <input type="submit" name="submit" value="Upload picture" /> -->
 						</form>
 					</div>
 					<div class="images-container">					
 						<div class="image" ng-repeat="pic in profile.pictures | orderBy:'-timestamp'" ng-if="pic.path">
 							<p class="image-icon"><span class="glyphicon glyphicon-tags" aria-hidden="true"></span></p> 
-							<img ng-src="http://localhost:8080/img/{{pic.path}}" alt="">
-							<!-- <p>Image id is: {{::pic.imageid}}</p> -->
+							<img ng-src="{{pic.path}}" alt="">
+					
 							<div class="image-details">
-								<div class="image-details-left">
+								<div class="image-details-left" ng-if="pic.author == profile.userId">
 									<button class="btn btn--default" ng-click="profile.shareWith(pic.mySharer, pic.imageid)">Share with</button>
 									<select class="cs-select cs-skin-border" ng-model="pic.mySharer">
 									    <option ng-repeat="user in profile.users" value="{{::user.accountid}}">{{user.username}}</option>								        
 									</select>
 								</div>
 								<div class="image-details-right">
-									<span class="glyphicon glyphicon-comment" ng-click="pic.showComments = !pic.showComments"></span>  <!-- ng-click="pic.showComments = !pic.showComments" -->
+									<span class="glyphicon glyphicon-comment" ng-click="pic.showComments = !pic.showComments"></span>
 									<span class="timestamp">{{::pic.timestamp}}</span>, 
 									<span class="author">By {{::pic.username}}</span>	
 								</div>
 							</div>
-							<div class="image-comments" ng-if="pic.showComments"> <!-- pic.showComments &&  ng-if="profile.onLoadImageCommentsSuccessERROR" -->
+							<div class="image-comments" ng-if="pic.showComments">
 								<div class="post-comment">
 									<div class="form-group group">
 									<input type="text" ng-model="profile.commBody">
@@ -71,7 +63,7 @@
 			    <div class="profile-info">
 			      <img src="assets/profile.png" alt="">
 			      <div class="personal-details">
-			        <p class="name"><i class="fa fa-user"></i>"Picture your life as you wish on Fakestagram!"<!-- {{main.userLS.name}} --></p>
+			        <p class="name"><i class="fa fa-user"></i>"Picture your life as you wish on Fakestagram!"</p>
 			        </div>
 			      </div>                      
 			    </div>

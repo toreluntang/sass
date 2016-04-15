@@ -92,6 +92,13 @@ public class FileSQL {
 	
 	public List<File> selectFilesByUserId(long userId){
 		List<File> images = new ArrayList<>();
+		
+		String realquery = "SELECT isw.imageid, i.id_user, i.path, i.timestamp , a.username"  + "\n" +
+							"FROM  image_shared_with isw, img i, account a" + "\n" +
+							"WHERE isw.userid = ?" + "\n" +
+							"AND   isw.imageid = i.id" + "\n" +
+							"AND   a.accountid = i.id_user";
+		
 		String query =  "SELECT I.id, I.id_user, I.path, I.timestamp, A.username" + "\n" +
 						"FROM account A, img I, image_shared_with ISW" + "\n" +
 						"WHERE ISW.imageid = I.id" + "\n" +
@@ -99,7 +106,7 @@ public class FileSQL {
 						"AND A.accountid = ?";
 		try (
 				Connection con = DriverManager.getConnection(CONNECTION_URL,CONNECTION_USERNAME,CONNECTION_PASSWORD);
-				PreparedStatement stmt = con.prepareStatement(query);
+				PreparedStatement stmt = con.prepareStatement(realquery);
 			){
 				stmt.setLong(1, userId);
 				ResultSet rs = stmt.executeQuery();
@@ -107,10 +114,10 @@ public class FileSQL {
 				while(rs.next()) {
 					File image = new File();
 					
-					image.setId(rs.getLong("id"));
+					image.setId(rs.getLong("imageid"));
+					image.setUserId(rs.getLong("id_user")); // author
 					image.setPath(Paths.get(rs.getString("path")));
 					image.setTimestamp(Instant.ofEpochMilli(rs.getLong("timestamp")));
-					image.setUserId(rs.getLong("id_user")); // author
 					image.setUsername(rs.getString("username"));
 					
 					images.add(image);
