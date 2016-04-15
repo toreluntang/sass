@@ -26,9 +26,7 @@ import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 
 import com.google.gson.JsonObject;
 
-import dk.itu.sass.teame.controller.AccountController;
 import dk.itu.sass.teame.controller.FileController;
-import dk.itu.sass.teame.entity.Account;
 import dk.itu.sass.teame.entity.File;
 
 @Path("protected/file")
@@ -75,7 +73,6 @@ public class FileResource {
 			json.addProperty("Error", "Wrong user id: " + userId);
 			return Response.status(Status.BAD_REQUEST).entity(json.toString()).build();
 		}
-		Account user = AccountController.getAccountById(uid);
 			Map<String, List<InputPart>> maps = input.getFormDataMap();
 			List<InputPart> f = maps.get("file");
 
@@ -84,6 +81,10 @@ public class FileResource {
 			// Hijacking filenames xD Timestamp/uuid to fix - but it's a cool
 			// feature.
 			String filename = getFileName(mv);
+			if (filename.contains(".exe") || filename.contains(".sh")|| filename.contains(".class")
+					|| filename.contains(".jsp")) {
+				return Response.status(Status.FORBIDDEN).build();
+			}
 
 			java.nio.file.Path sti = null;
 
@@ -158,7 +159,6 @@ public class FileResource {
 			Response.status(Response.Status.BAD_REQUEST).build();
 		}
 		long accountId = Long.parseLong(authorId);
-		Account acc = AccountController.getAccountById(accountId);
 		boolean b = fc.shareImage(Long.parseLong(imageId), accountId, Long.parseLong(shareWithId));
 
 		if (b)

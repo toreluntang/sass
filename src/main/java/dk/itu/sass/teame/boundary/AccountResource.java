@@ -28,14 +28,17 @@ public class AccountResource {
 	public Response createAccount(@FormParam("username") String username, @FormParam("password") String password,
 			@FormParam("email") String email) {
 
-		if (username == null || password == null || email == null) {
+		if (username == null || password == null) {
 			return Response.status(Response.Status.BAD_REQUEST).build();
 		}
-
+		if (password.length()<10) {
+			return Response.status(Response.Status.LENGTH_REQUIRED).build();
+		}
+		
 		boolean usernameIsTaken = accountController.validateUsername(username);
-
+		
 		if (!usernameIsTaken)
-			return Response.status(Response.Status.PAYMENT_REQUIRED).build();
+			return Response.status(Response.Status.CONFLICT).build();
 
 		Account acc = accountController.insertAccount(username, password, email);
 		
