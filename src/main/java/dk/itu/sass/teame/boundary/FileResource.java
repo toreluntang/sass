@@ -26,7 +26,9 @@ import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 
 import com.google.gson.JsonObject;
 
+import dk.itu.sass.teame.controller.AccountController;
 import dk.itu.sass.teame.controller.FileController;
+import dk.itu.sass.teame.entity.Account;
 import dk.itu.sass.teame.entity.File;
 
 @Path("protected/file")
@@ -34,51 +36,49 @@ public class FileResource {
 
 	// private final String FILE_LOCATION = "";
 
-	// private final String FILE_LOCATION =
-	// "\\Irina\\ITU\\Sem_1\\Security\\wildfly-10.0.0.Final\\Pictures";
-	// "C:\\Users\\Paul\\Desktop\\ITU\\Security\\PicturesProject\\wildfly-10.0.0.Final\\Pictures"
-	private final String FILE_LOCATION = "/home/neoot/wildfly-10.0.0.Final/Pictures";
+
+	// private final String FILE_LOCATION = "\\Irina\\ITU\\Sem_1\\Security\\wildfly-10.0.0.Final\\Pictures";
+	//private final String FILE_LOCATION = "/home/neoot/wildfly-10.0.0.Final/Pictures";
+	private final String FILE_LOCATION = "/var/www/html/";
 
 	@Inject
 	FileController fc;
 
 	@GET
 	public Response getFile(@QueryParam("id") String id) {
+		
+		JsonObject json = new JsonObject();
+		Long fid = null;
 		try {
-			JsonObject json = new JsonObject();
-			Long fid = null;
-			try {
-				fid = Long.parseLong(id);
-			} catch (Exception e) {
-				json.addProperty("Error", "Wrong file id: " + id);
-				return Response.status(Status.BAD_REQUEST).entity(json.toString()).build();
-			}
-			File file = fc.getFile(fid);
-
-			if (file == null)
-				Response.status(Status.INTERNAL_SERVER_ERROR).build();
-
-			JsonObject jsonResponse = fileToJsonObject(file);
-			return Response.ok().entity(jsonResponse.toString()).build();
+			fid = Long.parseLong(id);
 		} catch (Exception e) {
-			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+			json.addProperty("Error", "Wrong file id: " + id);
+			return Response.status(Status.BAD_REQUEST).entity(json.toString()).build();
 		}
+		File file = fc.getFile(fid);
+		
+		if(file==null)
+			Response.status(Status.INTERNAL_SERVER_ERROR).build();
+		
+		JsonObject jsonResponse = fileToJsonObject(file);
+		return Response.ok().entity(jsonResponse.toString()).build();
 	}
 
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response uploadFile(MultipartFormDataInput input, @QueryParam("userid") String userId) {
-		try {
-			JsonObject json = new JsonObject();
 
-			Long uid = null;
-			try {
-				uid = Long.parseLong(userId);
-			} catch (Exception e) {
-				json.addProperty("Error", "Wrong user id: " + userId);
-				return Response.status(Status.BAD_REQUEST).entity(json.toString()).build();
-			}
+		JsonObject json = new JsonObject();
+		
+		Long uid = null;
+		try {
+			uid = Long.parseLong(userId);
+		} catch (Exception e) {
+			json.addProperty("Error", "Wrong user id: " + userId);
+			return Response.status(Status.BAD_REQUEST).entity(json.toString()).build();
+		}
+		Account user = AccountController.getAccountById(uid);
 			Map<String, List<InputPart>> maps = input.getFormDataMap();
 			List<InputPart> f = maps.get("file");
 
@@ -87,10 +87,6 @@ public class FileResource {
 			// Hijacking filenames xD Timestamp/uuid to fix - but it's a cool
 			// feature.
 			String filename = getFileName(mv);
-			if (filename.contains(".exe") || filename.contains(".sh") || filename.contains(".class")
-					|| filename.contains(".jsp")) {
-				return Response.status(Status.FORBIDDEN).build();
-			}
 
 			java.nio.file.Path sti = null;
 
@@ -110,55 +106,10 @@ public class FileResource {
 			File file = fc.uploadFile(uid, sti);
 
 			return Response.created(file.getPath().toUri()).entity(fileToJsonObject(file).toString()).build();
-		} catch (Exception e) {
-			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-		}
 	}
 
-	@GET
-	@Path("getallimages")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getAllImagesFromUser(@QueryParam("id") String id) {
-		try {
-			if (id.isEmpty() || id == null) {
-				Response.status(Response.Status.BAD_REQUEST).build();
-			}
-
-			String json = fc.getFilesByUser(Long.parseLong(id));
-			return Response.status(Response.Status.ACCEPTED).entity(json).build();
-		} catch (Exception e) {
-			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-		}
-	}
-
-	@POST
-	@Path("shareimage")
-	public Response shareImage(@FormParam("imageId") String imageId, @FormParam("author") String authorId,
-			@FormParam("victim") String shareWithId) {
-		try {
-			JsonObject o = new JsonObject();
-			o.addProperty("author", authorId);
-			o.addProperty("sharedwith", shareWithId);
-			o.addProperty("imageid", imageId);
-
-			if ((imageId.isEmpty() || imageId == null) || (authorId.isEmpty() || authorId == null)
-					|| (shareWithId.isEmpty() || shareWithId == null)) {
-				Response.status(Response.Status.BAD_REQUEST).build();
-			}
-			long accountId = Long.parseLong(authorId);
-			boolean b = fc.shareImage(Long.parseLong(imageId), accountId, Long.parseLong(shareWithId));
-
-			if (b)
-				return Response.status(Response.Status.ACCEPTED).entity(o.toString()).build();
-			else
-				return Response.status(Response.Status.BAD_REQUEST).build();
-		} catch (Exception e) {
-			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-		}
-	}
-
-	// private methods
 	private String getFileName(MultivaluedMap<String, String> header) {
+
 		String[] contentDisposition = header.getFirst("Content-Disposition").split(";");
 
 		for (String filename : contentDisposition) {
@@ -180,6 +131,43 @@ public class FileResource {
 		json.addProperty("path", f.getPath().getFileName().toString());
 		json.addProperty("timestamp", f.getTimestamp().toString());
 		return json;
+	}
+
+	@GET
+	@Path("getallimages")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAllImagesFromUser(@QueryParam("id") String id) {
+
+		if (id.isEmpty() || id == null) {
+			Response.status(Response.Status.BAD_REQUEST).build();
+		}
+
+		String json = fc.getFilesByUser(Long.parseLong(id));
+		return Response.status(Response.Status.ACCEPTED).entity(json).build();
+	}
+
+	@POST
+	@Path("shareimage")
+	public Response shareImage(@FormParam("imageId") String imageId, @FormParam("author") String authorId,
+			@FormParam("victim") String shareWithId) {
+
+		JsonObject o = new JsonObject();
+		o.addProperty("author", authorId);
+		o.addProperty("sharedwith", shareWithId);
+		o.addProperty("imageid", imageId);
+
+		if ((imageId.isEmpty() || imageId == null) || (authorId.isEmpty() || authorId == null)
+				|| (shareWithId.isEmpty() || shareWithId == null)) {
+			Response.status(Response.Status.BAD_REQUEST).build();
+		}
+		long accountId = Long.parseLong(authorId);
+		Account acc = AccountController.getAccountById(accountId);
+		boolean b = fc.shareImage(Long.parseLong(imageId), accountId, Long.parseLong(shareWithId));
+
+		if (b)
+			return Response.status(Response.Status.ACCEPTED).entity(o.toString()).build();
+		else
+			return Response.status(Response.Status.BAD_REQUEST).build();
 	}
 
 }
