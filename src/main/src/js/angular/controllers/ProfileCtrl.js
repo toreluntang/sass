@@ -3,9 +3,9 @@
  */
 function ProfileCtrl($rootScope, $scope, $state, $location, DataService, CrudService) {
     vm = this;
-
     vm.profiletest = "Profile Test";
     vm.myPic = "";
+    vm.fileTypeError = false;
     vm.userId = JSON.parse(localStorage.getItem('LS')).accountId;
     if(vm.userId == null) {
         $state.go("welcome");
@@ -13,7 +13,7 @@ function ProfileCtrl($rootScope, $scope, $state, $location, DataService, CrudSer
     }
     vm.imageId = '1';
     vm.mySharer = "Test mySharer";
-    vm.myFile = "";
+    vm.myFile = null;
     var requestUrl = $location.$$protocol + "://" + $location.$$host + ":" + $location.$$port + "/sec/";
    
     
@@ -59,24 +59,30 @@ function ProfileCtrl($rootScope, $scope, $state, $location, DataService, CrudSer
     function onSharePicError(error) {
     }
 
-
     function onLoadUsersSuccess(usersData) {
         vm.users = usersData;
     }
     function onLoadUsersError(error) {
     }
     function onUploadSuccess() {
+        vm.fileTypeError = false;
         getAllImages(vm.userId);
         if(!$scope.$$phase) $scope.$digest();
     }
     function onUploadError(error) {
+        vm.fileTypeError = true;
+    }
+
+    vm.inputUpload = function inputUpload() {
+        vm.fileTypeError = false;
     }
 
     vm.uploadPic = function uploadPic() {
+        vm.fileTypeError = false;
         var file = vm.myFile;
         var uploadUrl = "resources/protected/file?userid="+vm.userId;
         CrudService.uploadFileToUrl(file, uploadUrl)
-            .then(angular.bind(this, onUploadSuccess), angular.bind(this, onUploadError));        
+            .then(angular.bind(this, onUploadSuccess), angular.bind(this, onUploadError));
     }
 
     vm.addComment = function addComment(commBody, imageId) {

@@ -24,17 +24,24 @@ public class CommentResource {
 			@FormParam("comment") String comment, 
 			@FormParam("userId")  long userId,
 			@FormParam("imageId") long imageId){
+		try {
 			long c = commentController.addComment(comment, userId, imageId);
 			return Response.status(Response.Status.ACCEPTED).entity(c).build();
+		} catch (Exception e) {
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		}
 	}
 
 	@GET
 	public Response getImageComments(
 			@QueryParam("imageId") String imageId) {
-		
+		try {
 		String json = commentController.getComments(imageId);
 		
 		return Response.status(Response.Status.ACCEPTED).entity(json).build();
+		} catch (Exception e) {
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		}
 	}
 
 }

@@ -4,7 +4,6 @@ AuthCtrl.$inject = ['$state', '$location', 'CrudService'];
 ProfileCtrl.$inject = ['$rootScope', '$scope', '$state', '$location', 'DataService', 'CrudService'];
 CrudService.$inject = ['$q', '$http', '$state'];
 DataService.$inject = ['$q', '$http', '$state'];angular.element(document).ready(function (event) {
-    console.log("angular is ready test");
 
     var modules = [];
     modules.push('ui.router'); 
@@ -72,7 +71,6 @@ function config ($stateProvider, $urlRouterProvider) {
  * @ngInject
  */
 function run () {
-
 }
 /**
  * @ngInject
@@ -84,6 +82,8 @@ function AuthCtrl($state, $location, CrudService) {
     vm.password = "";
     vm.usernameSignup = "";
     vm.passwordSignup = "";
+    vm.passwordError = false;
+    vm.loginError = false;
     var requestUrl = $location.$$protocol + "://" + $location.$$host + ":" + $location.$$port + "/sec/";
 
     vm.login = function login (username, password) {
@@ -111,17 +111,24 @@ function AuthCtrl($state, $location, CrudService) {
 
     function onLoginSuccess(data) {
         localStorage.setItem('LS', JSON.stringify(data));
+        vm.loginError = false;
         $state.go('profile');
     }
     function onLoginError(error) {
+        vm.loginError = true;
+        $state.go("welcome");
     }
+
     function onSignupSuccess(data) {
         var myLS = {keyid: data.keyid, accountId: data.accountId};
         localStorage.setItem("LS", JSON.stringify(myLS));
+        vm.passwordError = false;
         $state.go('profile', "test from onSignupSuccess ###");
 
     }
     function onSignupError(error) {
+        vm.passwordError = true;
+        $state.go("welcome");
     }
 }
 /**
@@ -129,9 +136,9 @@ function AuthCtrl($state, $location, CrudService) {
  */
 function ProfileCtrl($rootScope, $scope, $state, $location, DataService, CrudService) {
     vm = this;
-
     vm.profiletest = "Profile Test";
     vm.myPic = "";
+    vm.fileTypeError = false;
     vm.userId = JSON.parse(localStorage.getItem('LS')).accountId;
     if(vm.userId == null) {
         $state.go("welcome");
@@ -139,7 +146,7 @@ function ProfileCtrl($rootScope, $scope, $state, $location, DataService, CrudSer
     }
     vm.imageId = '1';
     vm.mySharer = "Test mySharer";
-    vm.myFile = "";
+    vm.myFile = null;
     var requestUrl = $location.$$protocol + "://" + $location.$$host + ":" + $location.$$port + "/sec/";
    
     
@@ -185,24 +192,30 @@ function ProfileCtrl($rootScope, $scope, $state, $location, DataService, CrudSer
     function onSharePicError(error) {
     }
 
-
     function onLoadUsersSuccess(usersData) {
         vm.users = usersData;
     }
     function onLoadUsersError(error) {
     }
     function onUploadSuccess() {
+        vm.fileTypeError = false;
         getAllImages(vm.userId);
         if(!$scope.$$phase) $scope.$digest();
     }
     function onUploadError(error) {
+        vm.fileTypeError = true;
+    }
+
+    vm.inputUpload = function inputUpload() {
+        vm.fileTypeError = false;
     }
 
     vm.uploadPic = function uploadPic() {
+        vm.fileTypeError = false;
         var file = vm.myFile;
         var uploadUrl = "resources/protected/file?userid="+vm.userId;
         CrudService.uploadFileToUrl(file, uploadUrl)
-            .then(angular.bind(this, onUploadSuccess), angular.bind(this, onUploadError));        
+            .then(angular.bind(this, onUploadSuccess), angular.bind(this, onUploadError));
     }
 
     vm.addComment = function addComment(commBody, imageId) {
