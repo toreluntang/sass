@@ -38,7 +38,7 @@ public class FileResource {
 
 
 	// private final String FILE_LOCATION = "\\Irina\\ITU\\Sem_1\\Security\\wildfly-10.0.0.Final\\Pictures";
-	private final String FILE_LOCATION = "/home/neoot/wildfly-10.0.0.Final/Pictures";
+	private final String FILE_LOCATION = "/var/www/html/";
 
 	@Inject
 	FileController fc;
