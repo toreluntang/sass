@@ -20,7 +20,6 @@ angular.element(document).ready(function (event) {
                     var modelSetter = model.assign;
                     
                     element.bind('change', function(){
-                        console.log("UPLOAAAAAAD")
                         scope.$apply(function(){
                             modelSetter(scope, element[0].files[0]);
                         });
@@ -28,22 +27,7 @@ angular.element(document).ready(function (event) {
                 }
             };
         }])
-        // .service('fileUpload', ['$http', function ($http) {
-        //     this.uploadFileToUrl = function(file, uploadUrl){
-        //         var fd = new FormData();
-        //         fd.append('file', file);
-        //         $http.post(uploadUrl, fd, {
-        //             transformRequest: angular.identity,
-        //             headers: {'Content-Type': undefined}
-        //         })
-        //         .success(function(){
-        //             console.log("SUCCESS : uploadFileToUrl")
-        //         })
-        //         .error(function(){
-        //             console.log("ERROR : uploadFileToUrl")
-        //         });
-        //     }
-        // }])
+ 
         .factory('CrudService', CrudService)
         .factory('DataService', DataService)
    

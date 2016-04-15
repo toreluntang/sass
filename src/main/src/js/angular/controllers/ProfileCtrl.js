@@ -1,134 +1,82 @@
 /**
  * @ngInject
  */
-function ProfileCtrl($rootScope, $scope, $state, DataService, CrudService) {
+function ProfileCtrl($rootScope, $scope, $state, $location, DataService, CrudService) {
     vm = this;
 
     vm.profiletest = "Profile Test";
     vm.myPic = "";
     vm.userId = JSON.parse(localStorage.getItem('LS')).accountId;
     if(vm.userId == null) {
-        console.log("LS is null -- from ProfileCtrl -- central place in ProfileCtrl");
         $state.go("welcome");
         return;
     }
-    console.log(vm.userId + "%%%%%%%%%%%USER ID is%%%%%%%%%%%%%%%%%%")
     vm.imageId = '1';
     vm.mySharer = "Test mySharer";
     vm.myFile = "";
-    // vm.loggedIn = "";
-    // $rootScope.test = "####";
-    // vm.onLoadImageCommentsSuccessERROR = false;
-    // vm.showComments = false;
-    // 
-
-
+    var requestUrl = $location.$$protocol + "://" + $location.$$host + ":" + $location.$$port + "/sec/";
+   
     
     function onLoadImagesSuccess(imagesData) {
-    	console.log("onLoadImagsSuccess RIGHT ONE")
-        _(imagesData).forEach(function(n) { 
-            console.log(n)
+        _(imagesData).forEach(function(n) {
             n.showComments = false;
+            n.path = $location.$$protocol + "://" + $location.$$host + ":" + $location.$$port + "/img/" + n.path;
             var LS = JSON.parse(localStorage.getItem('LS'));
             if(LS == null) {
-                console.log("LS is null -- from ProfileCtrl -- with onLoadImagsSuccess");
                 $state.go("welcome");
                 return;
             }
 
-            DataService.loadStuff('http://localhost:8080/sec/resources/protected/comment?imageId=' + n.imageid)
+            DataService.loadStuff(requestUrl+'resources/protected/comment?imageId=' + n.imageid)
             .then(angular.bind(this, onLoadImageCommentsSuccess), angular.bind(this, onLoadImageCommentsError));       
 
             function onLoadImageCommentsSuccess(data) {
-                console.log("onLoadImageCommentsSuccess", data)
                 if(data.error){
-                    console.log("DATA ERROR onLoadImageCommentsSuccess")
-                    // vm.onLoadImageCommentsSuccessERROR = true;
                  } else {
                     n.imageComments = data;
-                    // vm.onLoadImageCommentsSuccessERROR = false;
-                    
                  }
             }
             function onLoadImageCommentsError(error) {
-                console.log("onLoadImageCommentsError: no comments found for this image", error)
-
             }
         });
-        console.log("Images after adding comments are: ", imagesData)
         vm.pictures = imagesData;
 
         if(!$scope.$$phase) $scope.$digest();
-
-        
-        
-
     }
     function onLoadImagesError(error) {
-    	console.log("onLoadImagsError", error)
     }
     function onUploadPicSuccess(data) {
-        console.log("onUploadPicSuccess", data)
     }
     function onLoadImageCommentsError(error) {
-        console.log("onLoadImageCommentsError", error)
     }
     function onCreateCommentSuccess(data) {
-        console.log("onCreateCommentSuccess", data)
         getAllImages(vm.userId);
     }
     function onCreateCommentError(error) {
-        console.log("onCreateCommentError", error)
     }
     function onSharePicSuccess(data) {
-        console.log("onSharePicSuccess", data)
     }
     function onSharePicError(error) {
-        console.log("onSharePicError", error)
     }
 
 
     function onLoadUsersSuccess(usersData) {
-        console.log("onLoadUsersSuccess USEEEEERS", usersData)
         vm.users = usersData;
     }
     function onLoadUsersError(error) {
-        console.log("onLoadUsersError", error)
     }
     function onUploadSuccess() {
-        console.log("onUploadSuccess: final from ProfileCtrl")
         getAllImages(vm.userId);
         if(!$scope.$$phase) $scope.$digest();
-        console.log("### Tried to get all images ###")
     }
     function onUploadError(error) {
-        console.log("onUploadError: final from ProfileCtrl", error)
     }
 
-    vm.uploadPic = function uploadPic() { // USERID is HARDCODED
-        console.log("uploadPic IRINA test onChange test", vm.myFile)
+    vm.uploadPic = function uploadPic() {
         var file = vm.myFile;
-        console.log('file is ' );
-        console.dir(file);
         var uploadUrl = "resources/protected/file?userid="+vm.userId;
-        // Upload file to url start 
         CrudService.uploadFileToUrl(file, uploadUrl)
-            .then(angular.bind(this, onUploadSuccess), angular.bind(this, onUploadError));
-        // var fd = new FormData();
-        // fd.append('file', file);
-        // $http.post(uploadUrl, fd, {
-        //     transformRequest: angular.identity,
-        //     headers: {'Content-Type': undefined}
-        // })
-        // .success(function(){
-        //     console.log("SUCCESS     NEW : uploadFileToUrl")
-        // })
-        // .error(function(){
-        //     console.log("ERROR    NEW : uploadFileToUrl")
-        // });
-        // Upload file to url end 
-        // fileUpload.uploadFileToUrl(file, uploadUrl);
-        
+            .then(angular.bind(this, onUploadSuccess), angular.bind(this, onUploadError));        
     }
 
     vm.addComment = function addComment(commBody, imageId) {
@@ -136,46 +84,35 @@ function ProfileCtrl($rootScope, $scope, $state, DataService, CrudService) {
         vm.commBody = "";
         var LS = JSON.parse(localStorage.getItem('LS'));
 
-        // console.log("commentData to be added is: ", commentData);
-        CrudService.createItem(commentData, 'http://localhost:8080/sec/resources/protected/comment', LS)
+        CrudService.createItem(commentData, requestUrl+'resources/protected/comment', LS)
             .then(angular.bind(this, onCreateCommentSuccess), angular.bind(this, onCreateCommentError));
         
     }
 
     vm.shareWith = function shareWith(mySharer, imageid) {
-        console.log("share with", mySharer)
         var sharingObject = {imageId: imageid, author: vm.userId, victim: mySharer};
-        console.log("sharingObject is: ", sharingObject)
         var LS = JSON.parse(localStorage.getItem('LS'));
 
-        CrudService.createItem(sharingObject, 'http://localhost:8080/sec/resources/protected/file/shareimage', LS)
+        CrudService.createItem(sharingObject, requestUrl+'resources/protected/file/shareimage', LS)
             .then(angular.bind(this, onSharePicSuccess), angular.bind(this, onSharePicError));
     }
 
     vm.logout = function logout() {
         localStorage.removeItem('LS');
-        console.log("logout")
-        // $rootScope.authenticated = false;
-        $state.go('welcome'); // test
+        $state.go('welcome'); 
     }
 
-    // vm.toggleComments = function toggleComments() {
-    //     vm.showComments = !vm.showComments;
-    // }
-
-
-    
 
     function getAllImages(userId) {
         var LS = JSON.parse(localStorage.getItem('LS'));
 
-        DataService.loadStuff('http://localhost:8080/sec/resources/protected/file/getallimages?id='+userId)
+        DataService.loadStuff(requestUrl+'resources/protected/file/getallimages?id='+userId)
             .then(angular.bind(this, onLoadImagesSuccess), angular.bind(this, onLoadImagesError));
     }
     function getAllUsers() {
         var LS = JSON.parse(localStorage.getItem('LS'));
 
-        DataService.loadStuff('http://localhost:8080/sec/resources/protected/account/getallusers')
+        DataService.loadStuff(requestUrl+'resources/protected/account/getallusers')
             .then(angular.bind(this, onLoadUsersSuccess), angular.bind(this, onLoadUsersError));
     }
 
@@ -184,20 +121,10 @@ function ProfileCtrl($rootScope, $scope, $state, DataService, CrudService) {
 
 
    function stabilizeLoggedInUser (fromStateName) {
-       console.log("stabilizeLoggedInUser")
-      
 
-       // if(fromStateName == "welcome") {
-       //  console.log("fromStateName == welcome")
-       //  $rootScope.authenticated = true;
-       // } else {
-       //  console.log("fromStateName == !!welcome")
-       //  $state.go('welcome');
-       // }
    }
 
    function onStateChangeSuccess(event, toState, toParams, fromState, fromParams) {
-       console.log("ON STATE CHANGE SUCCESS!!!!!!!!!!!!!!!!!!", event, toState, toParams, fromState, fromParams, "!!!!!!!!!!!!!!!!")
        stabilizeLoggedInUser(fromState.name);
    }
 
