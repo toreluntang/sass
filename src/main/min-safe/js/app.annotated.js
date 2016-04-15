@@ -139,10 +139,15 @@ function ProfileCtrl($rootScope, $scope, $state, $location, DataService, CrudSer
     vm.profiletest = "Profile Test";
     vm.myPic = "";
     vm.fileTypeError = false;
-    vm.userId = JSON.parse(localStorage.getItem('LS')).accountId;
-    if(vm.userId == null) {
-        $state.go("welcome");
-        return;
+    if (localStorage.getItem('LS')!=null) {
+        vm.userId = JSON.parse(localStorage.getItem('LS')).accountId;
+        if(vm.userId == null) {
+            $state.go("welcome");
+            return;
+            }
+    } else {
+         $state.go("welcome");
+            return;
     }
     vm.imageId = '1';
     vm.mySharer = "Test mySharer";
