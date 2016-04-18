@@ -60,6 +60,34 @@ public class AccountSQL {
 		
 		return foundAcc;
 	}
+	
+	public Account getAccountByString(String field, long value) {
+		Account foundAcc = null;
+		
+		try{
+			try (Connection con = DriverManager.getConnection("jdbc:postgresql://horton.elephantsql.com:5432/hmdgzyax", "hmdgzyax", "8ETS72wV53uGfPIs-RCJy_tolfPs481n")) {
+
+				PreparedStatement pre = null;
+				String stm = "select accountid, username, password, email, keyid from account where "+field+" = ?";
+				pre = con.prepareStatement(stm);
+				pre.setLong(1, value);
+
+				try (ResultSet rs = pre.executeQuery();) {
+					if (rs.next()) {
+						int id = rs.getInt("accountid");
+						String name = rs.getString("username");
+						String password = rs.getString("password");
+						String keyid = rs.getString("keyid");
+						System.out.println("ALL tha way down: " + keyid);
+						String email = rs.getString("email");
+						foundAcc = new Account(id, name,password, email,keyid);
+					}
+				}
+			}
+		}catch(Exception e) { e.printStackTrace(); }
+		
+		return foundAcc;
+	}
 
 	public long insertUser(Account newAccount) {
 		long bob = -1; // confuse the enemy with nice variable names! 
@@ -95,15 +123,11 @@ public class AccountSQL {
 
 	public Account checkLogin(Account acc) {
 
-		System.out.println("1");
-		
 		try (
 			Connection con = DriverManager.getConnection("jdbc:postgresql://horton.elephantsql.com:5432/hmdgzyax", "hmdgzyax", "8ETS72wV53uGfPIs-RCJy_tolfPs481n");
 			PreparedStatement stmt = con.prepareStatement("SELECT accountid, username, password, email FROM account WHERE username=?");
 		) {
 			
-			
-			System.out.println("2");
 			stmt.setString(1, acc.getUsername());
 			
 			ResultSet rs = stmt.executeQuery();
@@ -111,14 +135,11 @@ public class AccountSQL {
 				acc.setAccountid(rs.getLong("accountid"));
 				acc.setPassword(rs.getString("password"));
 				acc.setEmail(rs.getString("email"));
-				System.out.println("3");
 				return acc;
 			}
 		} catch (Exception e) {
-			System.out.println("4");
 			e.printStackTrace();
 		}
-		System.out.println("5");
 		return null;
 	}
 	

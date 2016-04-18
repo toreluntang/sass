@@ -75,7 +75,7 @@ public class CommentSQL {
 //				 while(rss.next()){
 //				 }
 				 
-				System.out.println(rss.next());
+				//System.out.println(rss.next());
 				try (ResultSet rs = pre.executeQuery();) {
 					
 					while( rs.next() ){
