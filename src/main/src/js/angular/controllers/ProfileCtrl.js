@@ -77,6 +77,7 @@ function ProfileCtrl($rootScope, $scope, $state, $location, DataService, CrudSer
         if(!$scope.$$phase) $scope.$digest();
     }
     function onUploadError(error) {
+        console.log("upload errr", error)
         vm.fileTypeError = true;
     }
 

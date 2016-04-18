@@ -2,7 +2,7 @@
  * @ngInject
  */
 
-function CrudService($q, $http, $state) {
+function CrudService($q, $http, $state, $location) {
     
     var service = {
         createItem: createItem,
@@ -41,7 +41,7 @@ function CrudService($q, $http, $state) {
     // implementation
     function uploadFileToUrl(file, uploadUrl, userId) {
         var def = $q.defer();
-        var header = createAuthorizationHeader("sec/" + uploadUrl,'POST');
+        var header = createAuthorizationHeader($location.$$protocol + "://" + $location.$$host + ":" + $location.$$port + '/sec/resources/protected/file','POST');
         console.log("### from CrudService ###, header from the uploadFileToUrl", header)
         var fd = new FormData();
         fd.append('file', file);

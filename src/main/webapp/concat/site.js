@@ -13,7 +13,7 @@ if (typeof console === 'undefined') {
 config.$inject = ['$stateProvider', '$urlRouterProvider'];
 AuthCtrl.$inject = ['$state', '$location', 'CrudService'];
 ProfileCtrl.$inject = ['$rootScope', '$scope', '$state', '$location', 'DataService', 'CrudService'];
-CrudService.$inject = ['$q', '$http', '$state'];
+CrudService.$inject = ['$q', '$http', '$state', '$location'];
 DataService.$inject = ['$q', '$http', '$state'];angular.element(document).ready(function (event) {
 
     var modules = [];
@@ -221,6 +221,7 @@ function ProfileCtrl($rootScope, $scope, $state, $location, DataService, CrudSer
         if(!$scope.$$phase) $scope.$digest();
     }
     function onUploadError(error) {
+        console.log("upload errr", error)
         vm.fileTypeError = true;
     }
 
@@ -302,7 +303,7 @@ function ProfileCtrl($rootScope, $scope, $state, $location, DataService, CrudSer
  * @ngInject
  */
 
-function CrudService($q, $http, $state) {
+function CrudService($q, $http, $state, $location) {
     
     var service = {
         createItem: createItem,
@@ -341,7 +342,7 @@ function CrudService($q, $http, $state) {
     // implementation
     function uploadFileToUrl(file, uploadUrl, userId) {
         var def = $q.defer();
-        var header = createAuthorizationHeader("sec/" + uploadUrl,'POST');
+        var header = createAuthorizationHeader($location.$$protocol + "://" + $location.$$host + ":" + $location.$$port + '/sec/resources/protected/file','POST');
         console.log("### from CrudService ###, header from the uploadFileToUrl", header)
         var fd = new FormData();
         fd.append('file', file);
