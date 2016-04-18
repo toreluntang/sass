@@ -327,9 +327,7 @@ function CrudService($q, $http, $state) {
         var options = {
             credentials: credentials
         };
-        var autourl = window.location.href;
-        var arr = autourl.split('/');
-        autourl = arr[0] + '//' + arr[2];
+        console.log("### from CrudService ###, uploadUrl", uploadUrl)
         var header = hawk.client.header(uploadUrl, method, options);
         if (header.err != null) {
             alert(header.err);
@@ -342,7 +340,7 @@ function CrudService($q, $http, $state) {
     // implementation
     function uploadFileToUrl(file, uploadUrl, userId) {
         var def = $q.defer();
-        var header = createAuthorizationHeader(uploadUrl,'POST');
+        var header = createAuthorizationHeader("sec/" + uploadUrl,'POST');
         var fd = new FormData();
         fd.append('file', file);
         fd.append('userid', userId);
