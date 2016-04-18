@@ -31,7 +31,10 @@ public class AccountResource {
 		if (username == null || password == null || email == null) {
 			return Response.status(Response.Status.BAD_REQUEST).build();
 		}
-
+		if (password.length() < 10) {
+			return Response.status(Response.Status.LENGTH_REQUIRED).build();
+		}
+		
 		boolean usernameIsTaken = accountController.validateUsername(username);
 
 		if (!usernameIsTaken)
