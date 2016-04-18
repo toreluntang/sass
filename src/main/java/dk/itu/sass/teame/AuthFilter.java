@@ -14,13 +14,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.JsonObject;
 
-import dk.itu.sass.teame.controller.AccountController;
 import dk.itu.sass.teame.controller.AuthProcessor;
-import dk.itu.sass.teame.entity.Account;
-import net.jalg.hawkj.Algorithm;
-import net.jalg.hawkj.HawkContext;
 
-@WebFilter(urlPatterns = "resources/protected/*")
+@WebFilter(urlPatterns = "/resources/protected/*")
 public class AuthFilter implements Filter {
 
 	@Override
