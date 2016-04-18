@@ -1,5 +1,6 @@
 package dk.itu.sass.teame.boundary;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -37,10 +38,11 @@ public class FileResource {
 
 	// private final String FILE_LOCATION = "";
 
-
-	// private final String FILE_LOCATION = "\\Irina\\ITU\\Sem_1\\Security\\wildfly-10.0.0.Final\\Pictures";
-	//private final String FILE_LOCATION = "/home/neoot/wildfly-10.0.0.Final/Pictures";
-	//private final String FILE_LOCATION = "/var/www/html/";
+	// private final String FILE_LOCATION =
+	// "\\Irina\\ITU\\Sem_1\\Security\\wildfly-10.0.0.Final\\Pictures";
+	// private final String FILE_LOCATION =
+	// "/home/neoot/wildfly-10.0.0.Final/Pictures";
+	// private final String FILE_LOCATION = "/var/www/html/";
 	private final String FILE_LOCATION = "/Users/Alexander/Code/Servers/wildfly-10-sass/bin/pictures";
 
 	@Inject
@@ -49,21 +51,21 @@ public class FileResource {
 	@GET
 	public Response getFile(@QueryParam("id") String id) {
 		try {
-		JsonObject json = new JsonObject();
-		Long fid = null;
-		try {
-			fid = Long.parseLong(id);
-		} catch (Exception e) {
-			json.addProperty("Error", "Wrong file id: " + id);
-			return Response.status(Status.BAD_REQUEST).entity(json.toString()).build();
-		}
-		File file = fc.getFile(fid);
-		
-		if(file==null)
-			Response.status(Status.INTERNAL_SERVER_ERROR).build();
-		
-		JsonObject jsonResponse = fileToJsonObject(file);
-		return Response.ok().entity(jsonResponse.toString()).build();
+			JsonObject json = new JsonObject();
+			Long fid = null;
+			try {
+				fid = Long.parseLong(id);
+			} catch (Exception e) {
+				json.addProperty("Error", "Wrong file id: " + id);
+				return Response.status(Status.BAD_REQUEST).entity(json.toString()).build();
+			}
+			File file = fc.getFile(fid);
+
+			if (file == null)
+				Response.status(Status.INTERNAL_SERVER_ERROR).build();
+
+			JsonObject jsonResponse = fileToJsonObject(file);
+			return Response.ok().entity(jsonResponse.toString()).build();
 		} catch (Exception e) {
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		}
@@ -73,22 +75,29 @@ public class FileResource {
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response uploadFile(MultipartFormDataInput input) {
+
+		Map<String, List<InputPart>> maps = input.getFormDataMap();
 		
-		String userId = "33";
-		System.out.println("ALEX : " + userId);
-		
+		String userId = null;
 		try {
-		JsonObject json = new JsonObject();
-		System.out.println("ALEX2");
-		Long uid = null;
-		try {
-			uid = Long.parseLong(userId);
-		} catch (Exception e) {
-			json.addProperty("Error", "Wrong user id: " + userId);
-			return Response.status(Status.BAD_REQUEST).entity(json.toString()).build();
+			userId = maps.get("userid").get(0).getBodyAsString();
+		} catch (IOException e1) {
+			e1.printStackTrace();
 		}
-		Account user = AccountController.getAccountById(uid);
-			Map<String, List<InputPart>> maps = input.getFormDataMap();
+		
+		try {
+			JsonObject json = new JsonObject();
+			System.out.println("ALEX2");
+			Long uid = null;
+			try {
+				uid = Long.parseLong(userId);
+			} catch (Exception e) {
+				json.addProperty("Error", "Wrong user id: " + userId);
+				return Response.status(Status.BAD_REQUEST).entity(json.toString()).build();
+			}
+			
+			Account user = AccountController.getAccountById(uid);
+
 			List<InputPart> f = maps.get("file");
 
 			MultivaluedMap<String, String> mv = f.get(0).getHeaders();
@@ -136,9 +145,8 @@ public class FileResource {
 			}
 		}
 		return "unknown";
-		
 	}
-
+	
 	private JsonObject fileToJsonObject(File f) {
 		JsonObject json = new JsonObject();
 		json.addProperty("id", f.getId());
@@ -153,12 +161,12 @@ public class FileResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAllImagesFromUser(@PathParam("id") String id) {
 		try {
-		if (id.isEmpty() || id == null) {
-			Response.status(Response.Status.BAD_REQUEST).build();
-		}
+			if (id.isEmpty() || id == null) {
+				Response.status(Response.Status.BAD_REQUEST).build();
+			}
 
-		String json = fc.getFilesByUser(Long.parseLong(id));
-		return Response.status(Response.Status.ACCEPTED).entity(json).build();
+			String json = fc.getFilesByUser(Long.parseLong(id));
+			return Response.status(Response.Status.ACCEPTED).entity(json).build();
 		} catch (Exception e) {
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		}
@@ -169,23 +177,23 @@ public class FileResource {
 	public Response shareImage(@FormParam("imageId") String imageId, @FormParam("author") String authorId,
 			@FormParam("victim") String shareWithId) {
 		try {
-		JsonObject o = new JsonObject();
-		o.addProperty("author", authorId);
-		o.addProperty("sharedwith", shareWithId);
-		o.addProperty("imageid", imageId);
+			JsonObject o = new JsonObject();
+			o.addProperty("author", authorId);
+			o.addProperty("sharedwith", shareWithId);
+			o.addProperty("imageid", imageId);
 
-		if ((imageId.isEmpty() || imageId == null) || (authorId.isEmpty() || authorId == null)
-				|| (shareWithId.isEmpty() || shareWithId == null)) {
-			Response.status(Response.Status.BAD_REQUEST).build();
-		}
-		long accountId = Long.parseLong(authorId);
-		Account acc = AccountController.getAccountById(accountId);
-		boolean b = fc.shareImage(Long.parseLong(imageId), accountId, Long.parseLong(shareWithId));
+			if ((imageId.isEmpty() || imageId == null) || (authorId.isEmpty() || authorId == null)
+					|| (shareWithId.isEmpty() || shareWithId == null)) {
+				Response.status(Response.Status.BAD_REQUEST).build();
+			}
+			long accountId = Long.parseLong(authorId);
+			Account acc = AccountController.getAccountById(accountId);
+			boolean b = fc.shareImage(Long.parseLong(imageId), accountId, Long.parseLong(shareWithId));
 
-		if (b)
-			return Response.status(Response.Status.ACCEPTED).entity(o.toString()).build();
-		else
-			return Response.status(Response.Status.BAD_REQUEST).build();
+			if (b)
+				return Response.status(Response.Status.ACCEPTED).entity(o.toString()).build();
+			else
+				return Response.status(Response.Status.BAD_REQUEST).build();
 		} catch (Exception e) {
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		}
