@@ -46,7 +46,7 @@ public class CommentSQL {
 				PreparedStatement pre = null;
 				String stm = query;
 				pre = con.prepareStatement(stm);
-				pre.setString(1, imageId);
+				pre.setLong(1, Long.parseLong(imageId));
 				ResultSet rss = null;
 				
 				Statement s = con.createStatement();

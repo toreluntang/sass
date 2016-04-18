@@ -35,7 +35,7 @@ public class AuthFilter implements Filter {
 			System.out.println("authenticating..." + r);
 			boolean isAuth = AuthProcessor.Authenticate(r);
 			System.out.println("Has been authenticated..." + isAuth);
-
+			
 			if (isAuth) {
 				chain.doFilter(request, response);
 				return;

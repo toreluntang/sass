@@ -13,6 +13,7 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -71,10 +72,14 @@ public class FileResource {
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response uploadFile(MultipartFormDataInput input, @QueryParam("userid") String userId) {
+	public Response uploadFile(MultipartFormDataInput input) {
+		
+		String userId = "33";
+		System.out.println("ALEX : " + userId);
+		
 		try {
 		JsonObject json = new JsonObject();
-		
+		System.out.println("ALEX2");
 		Long uid = null;
 		try {
 			uid = Long.parseLong(userId);
@@ -144,9 +149,9 @@ public class FileResource {
 	}
 
 	@GET
-	@Path("getallimages")
+	@Path("getallimages/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getAllImagesFromUser(@QueryParam("id") String id) {
+	public Response getAllImagesFromUser(@PathParam("id") String id) {
 		try {
 		if (id.isEmpty() || id == null) {
 			Response.status(Response.Status.BAD_REQUEST).build();
