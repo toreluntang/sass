@@ -334,6 +334,7 @@ function CrudService($q, $http, $state) {
             return null;
         }
         else
+        console.log("### from CrudService ###, header from the method itself", header)
             return header;
     }
 
@@ -341,12 +342,13 @@ function CrudService($q, $http, $state) {
     function uploadFileToUrl(file, uploadUrl, userId) {
         var def = $q.defer();
         var header = createAuthorizationHeader("sec/" + uploadUrl,'POST');
+        console.log("### from CrudService ###, header from the uploadFileToUrl", header)
         var fd = new FormData();
         fd.append('file', file);
         fd.append('userid', userId);
         $http.post(uploadUrl, fd, {
             transformRequest: angular.identity,
-            headers: {'Content-Type': undefined,
+            headers: {'Content-Type': 'multipart/form-data',
                         'Authorization': header.field}
         })
         .success(function(){
