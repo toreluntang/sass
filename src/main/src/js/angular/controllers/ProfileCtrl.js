@@ -90,8 +90,8 @@ function ProfileCtrl($rootScope, $scope, $state, $location, DataService, CrudSer
 
  
         if(file != "") {
-            var uploadUrl = "resources/protected/file/"+vm.userId;
-            CrudService.uploadFileToUrl(file, uploadUrl)
+            var uploadUrl = "resources/protected/file";
+            CrudService.uploadFileToUrl(file, uploadUrl, vm.userId)
                 .then(angular.bind(this, onUploadSuccess), angular.bind(this, onUploadError));        
             vm.errorUpload = "";
         } else {
