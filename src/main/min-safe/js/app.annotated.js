@@ -338,7 +338,7 @@ function CrudService($q, $http, $state, $location) {
         fd.append('userid', userId);
         $http.post(uploadUrl, fd, {
             transformRequest: angular.identity,
-            headers: {'Content-Type': 'multipart/form-data',
+            headers: {'Content-Type': undefined,
                         'Authorization': header.field}
         })
         .success(function(){
