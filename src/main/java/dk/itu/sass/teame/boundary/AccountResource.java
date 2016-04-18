@@ -27,11 +27,14 @@ public class AccountResource {
 	@Path("account/create")
 	public Response createAccount(@FormParam("username") String username, @FormParam("password") String password,
 			@FormParam("email") String email) {
-
+		try {
 		if (username == null || password == null || email == null) {
 			return Response.status(Response.Status.BAD_REQUEST).build();
 		}
-
+		if (password.length() < 10) {
+			return Response.status(Response.Status.LENGTH_REQUIRED).build();
+		}
+		
 		boolean usernameIsTaken = accountController.validateUsername(username);
 
 		if (!usernameIsTaken)
@@ -46,34 +49,44 @@ public class AccountResource {
 		res.addProperty("email", acc.getEmail());
 		
 		return Response.status(Response.Status.ACCEPTED).entity(res.toString()).build();
+		} catch (Exception e) {
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		}
 	}
 
 	@POST
 	@Path("account/login")
 	public Response login(@FormParam("username") String username, @FormParam("password") String password) {
-
+		try {
 		JsonObject json = new JsonObject();
 
 		Account account = accountController.login(username, password);
 
-		json.addProperty("id", account.getAccountid());
+		
 		if (account == null)
 			return Response.status(Status.UNAUTHORIZED).build();
 
+		json.addProperty("id", account.getAccountid());
 		
 		json.addProperty("keyid", account.getKeyId());
 		json.addProperty("accountId", account.getAccountid());
 		
 		return Response.ok().entity(json.toString()).build();
+	} catch (Exception e) {
+		return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+	}
 	}
 
 	@GET
 	@Path("protected/account/getallusers")
 	public Response getAllUsers() {
 		// Something with authentications
-
+		try {
 		String json = accountController.getAllusers();
 		return Response.ok().entity(json).build();
+		} catch (Exception e) {
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		}
 	}
 
 }

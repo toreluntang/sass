@@ -2,5 +2,4 @@
  * @ngInject
  */
 function run () {
-
 }

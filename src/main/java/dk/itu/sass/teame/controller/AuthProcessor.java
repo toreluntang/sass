@@ -1,9 +1,6 @@
 package dk.itu.sass.teame.controller;
 
-import java.net.URI;
-
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.HttpHeaders;
 
 import dk.itu.sass.teame.entity.Account;
@@ -22,11 +19,6 @@ public class AuthProcessor {
 
 			long accountId = Long.parseLong(authHeader.getId());
 			Account acc = AccountController.getAccountById(accountId);
-
-			System.out.println(acc.getAccountid());
-			System.out.println(acc.getKeyId());
-			System.out.println(authHeader.getTs());
-			System.out.println(authHeader.getNonce());
 
 			String path = requestContext.getRequestURI();
 			String host = requestContext.getServerName();

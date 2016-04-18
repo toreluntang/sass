@@ -8,6 +8,8 @@ function AuthCtrl($state, $location, CrudService) {
     vm.password = "";
     vm.usernameSignup = "";
     vm.passwordSignup = "";
+    vm.passwordError = false;
+    vm.loginError = false;
     var requestUrl = $location.$$protocol + "://" + $location.$$host + ":" + $location.$$port + "/sec/";
 
     vm.login = function login (username, password) {
@@ -35,16 +37,23 @@ function AuthCtrl($state, $location, CrudService) {
 
     function onLoginSuccess(data) {
         localStorage.setItem('LS', JSON.stringify(data));
+        vm.loginError = false;
         $state.go('profile');
     }
     function onLoginError(error) {
+        vm.loginError = true;
+        $state.go("welcome");
     }
+
     function onSignupSuccess(data) {
         var myLS = {keyid: data.keyid, accountId: data.accountId};
         localStorage.setItem("LS", JSON.stringify(myLS));
+        vm.passwordError = false;
         $state.go('profile', "test from onSignupSuccess ###");
 
     }
     function onSignupError(error) {
+        vm.passwordError = true;
+        $state.go("welcome");
     }
 }

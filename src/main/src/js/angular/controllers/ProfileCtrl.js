@@ -3,18 +3,24 @@
  */
 function ProfileCtrl($rootScope, $scope, $state, $location, DataService, CrudService) {
     vm = this;
-
     vm.profiletest = "Profile Test";
     vm.myPic = "";
-    vm.userId = JSON.parse(localStorage.getItem('LS')).accountId;
-    if(vm.userId == null) {
-        $state.go("welcome");
-        return;
+    vm.fileTypeError = false;
+    if (localStorage.getItem('LS')!=null) {
+        vm.userId = JSON.parse(localStorage.getItem('LS')).accountId;
+        if(vm.userId == null) {
+            $state.go("welcome");
+            return;
+            }
+    } else {
+         $state.go("welcome");
+            return;
     }
     vm.imageId = '1';
     vm.mySharer = "Test mySharer";
     vm.myFile = "";
     vm.errorUpload = "";
+
     var requestUrl = $location.$$protocol + "://" + $location.$$host + ":" + $location.$$port + "/sec/";
    
     
@@ -28,7 +34,7 @@ function ProfileCtrl($rootScope, $scope, $state, $location, DataService, CrudSer
                 return;
             }
 
-            DataService.loadStuff(requestUrl+'resources/protected/comment?imageId=' + n.imageid)
+            DataService.loadStuff(requestUrl+'resources/protected/comment/' + n.imageid)
             .then(angular.bind(this, onLoadImageCommentsSuccess), angular.bind(this, onLoadImageCommentsError));       
 
             function onLoadImageCommentsSuccess(data) {
@@ -60,24 +66,31 @@ function ProfileCtrl($rootScope, $scope, $state, $location, DataService, CrudSer
     function onSharePicError(error) {
     }
 
-
     function onLoadUsersSuccess(usersData) {
         vm.users = usersData;
     }
     function onLoadUsersError(error) {
     }
     function onUploadSuccess() {
+        vm.fileTypeError = false;
         getAllImages(vm.userId);
         if(!$scope.$$phase) $scope.$digest();
     }
     function onUploadError(error) {
+        vm.fileTypeError = true;
+    }
+
+    vm.inputUpload = function inputUpload() {
+        vm.fileTypeError = false;
     }
 
     vm.uploadPic = function uploadPic() {
+        vm.fileTypeError = false;
         var file = vm.myFile;
-        console.log(file)
+
+ 
         if(file != "") {
-            var uploadUrl = "resources/protected/file?userid="+vm.userId;
+            var uploadUrl = "resources/protected/file/"+vm.userId;
             CrudService.uploadFileToUrl(file, uploadUrl)
                 .then(angular.bind(this, onUploadSuccess), angular.bind(this, onUploadError));        
             vm.errorUpload = "";
@@ -85,6 +98,7 @@ function ProfileCtrl($rootScope, $scope, $state, $location, DataService, CrudSer
             console.log("file is empty, dude")
             vm.errorUpload = "Please make sure the picture is chosen. Your upload cannot be empty.";
         }
+
     }
 
     vm.addComment = function addComment(commBody, imageId) {
@@ -114,7 +128,7 @@ function ProfileCtrl($rootScope, $scope, $state, $location, DataService, CrudSer
     function getAllImages(userId) {
         var LS = JSON.parse(localStorage.getItem('LS'));
 
-        DataService.loadStuff(requestUrl+'resources/protected/file/getallimages?id='+userId)
+        DataService.loadStuff(requestUrl+'resources/protected/file/getallimages/'+userId)
             .then(angular.bind(this, onLoadImagesSuccess), angular.bind(this, onLoadImagesError));
     }
     function getAllUsers() {

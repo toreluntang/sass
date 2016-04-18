@@ -1,5 +1,4 @@
 angular.element(document).ready(function (event) {
-    console.log("angular is ready test");
 
     var modules = [];
     modules.push('ui.router'); 

@@ -12,9 +12,12 @@
 					<div class="upload-container">
 				
 						<form enctype="multipart/form-data" id="upload-form">
-						<input type="file" class="inputfile inputfile-2" name="file"  file-model="profile.myFile" />
+						<input type="file" class="inputfile inputfile-2" name="file" ng-click="profile.inputUpload()" file-model="profile.myFile" />
 						<label for="file"><span>Choose file</span></label>
 						<button class="btn btn--default" ng-click="profile.uploadPic()" id="upload">Upload fakestagram</button>
+						<div class="alert alert-danger" ng-show="profile.fileTypeError">
+  							<strong>Error!</strong> This file type is not allowed.
+						</div>
 						</form>
 						<p>{{profile.errorUpload}}</p>
 					</div>
