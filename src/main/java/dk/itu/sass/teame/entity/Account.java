@@ -4,29 +4,27 @@ public class Account {
 	private long accountid;
 	private String username;
 	private String password;
-	private String salt;
 	private String email;
 	private String keyId;
 	
 	public Account() {
 	}
 	
-	public Account(String username, String password, String salt, String email, String keyid) {
+	public Account(int accountid, String username, String password, String email, String keyid) {
+		this.accountid = accountid;
 		this.username = username;
 		this.password = password;
-		this.salt = salt;
 		this.email = email;
 		this.keyId = keyid;
 	}
 	
-	public Account(int accountid, String username, String password, String salt, String email) {
-		this.accountid = accountid;
+	public Account(String username, String password, String email, String keyid) {
 		this.username = username;
 		this.password = password;
-		this.salt = salt;
 		this.email = email;
+		this.keyId = keyid;
 	}
-	
+
 	public long getAccountid() {
 		return accountid;
 	}
@@ -51,14 +49,6 @@ public class Account {
 		this.password = password;
 	}
 
-	public String getSalt() {
-		return salt;
-	}
-
-	public void setSalt(String salt) {
-		this.salt = salt;
-	}
-
 	public String getEmail() {
 		return email;
 	}
@@ -74,7 +64,12 @@ public class Account {
 	public void setKeyId(String keyId) {
 		this.keyId = keyId;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "Account [accountid=" + accountid + ", username=" + username + ", password=" + password + ", email="
+				+ email + ", keyId=" + keyId + "]";
+	}
 	
 	
 }

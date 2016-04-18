@@ -27,7 +27,7 @@ public class AccountController {
 	
 	public static Account getAccountById(long accountId){
 		AccountSQL accountSQL = new AccountSQL();
-		Account a = accountSQL.getAccountByString("accountid",""+accountId);
+		Account a = accountSQL.getAccountByString("accountid",accountId);
 		return a;
 	}
 	
@@ -41,7 +41,7 @@ public class AccountController {
 
 			String hashedPassword;
 			hashedPassword = PasswordHash.createHash(password);
-			Account newAccount = new Account(username, hashedPassword, "", email, UUID.randomUUID().toString());
+			Account newAccount = new Account(username, hashedPassword, email, UUID.randomUUID().toString());
 			
 			long newAccountId = accountSQL.insertUser(newAccount);
 			newAccount.setAccountid(newAccountId);
