@@ -261,6 +261,8 @@ function ProfileCtrl($rootScope, $scope, $state, $location, DataService, CrudSer
     function getAllImages(userId) {
         var LS = JSON.parse(localStorage.getItem('LS'));
 
+        console.log("teeest")
+
         DataService.loadStuff(requestUrl+'resources/protected/file/getallimages/'+userId)
             .then(angular.bind(this, onLoadImagesSuccess), angular.bind(this, onLoadImagesError));
     }
