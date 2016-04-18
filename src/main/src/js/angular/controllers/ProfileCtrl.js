@@ -14,6 +14,7 @@ function ProfileCtrl($rootScope, $scope, $state, $location, DataService, CrudSer
     vm.imageId = '1';
     vm.mySharer = "Test mySharer";
     vm.myFile = "";
+    vm.errorUpload = "";
     var requestUrl = $location.$$protocol + "://" + $location.$$host + ":" + $location.$$port + "/sec/";
    
     
@@ -74,9 +75,16 @@ function ProfileCtrl($rootScope, $scope, $state, $location, DataService, CrudSer
 
     vm.uploadPic = function uploadPic() {
         var file = vm.myFile;
-        var uploadUrl = "resources/protected/file?userid="+vm.userId;
-        CrudService.uploadFileToUrl(file, uploadUrl)
-            .then(angular.bind(this, onUploadSuccess), angular.bind(this, onUploadError));        
+        console.log(file)
+        if(file != "") {
+            var uploadUrl = "resources/protected/file?userid="+vm.userId;
+            CrudService.uploadFileToUrl(file, uploadUrl)
+                .then(angular.bind(this, onUploadSuccess), angular.bind(this, onUploadError));        
+            vm.errorUpload = "";
+        } else {
+            console.log("file is empty, dude")
+            vm.errorUpload = "Please make sure the picture is chosen. Your upload cannot be empty.";
+        }
     }
 
     vm.addComment = function addComment(commBody, imageId) {
